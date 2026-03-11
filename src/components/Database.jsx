@@ -1,5 +1,5 @@
 // Database.jsx
-import React, { useEffect, useState, useRef } from "react";
+import React, { useEffect, useState, useRef, useCallback } from "react";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
 import * as XLSX from 'xlsx';
@@ -81,25 +81,25 @@ const PHILIPPINE_REGIONS = [
   { code: "BARMM", name: "Bangsamoro Autonomous Region in Muslim Mindanao (BARMM)" }
 ];
 
-// Region mapping for filtering - maps region codes to possible values in database
-const REGION_FILTER_MAP = {
-  "NCR": ["NCR", "National Capital Region", "National Capital Region (NCR)"],
-  "CAR": ["CAR", "Cordillera Administrative Region", "Cordillera Administrative Region (CAR)"],
-  "I": ["I", "Region I", "Region I (Ilocos Region)", "Ilocos Region"],
-  "II": ["II", "Region II", "Region II (Cagayan Valley)", "Cagayan Valley"],
-  "III": ["III", "Region III", "Region III (Central Luzon)", "Central Luzon"],
-  "IV-A": ["IV-A", "Region IV-A", "Region IV-A (CALABARZON)", "CALABARZON"],
-  "MIMAROPA": ["MIMAROPA", "MIMAROPA Region"],
-  "V": ["V", "Region V", "Region V (Bicol Region)", "Bicol Region"],
-  "VI": ["VI", "Region VI", "Region VI (Western Visayas)", "Western Visayas"],
-  "VII": ["VII", "Region VII", "Region VII (Central Visayas)", "Central Visayas"],
-  "VIII": ["VIII", "Region VIII", "Region VIII (Eastern Visayas)", "Eastern Visayas"],
-  "IX": ["IX", "Region IX", "Region IX (Zamboanga Peninsula)", "Zamboanga Peninsula"],
-  "X": ["X", "Region X", "Region X (Northern Mindanao)", "Northern Mindanao"],
-  "XI": ["XI", "Region XI", "Region XI (Davao Region)", "Davao Region"],
-  "XII": ["XII", "Region XII", "Region XII (SOCCSKSARGEN)", "SOCCSKSARGEN"],
-  "XIII": ["XIII", "Region XIII", "Region XIII (Caraga)", "Caraga"],
-  "BARMM": ["BARMM", "Bangsamoro Autonomous Region", "Bangsamoro Autonomous Region in Muslim Mindanao (BARMM)"]
+// Simple direct mapping for region filtering
+const REGION_DIRECT_MATCH = {
+  "National Capital Region (NCR)": "NCR",
+  "Cordillera Administrative Region (CAR)": "CAR",
+  "Region I (Ilocos Region)": "I",
+  "Region II (Cagayan Valley)": "II",
+  "Region III (Central Luzon)": "III",
+  "Region IV-A (CALABARZON)": "IV-A",
+  "MIMAROPA Region": "MIMAROPA",
+  "Region V (Bicol Region)": "V",
+  "Region VI (Western Visayas)": "VI",
+  "Region VII (Central Visayas)": "VII",
+  "Region VIII (Eastern Visayas)": "VIII",
+  "Region IX (Zamboanga Peninsula)": "IX",
+  "Region X (Northern Mindanao)": "X",
+  "Region XI (Davao Region)": "XI",
+  "Region XII (SOCCSKSARGEN)": "XII",
+  "Region XIII (Caraga)": "XIII",
+  "Bangsamoro Autonomous Region in Muslim Mindanao (BARMM)": "BARMM"
 };
 
 const Database = () => {
@@ -133,6 +133,69 @@ const Database = () => {
   
   const navigate = useNavigate();
 
+  // Define applyFilters with useCallback to prevent unnecessary re-renders
+  const applyFilters = useCallback(() => {
+    let filtered = [...users];
+
+    // Filter by name
+    if (searchName.trim() !== "") {
+      filtered = filtered.filter(user => 
+        user.full_name.toLowerCase().includes(searchName.toLowerCase())
+      );
+    }
+
+    // Filter by company
+    if (searchCompany.trim() !== "") {
+      filtered = filtered.filter(user => 
+        user.company_name.toLowerCase().includes(searchCompany.toLowerCase())
+      );
+    }
+
+    // Filter by city
+    if (searchCity.trim() !== "") {
+      filtered = filtered.filter(user => 
+        user.city && user.city.toLowerCase().includes(searchCity.toLowerCase())
+      );
+    }
+
+    // Filter by region - SIMPLIFIED AND RELIABLE VERSION
+    if (filterRegion !== "all") {
+      // Get the selected region name from the filter
+      const selectedRegionName = filterRegion;
+      
+      filtered = filtered.filter(user => {
+        const userRegion = user.region || '';
+        
+        // Direct string comparison - check if user region exactly matches or contains the selected region name
+        // This works because the registration form stores the full region name
+        if (userRegion === selectedRegionName) {
+          return true;
+        }
+        
+        // For partial matches, check if the user region contains the selected region name
+        // or if the selected region name contains the user region (for variations)
+        return userRegion.includes(selectedRegionName) || 
+               selectedRegionName.includes(userRegion);
+      });
+    }
+
+    // Filter by event
+    if (filterEvent !== "all") {
+      filtered = filtered.filter(user => user.event_name === filterEvent);
+    }
+
+    // Filter by date
+    if (filterDate) {
+      const selectedDate = new Date(filterDate).toDateString();
+      filtered = filtered.filter(user => {
+        const userDate = new Date(user.created_at).toDateString();
+        return userDate === selectedDate;
+      });
+    }
+
+    setFilteredUsers(filtered);
+  }, [users, searchName, searchCompany, searchCity, filterRegion, filterEvent, filterDate]);
+
   useEffect(() => {
     const isAuthenticated = localStorage.getItem("isAuthenticated") === "true";
     if (!isAuthenticated) {
@@ -148,7 +211,7 @@ const Database = () => {
   useEffect(() => {
     // Apply filters whenever users or filter states change
     applyFilters();
-  }, [users, searchName, searchCompany, searchCity, filterRegion, filterEvent, filterDate]);
+  }, [applyFilters]);
 
   const fetchUsers = async () => {
     try {
@@ -179,73 +242,6 @@ const Database = () => {
     } catch (err) {
       console.error("Error fetching active event:", err);
     }
-  };
-
-  const applyFilters = () => {
-    let filtered = [...users];
-
-    // Filter by name
-    if (searchName.trim() !== "") {
-      filtered = filtered.filter(user => 
-        user.full_name.toLowerCase().includes(searchName.toLowerCase())
-      );
-    }
-
-    // Filter by company
-    if (searchCompany.trim() !== "") {
-      filtered = filtered.filter(user => 
-        user.company_name.toLowerCase().includes(searchCompany.toLowerCase())
-      );
-    }
-
-    // Filter by city
-    if (searchCity.trim() !== "") {
-      filtered = filtered.filter(user => 
-        user.city && user.city.toLowerCase().includes(searchCity.toLowerCase())
-      );
-    }
-
-    // Filter by region - FIXED VERSION
-    if (filterRegion !== "all") {
-      filtered = filtered.filter(user => {
-        const userRegion = (user.region || '').toLowerCase().trim();
-        
-        // Extract region code from the selected filter value
-        let selectedRegionCode = null;
-        for (const region of PHILIPPINE_REGIONS) {
-          if (region.name === filterRegion) {
-            selectedRegionCode = region.code;
-            break;
-          }
-        }
-        
-        // If we found a region code, check if user region matches any variation
-        if (selectedRegionCode && REGION_FILTER_MAP[selectedRegionCode]) {
-          return REGION_FILTER_MAP[selectedRegionCode].some(variation => 
-            userRegion.includes(variation.toLowerCase())
-          );
-        }
-        
-        // Fallback: check if the user region contains the filter region string
-        return userRegion.includes(filterRegion.toLowerCase());
-      });
-    }
-
-    // Filter by event
-    if (filterEvent !== "all") {
-      filtered = filtered.filter(user => user.event_name === filterEvent);
-    }
-
-    // Filter by date
-    if (filterDate) {
-      const selectedDate = new Date(filterDate).toDateString();
-      filtered = filtered.filter(user => {
-        const userDate = new Date(user.created_at).toDateString();
-        return userDate === selectedDate;
-      });
-    }
-
-    setFilteredUsers(filtered);
   };
 
   const clearFilters = () => {
