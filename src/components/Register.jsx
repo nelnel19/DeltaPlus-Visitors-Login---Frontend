@@ -319,6 +319,7 @@ function Register() {
   const [tvPower, setTvPower] = useState(true);
   const [staticNoise, setStaticNoise] = useState(false);
   const [availableCities, setAvailableCities] = useState([]);
+  const [isMobile, setIsMobile] = useState(window.innerWidth <= 768);
 
   const slides = [
     {
@@ -331,6 +332,16 @@ function Register() {
       image: "/delta3.jpg",
     }
   ];
+
+  // Handle resize events
+  useEffect(() => {
+    const handleResize = () => {
+      setIsMobile(window.innerWidth <= 768);
+    };
+    
+    window.addEventListener('resize', handleResize);
+    return () => window.removeEventListener('resize', handleResize);
+  }, []);
 
   // Update available cities when region changes
   useEffect(() => {
@@ -451,83 +462,85 @@ function Register() {
   return (
     <div className="register-page">
       <div className="register-container">
-        {/* Left Side - Mini TV Carousel */}
-        <div className="tv-side">
-          <div className="tv-set">
-            {/* TV Antenna */}
-            <div className="tv-antenna">
-              <div className="antenna-left"></div>
-              <div className="antenna-right"></div>
-              <div className="antenna-base"></div>
-            </div>
-            
-            {/* TV Body */}
-            <div className="tv-body">
-              {/* TV Screen */}
-              <div className="tv-screen-container">
-                <div className="tv-screen">
-                  {tvPower ? (
-                    <>
-                      <div className={`tv-static ${staticNoise ? 'active' : ''}`}></div>
-                      <div className="tv-scanlines"></div>
-                      <div className="tv-content">
-                        {slides.map((slide, index) => (
-                          <div
-                            key={index}
-                            className={`tv-slide ${index === currentSlide ? 'active' : ''}`}
-                          >
-                            <img 
-                              src={slide.image} 
-                              alt={`Slide ${index + 1}`}
-                              className="tv-image"
-                            />
-                          </div>
-                        ))}
+        {/* Left Side - Mini TV Carousel - Hidden on mobile */}
+        {!isMobile && (
+          <div className="tv-side">
+            <div className="tv-set">
+              {/* TV Antenna */}
+              <div className="tv-antenna">
+                <div className="antenna-left"></div>
+                <div className="antenna-right"></div>
+                <div className="antenna-base"></div>
+              </div>
+              
+              {/* TV Body */}
+              <div className="tv-body">
+                {/* TV Screen */}
+                <div className="tv-screen-container">
+                  <div className="tv-screen">
+                    {tvPower ? (
+                      <>
+                        <div className={`tv-static ${staticNoise ? 'active' : ''}`}></div>
+                        <div className="tv-scanlines"></div>
+                        <div className="tv-content">
+                          {slides.map((slide, index) => (
+                            <div
+                              key={index}
+                              className={`tv-slide ${index === currentSlide ? 'active' : ''}`}
+                            >
+                              <img 
+                                src={slide.image} 
+                                alt={`Slide ${index + 1}`}
+                                className="tv-image"
+                              />
+                            </div>
+                          ))}
+                        </div>
+                      </>
+                    ) : (
+                      <div className="tv-off">
+                        <span className="tv-off-text">NO SIGNAL</span>
                       </div>
-                    </>
-                  ) : (
-                    <div className="tv-off">
-                      <span className="tv-off-text">NO SIGNAL</span>
+                    )}
+                  </div>
+                </div>
+                
+                {/* TV Controls */}
+                <div className="tv-controls">
+                  <div className="tv-power-button" onClick={toggleTV}>
+                    <span className={`power-led ${tvPower ? 'on' : 'off'}`}></span>
+                    <span className="power-text">POWER</span>
+                  </div>
+                  <div className="tv-channel-indicator">
+                    <span className="channel-label">CH</span>
+                    <span className="channel-number">{currentSlide + 1}</span>
+                  </div>
+                  <div className="tv-knobs">
+                    <div className="tv-knob volume-knob">
+                      <div className="knob-indicator"></div>
                     </div>
-                  )}
-                </div>
-              </div>
-              
-              {/* TV Controls */}
-              <div className="tv-controls">
-                <div className="tv-power-button" onClick={toggleTV}>
-                  <span className={`power-led ${tvPower ? 'on' : 'off'}`}></span>
-                  <span className="power-text">POWER</span>
-                </div>
-                <div className="tv-channel-indicator">
-                  <span className="channel-label">CH</span>
-                  <span className="channel-number">{currentSlide + 1}</span>
-                </div>
-                <div className="tv-knobs">
-                  <div className="tv-knob volume-knob">
-                    <div className="knob-indicator"></div>
-                  </div>
-                  <div className="tv-knob channel-knob">
-                    <div className="knob-indicator"></div>
+                    <div className="tv-knob channel-knob">
+                      <div className="knob-indicator"></div>
+                    </div>
                   </div>
                 </div>
+                
+                {/* TV Speaker */}
+                <div className="tv-speaker">
+                  <div className="speaker-grill"></div>
+                  <div className="speaker-grill"></div>
+                  <div className="speaker-grill"></div>
+                </div>
+                
+                {/* TV Brand */}
+                <div className="tv-brand">RETROVISION</div>
               </div>
-              
-              {/* TV Speaker */}
-              <div className="tv-speaker">
-                <div className="speaker-grill"></div>
-                <div className="speaker-grill"></div>
-                <div className="speaker-grill"></div>
-              </div>
-              
-              {/* TV Brand */}
-              <div className="tv-brand">RETROVISION</div>
             </div>
           </div>
-        </div>
+        )}
 
         {/* Right Side - Registration Form */}
-        <div className="form-side">
+        <div className={`form-side ${isMobile ? 'mobile-full' : ''}`}>
           {/* Logo at top */}
           <div className="logo-section">
             <img 

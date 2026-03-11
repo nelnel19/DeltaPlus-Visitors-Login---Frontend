@@ -1190,3 +1190,340 @@ body {
   margin-top: 4px;
   font-style: italic;
 }
+/* Add these responsive styles to your register.css file */
+
+/* Mobile Responsive Styles */
+@media (max-width: 768px) {
+  .register-container {
+    flex-direction: column;
+    max-width: 100%;
+    margin: 10px;
+    border-radius: 12px;
+  }
+
+  /* Hide TV side on mobile - already handled in JSX */
+  
+  /* Form side takes full width on mobile */
+  .form-side.mobile-full {
+    width: 100%;
+  }
+
+  /* Adjust logo for mobile */
+  .logo-section {
+    padding: 20px 20px 10px 20px;
+  }
+
+  .register-logo {
+    height: 70px;
+  }
+
+  /* Form section padding */
+  .form-section {
+    padding: 0 20px 25px 20px;
+  }
+
+  /* Form title size */
+  .form-title {
+    font-size: 22px;
+  }
+
+  .form-subtitle {
+    font-size: 13px;
+  }
+
+  /* Stack form rows vertically */
+  .form-row {
+    flex-direction: column;
+    gap: 16px;
+  }
+
+  /* Input field adjustments */
+  .form-input {
+    padding: 12px 14px;
+    font-size: 16px; /* Better for mobile touch */
+    height: 48px;
+  }
+
+  /* Custom select trigger adjustments */
+  .custom-select-trigger {
+    padding: 12px 14px;
+    font-size: 16px;
+    height: 48px;
+  }
+
+  /* Address section padding */
+  .address-section {
+    padding: 14px;
+  }
+
+  /* Submit button */
+  .submit-btn {
+    padding: 14px;
+    font-size: 16px;
+    height: 52px;
+  }
+
+  /* Admin login link */
+  .admin-login-link {
+    font-size: 14px;
+    padding: 10px 16px;
+  }
+
+  /* Success and error messages */
+  .success-message,
+  .error-message {
+    padding: 12px 14px;
+    margin-bottom: 20px;
+  }
+
+  .success-icon,
+  .error-icon {
+    width: 28px;
+    height: 28px;
+    font-size: 16px;
+  }
+
+  /* Field note */
+  .field-note {
+    font-size: 12px;
+    margin-top: 6px;
+  }
+}
+
+/* Small mobile devices */
+@media (max-width: 480px) {
+  .register-page {
+    padding: 8px;
+  }
+
+  .register-container {
+    margin: 0;
+    border-radius: 10px;
+  }
+
+  .logo-section {
+    padding: 15px 15px 8px 15px;
+  }
+
+  .register-logo {
+    height: 60px;
+  }
+
+  .form-section {
+    padding: 0 15px 20px 15px;
+  }
+
+  .form-title {
+    font-size: 20px;
+  }
+
+  .form-subtitle {
+    font-size: 12px;
+  }
+
+  .form-group label {
+    font-size: 13px;
+  }
+
+  .form-input {
+    padding: 10px 12px;
+    font-size: 15px;
+    height: 44px;
+  }
+
+  .custom-select-trigger {
+    padding: 10px 12px;
+    font-size: 15px;
+    height: 44px;
+  }
+
+  .address-section {
+    padding: 12px;
+  }
+
+  .address-title {
+    font-size: 13px;
+    margin-bottom: 12px;
+  }
+
+  .submit-btn {
+    padding: 12px;
+    font-size: 15px;
+    height: 48px;
+  }
+
+  .admin-login-container {
+    margin-top: 15px;
+    padding-top: 12px;
+  }
+
+  .admin-login-link {
+    font-size: 13px;
+    padding: 8px 14px;
+  }
+
+  /* Dropdown improvements for mobile */
+  .custom-select-dropdown {
+    max-height: 250px;
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    top: auto;
+    border-radius: 12px 12px 0 0;
+    animation: slideUp 0.3s ease;
+  }
+
+  .custom-select-option {
+    padding: 16px 20px;
+    font-size: 16px;
+    text-align: center;
+    border-bottom: 1px solid var(--gray-200);
+  }
+
+  @keyframes slideUp {
+    from {
+      transform: translateY(100%);
+    }
+    to {
+      transform: translateY(0);
+    }
+  }
+
+  /* Success/Error message improvements */
+  .success-message,
+  .error-message {
+    padding: 10px 12px;
+  }
+
+  .success-content strong,
+  .error-content strong {
+    font-size: 14px;
+  }
+
+  .success-content p,
+  .error-content p {
+    font-size: 12px;
+  }
+}
+
+/* Landscape mode for mobile */
+@media (max-width: 896px) and (orientation: landscape) {
+  .register-container {
+    max-width: 600px;
+  }
+
+  .form-row {
+    flex-direction: row;
+    gap: 12px;
+  }
+
+  .form-section {
+    max-height: 80vh;
+    overflow-y: auto;
+    padding-bottom: 20px;
+  }
+}
+
+/* Tablet devices */
+@media (min-width: 769px) and (max-width: 1024px) {
+  .register-container {
+    max-width: 900px;
+  }
+
+  .tv-set {
+    max-width: 320px;
+  }
+
+  .tv-screen {
+    max-height: 180px;
+  }
+
+  .logo-section {
+    padding: 25px 30px 12px 30px;
+  }
+
+  .register-logo {
+    height: 80px;
+  }
+
+  .form-section {
+    padding: 0 30px 30px 30px;
+  }
+
+  .form-row {
+    gap: 14px;
+  }
+}
+
+/* Touch-friendly improvements */
+@media (hover: none) and (pointer: coarse) {
+  .form-input,
+  .custom-select-trigger,
+  .submit-btn,
+  .admin-login-link {
+    cursor: default;
+    -webkit-tap-highlight-color: transparent;
+  }
+
+  .form-input:focus,
+  .custom-select-trigger:focus {
+    transform: none;
+  }
+
+  .submit-btn:active {
+    transform: scale(0.98);
+  }
+}
+
+/* Safe area insets for modern mobile devices */
+@supports (padding: max(0px)) {
+  .register-page {
+    padding-left: max(20px, env(safe-area-inset-left));
+    padding-right: max(20px, env(safe-area-inset-right));
+    padding-top: max(20px, env(safe-area-inset-top));
+    padding-bottom: max(20px, env(safe-area-inset-bottom));
+  }
+
+  @media (max-width: 480px) {
+    .custom-select-dropdown {
+      padding-bottom: env(safe-area-inset-bottom);
+    }
+  }
+}
+
+/* Prevent zoom on input focus for iOS */
+@media screen and (-webkit-min-device-pixel-ratio: 0) { 
+  select,
+  textarea,
+  input {
+    font-size: 16px;
+  }
+}
+
+/* Improve dropdown experience on mobile */
+@media (max-width: 768px) {
+  .custom-select-dropdown {
+    max-height: 300px;
+    overflow-y: auto;
+    -webkit-overflow-scrolling: touch;
+  }
+
+  .custom-select-option {
+    padding: 14px 16px;
+  }
+}
+
+/* Animation for mobile menu */
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+.modal-overlay {
+  animation: fadeIn 0.2s ease;
+}
