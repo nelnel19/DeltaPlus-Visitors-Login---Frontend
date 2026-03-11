@@ -1,6 +1,7 @@
 // Register.jsx
 import React, { useState, useEffect, useRef } from "react";
 import axios from "axios";
+import { useNavigate } from "react-router-dom"; // Add this import
 import "../styles/register.css";
 
 // Custom Select Component for dropdowns
@@ -265,6 +266,8 @@ const PHILIPPINE_REGIONS = [
 ];
 
 function Register() {
+  const navigate = useNavigate(); // Add this hook
+  
   const [form, setForm] = useState({
     full_name: "",
     company_name: "",
@@ -379,6 +382,10 @@ function Register() {
     return () => clearInterval(timer);
   }, []);
 
+  const handleAdminLogin = () => {
+    navigate("/login");
+  };
+
   return (
     <div className="register-page">
       <div className="register-container">
@@ -395,10 +402,8 @@ function Register() {
                   alt={`Slide ${index + 1}`}
                   className="carousel-image"
                 />
-                {/* Removed slide-overlay and slide-content */}
               </div>
             ))}
-            {/* Removed carousel-dots */}
           </div>
         </div>
 
@@ -589,7 +594,17 @@ function Register() {
                     'Sign In'
                   )}
                 </button>
-                <p className="form-note"></p>
+                
+                {/* Admin Login Link */}
+                <div className="admin-login-container">
+                  <button 
+                    type="button"
+                    onClick={handleAdminLogin}
+                    className="admin-login-link"
+                  >
+                    Login as Administrator
+                  </button>
+                </div>
               </div>
             </form>
           </div>

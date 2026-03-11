@@ -777,3 +777,54 @@ body {
 .form-row .form-group:has(.custom-select-container) {
   flex: 1;
 }
+/* Add these styles at the end of your register.css file */
+
+/* Admin Login Link */
+.admin-login-container {
+  margin-top: 20px;
+  text-align: center;
+  padding-top: 15px;
+  border-top: 1px solid var(--gray-200);
+}
+
+.admin-login-link {
+  background: none;
+  border: none;
+  color: var(--gray-500);
+  font-size: 13px;
+  cursor: pointer;
+  text-decoration: none;
+  transition: all 0.2s ease;
+  padding: 8px 16px;
+  border-radius: var(--radius);
+  font-weight: 500;
+}
+
+.admin-login-link:hover {
+  color: var(--dark-blue);
+  background: var(--gray-100);
+  transform: translateY(-1px);
+}
+
+.admin-login-link:active {
+  transform: translateY(0);
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+  .admin-login-link {
+    font-size: 12px;
+    padding: 6px 12px;
+  }
+}
+
+@media (max-width: 480px) {
+  .admin-login-container {
+    margin-top: 15px;
+    padding-top: 12px;
+  }
+  
+  .admin-login-link {
+    font-size: 12px;
+  }
+}
