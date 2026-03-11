@@ -59,6 +59,10 @@ function Login() {
     }, 800);
   };
 
+  const handleVisitorRegister = () => {
+    navigate("/register");
+  };
+
   return (
     <div className="login-page">
       <div className="login-container">
@@ -132,6 +136,18 @@ function Login() {
                   'Sign In'
                 )}
               </button>
+              
+              {/* Visitor Registration Link */}
+              <div className="visitor-register-container">
+                <button 
+                  type="button"
+                  onClick={handleVisitorRegister}
+                  className="visitor-register-link"
+                >
+                  ← Register as Visitor
+                </button>
+              </div>
+              
               <p className="form-note">Authorized personnel only</p>
             </div>
           </form>

@@ -1,4 +1,4 @@
-/* styles/login.css */
+/* styles/login.css - Updated with visitor link */
 :root {
   --primary-yellow: #FFC107;
   --dark-blue: #1E2A39;
@@ -268,6 +268,9 @@ body {
 
 .form-footer {
   margin-top: 10px;
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
 }
 
 /* Submit Button */
@@ -349,13 +352,45 @@ body {
   to { transform: rotate(360deg); }
 }
 
+/* Visitor Registration Link */
+.visitor-register-container {
+  text-align: center;
+  padding-top: 5px;
+}
+
+.visitor-register-link {
+  background: none;
+  border: none;
+  color: var(--gray-500);
+  font-size: 13px;
+  cursor: pointer;
+  text-decoration: none;
+  transition: all 0.2s ease;
+  padding: 8px 16px;
+  border-radius: var(--radius);
+  font-weight: 500;
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.visitor-register-link:hover {
+  color: var(--primary-yellow);
+  background: var(--gray-100);
+  transform: translateX(-2px);
+}
+
+.visitor-register-link:active {
+  transform: translateX(0);
+}
+
 /* Form Note */
 .form-note {
   text-align: center;
-  margin-top: 20px;
   font-size: 12px;
   color: var(--gray-500);
   font-style: italic;
+  margin-top: 5px;
 }
 
 /* Responsive */
@@ -394,5 +429,10 @@ body {
   
   .submit-btn {
     padding: 12px;
+  }
+  
+  .visitor-register-link {
+    font-size: 12px;
+    padding: 6px 12px;
   }
 }
