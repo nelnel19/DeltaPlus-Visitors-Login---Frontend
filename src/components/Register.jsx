@@ -1,7 +1,7 @@
 // Register.jsx
 import React, { useState, useEffect, useRef } from "react";
 import axios from "axios";
-import { useNavigate } from "react-router-dom"; // Add this import
+import { useNavigate } from "react-router-dom";
 import "../styles/register.css";
 
 // Custom Select Component for dropdowns
@@ -266,7 +266,7 @@ const PHILIPPINE_REGIONS = [
 ];
 
 function Register() {
-  const navigate = useNavigate(); // Add this hook
+  const navigate = useNavigate();
   
   const [form, setForm] = useState({
     full_name: "",
@@ -284,6 +284,8 @@ function Register() {
   const [success, setSuccess] = useState(false);
   const [error, setError] = useState("");
   const [currentSlide, setCurrentSlide] = useState(0);
+  const [tvPower, setTvPower] = useState(true);
+  const [staticNoise, setStaticNoise] = useState(false);
 
   const slides = [
     {
@@ -371,13 +373,21 @@ function Register() {
   };
 
   const goToSlide = (index) => {
-    setCurrentSlide(index);
+    setStaticNoise(true);
+    setTimeout(() => {
+      setCurrentSlide(index);
+      setStaticNoise(false);
+    }, 150);
   };
 
-  // Auto-advance slides every 4 seconds
+  // Auto-advance slides every 4 seconds with TV channel change effect
   useEffect(() => {
     const timer = setInterval(() => {
-      setCurrentSlide((prev) => (prev + 1) % slides.length);
+      setStaticNoise(true);
+      setTimeout(() => {
+        setCurrentSlide((prev) => (prev + 1) % slides.length);
+        setStaticNoise(false);
+      }, 150);
     }, 4000);
     return () => clearInterval(timer);
   }, []);
@@ -386,24 +396,85 @@ function Register() {
     navigate("/login");
   };
 
+  const toggleTV = () => {
+    setTvPower(!tvPower);
+  };
+
   return (
     <div className="register-page">
       <div className="register-container">
-        {/* Left Side - Carousel */}
-        <div className="carousel-side">
-          <div className="carousel-container">
-            {slides.map((slide, index) => (
-              <div
-                key={index}
-                className={`carousel-slide ${index === currentSlide ? 'active' : ''}`}
-              >
-                <img 
-                  src={slide.image} 
-                  alt={`Slide ${index + 1}`}
-                  className="carousel-image"
-                />
+        {/* Left Side - Mini TV Carousel */}
+        <div className="tv-side">
+          <div className="tv-set">
+            {/* TV Antenna */}
+            <div className="tv-antenna">
+              <div className="antenna-left"></div>
+              <div className="antenna-right"></div>
+              <div className="antenna-base"></div>
+            </div>
+            
+            {/* TV Body */}
+            <div className="tv-body">
+              {/* TV Screen */}
+              <div className="tv-screen-container">
+                <div className="tv-screen">
+                  {tvPower ? (
+                    <>
+                      <div className={`tv-static ${staticNoise ? 'active' : ''}`}></div>
+                      <div className="tv-scanlines"></div>
+                      <div className="tv-content">
+                        {slides.map((slide, index) => (
+                          <div
+                            key={index}
+                            className={`tv-slide ${index === currentSlide ? 'active' : ''}`}
+                          >
+                            <img 
+                              src={slide.image} 
+                              alt={`Slide ${index + 1}`}
+                              className="tv-image"
+                            />
+                          </div>
+                        ))}
+                      </div>
+                    </>
+                  ) : (
+                    <div className="tv-off">
+                      <span className="tv-off-text">NO SIGNAL</span>
+                    </div>
+                  )}
+                </div>
               </div>
-            ))}
+              
+              {/* TV Controls */}
+              <div className="tv-controls">
+                <div className="tv-power-button" onClick={toggleTV}>
+                  <span className={`power-led ${tvPower ? 'on' : 'off'}`}></span>
+                  <span className="power-text">POWER</span>
+                </div>
+                <div className="tv-channel-indicator">
+                  <span className="channel-label">CH</span>
+                  <span className="channel-number">{currentSlide + 1}</span>
+                </div>
+                <div className="tv-knobs">
+                  <div className="tv-knob volume-knob">
+                    <div className="knob-indicator"></div>
+                  </div>
+                  <div className="tv-knob channel-knob">
+                    <div className="knob-indicator"></div>
+                  </div>
+                </div>
+              </div>
+              
+              {/* TV Speaker */}
+              <div className="tv-speaker">
+                <div className="speaker-grill"></div>
+                <div className="speaker-grill"></div>
+                <div className="speaker-grill"></div>
+              </div>
+              
+              {/* TV Brand */}
+              <div className="tv-brand">RETROVISION</div>
+            </div>
           </div>
         </div>
 

@@ -15,6 +15,10 @@
   --gray-700: #334155;
   --gray-800: #1e293b;
   --gray-900: #0f172a;
+  --tv-gray: #2a2a2a;
+  --tv-dark: #1a1a1a;
+  --tv-screen-gray: #1e1e1e;
+  --tv-antenna: #4a4a4a;
   --shadow-sm: 0 1px 2px 0 rgb(0 0 0 / 0.05);
   --shadow-md: 0 4px 6px -1px rgb(0 0 0 / 0.1);
   --shadow-lg: 0 10px 15px -3px rgb(0 0 0 / 0.1);
@@ -44,7 +48,7 @@ body {
 
 /* Form Container */
 .register-container {
-  max-width: 1100px;
+  max-width: 1200px;
   width: 100%;
   background: white;
   border-radius: var(--radius);
@@ -66,59 +70,453 @@ body {
   }
 }
 
-/* Carousel Side - Positioned at the top */
-.carousel-side {
+/* TV Side */
+.tv-side {
   flex: 1;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 20px;
   position: relative;
-  background: var(--dark-blue);
   overflow: hidden;
-  height: 450px; /* Fixed height */
-  align-self: flex-start; /* Align to the top of container */
 }
 
-.carousel-container {
+.tv-side::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: radial-gradient(circle at 20% 50%, rgba(255,255,255,0.1) 0%, transparent 50%);
+  pointer-events: none;
+}
+
+/* TV Set */
+.tv-set {
+  width: 100%;
+  max-width: 400px;
+  position: relative;
+  animation: tvAppear 0.6s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+}
+
+@keyframes tvAppear {
+  0% {
+    opacity: 0;
+    transform: scale(0.8) rotate(-2deg);
+  }
+  100% {
+    opacity: 1;
+    transform: scale(1) rotate(0);
+  }
+}
+
+/* TV Antenna */
+.tv-antenna {
+  position: relative;
+  height: 60px;
+  margin-bottom: -10px;
+  z-index: 2;
+}
+
+.antenna-left,
+.antenna-right {
+  position: absolute;
+  width: 4px;
+  height: 50px;
+  background: linear-gradient(90deg, var(--tv-antenna), #666);
+  top: 0;
+}
+
+.antenna-left {
+  left: 30%;
+  transform: rotate(-15deg);
+  transform-origin: bottom;
+  animation: antennaWobble 3s ease-in-out infinite;
+}
+
+.antenna-right {
+  right: 30%;
+  transform: rotate(15deg);
+  transform-origin: bottom;
+  animation: antennaWobble 3s ease-in-out infinite 0.5s;
+}
+
+@keyframes antennaWobble {
+  0%, 100% {
+    transform: rotate(-15deg);
+  }
+  50% {
+    transform: rotate(-10deg);
+  }
+}
+
+.antenna-right {
+  animation: antennaWobbleRight 3s ease-in-out infinite 0.5s;
+}
+
+@keyframes antennaWobbleRight {
+  0%, 100% {
+    transform: rotate(15deg);
+  }
+  50% {
+    transform: rotate(10deg);
+  }
+}
+
+.antenna-base {
+  position: absolute;
+  width: 30px;
+  height: 10px;
+  background: linear-gradient(to bottom, var(--tv-antenna), #333);
+  bottom: 0;
+  left: 50%;
+  transform: translateX(-50%);
+  border-radius: 4px 4px 0 0;
+}
+
+/* TV Body */
+.tv-body {
+  background: linear-gradient(145deg, var(--tv-gray), var(--tv-dark));
+  border-radius: 20px 20px 25px 25px;
+  padding: 25px 25px 20px 25px;
+  box-shadow: 
+    0 15px 25px rgba(0,0,0,0.3),
+    inset 0 -2px 5px rgba(0,0,0,0.5),
+    inset 0 2px 5px rgba(255,255,255,0.1);
+  position: relative;
+  border: 2px solid #3a3a3a;
+}
+
+.tv-body::before {
+  content: '';
+  position: absolute;
+  top: 5px;
+  left: 5px;
+  right: 5px;
+  bottom: 5px;
+  border: 1px solid rgba(255,255,255,0.05);
+  border-radius: 16px;
+  pointer-events: none;
+}
+
+/* TV Screen Container */
+.tv-screen-container {
+  background: #000;
+  padding: 15px;
+  border-radius: 15px;
+  box-shadow: inset 0 0 20px rgba(0,0,0,0.8);
+  margin-bottom: 15px;
+  position: relative;
+}
+
+.tv-screen-container::before {
+  content: '';
+  position: absolute;
+  top: 10px;
+  left: 10px;
+  right: 10px;
+  bottom: 10px;
+  border: 1px solid rgba(255,255,255,0.03);
+  border-radius: 8px;
+  pointer-events: none;
+}
+
+/* TV Screen */
+.tv-screen {
+  position: relative;
+  width: 100%;
+  aspect-ratio: 4/3;
+  background: var(--tv-screen-gray);
+  border-radius: 8px;
+  overflow: hidden;
+  box-shadow: 0 0 0 2px #333, 0 0 0 4px #222;
+  cursor: pointer;
+}
+
+/* Screen Effects */
+.tv-static {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: repeating-radial-gradient(circle at 30% 40%, #fff 0px, #333 2px, #000 4px);
+  opacity: 0;
+  pointer-events: none;
+  z-index: 20;
+  animation: staticNoise 0.2s infinite;
+  transition: opacity 0.1s;
+}
+
+.tv-static.active {
+  opacity: 0.8;
+}
+
+@keyframes staticNoise {
+  0% { background-position: 0 0; }
+  100% { background-position: 100% 100%; }
+}
+
+.tv-scanlines {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: repeating-linear-gradient(
+    0deg,
+    rgba(0, 0, 0, 0.1) 0px,
+    rgba(0, 0, 0, 0.2) 2px,
+    transparent 3px,
+    transparent 5px
+  );
+  pointer-events: none;
+  z-index: 15;
+  animation: scanlines 8s linear infinite;
+}
+
+@keyframes scanlines {
+  0% { transform: translateY(0); }
+  100% { transform: translateY(100%); }
+}
+
+.tv-content {
   position: relative;
   width: 100%;
   height: 100%;
+  z-index: 10;
 }
 
-.carousel-slide {
+.tv-slide {
   position: absolute;
   top: 0;
   left: 0;
   width: 100%;
   height: 100%;
   opacity: 0;
-  transition: opacity 0.5s ease-in-out;
+  transition: opacity 0.2s;
   display: flex;
   align-items: center;
   justify-content: center;
 }
 
-.carousel-slide.active {
+.tv-slide.active {
   opacity: 1;
-  z-index: 1;
+  z-index: 5;
 }
 
-.carousel-image {
+.tv-image {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  image-rendering: -webkit-optimize-contrast;
+  filter: contrast(1.05) brightness(0.95);
+}
+
+/* TV Off State */
+.tv-off {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--tv-screen-gray);
+  position: relative;
+}
+
+.tv-off::before {
+  content: '';
   position: absolute;
   top: 0;
   left: 0;
-  width: 100%;
-  height: 100%;
-  object-fit: contain; /* Changed back to contain for original resolution */
-  object-position: center;
-  image-rendering: -webkit-optimize-contrast;
-  image-rendering: crisp-edges;
-  -webkit-backface-visibility: hidden;
-  backface-visibility: hidden;
+  right: 0;
+  bottom: 0;
+  background: radial-gradient(circle at 30% 40%, rgba(255,255,255,0.1) 0%, transparent 60%);
 }
 
-/* Removed overlay and zoom animation completely */
+.tv-off-text {
+  color: rgba(255,255,255,0.3);
+  font-size: 24px;
+  font-weight: bold;
+  letter-spacing: 4px;
+  text-transform: uppercase;
+  animation: textFlicker 2s infinite;
+}
 
-/* Removed slide-overlay class */
-/* Removed slide-content class */
-/* Removed carousel-dots class and dot styles */
+@keyframes textFlicker {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.5; }
+}
+
+/* TV Controls */
+.tv-controls {
+  display: flex;
+  align-items: center;
+  gap: 15px;
+  padding: 10px 5px;
+}
+
+.tv-power-button {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  cursor: pointer;
+  padding: 5px 10px;
+  background: rgba(0,0,0,0.3);
+  border-radius: 20px;
+  transition: all 0.2s;
+}
+
+.tv-power-button:hover {
+  background: rgba(0,0,0,0.5);
+}
+
+.tv-power-button:hover .power-led {
+  animation: ledPulse 0.5s infinite;
+}
+
+@keyframes ledPulse {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.5; }
+}
+
+.power-led {
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+  transition: all 0.2s;
+}
+
+.power-led.on {
+  background: #4ade80;
+  box-shadow: 0 0 10px #4ade80;
+  animation: ledBreath 2s ease-in-out infinite;
+}
+
+.power-led.off {
+  background: #6b7280;
+}
+
+@keyframes ledBreath {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.5; }
+}
+
+.power-text {
+  color: #fff;
+  font-size: 12px;
+  font-weight: 500;
+  letter-spacing: 1px;
+}
+
+.tv-channel-indicator {
+  background: #000;
+  padding: 5px 10px;
+  border-radius: 12px;
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  border: 1px solid #444;
+}
+
+.channel-label {
+  color: var(--primary-yellow);
+  font-size: 10px;
+  font-weight: bold;
+}
+
+.channel-number {
+  color: #fff;
+  font-size: 14px;
+  font-weight: bold;
+  min-width: 20px;
+  text-align: center;
+}
+
+.tv-knobs {
+  display: flex;
+  gap: 10px;
+  margin-left: auto;
+}
+
+.tv-knob {
+  width: 30px;
+  height: 30px;
+  background: linear-gradient(145deg, #4a4a4a, #2a2a2a);
+  border-radius: 50%;
+  position: relative;
+  cursor: pointer;
+  box-shadow: 
+    0 2px 5px rgba(0,0,0,0.3),
+    inset 0 1px 3px rgba(255,255,255,0.2);
+  transition: all 0.1s;
+}
+
+.tv-knob:hover {
+  transform: rotate(10deg);
+}
+
+.tv-knob:active {
+  transform: rotate(20deg);
+}
+
+.knob-indicator {
+  position: absolute;
+  top: 5px;
+  left: 50%;
+  width: 4px;
+  height: 8px;
+  background: #fff;
+  transform: translateX(-50%);
+  border-radius: 2px;
+}
+
+/* TV Speaker */
+.tv-speaker {
+  display: flex;
+  gap: 5px;
+  margin-top: 15px;
+  justify-content: center;
+}
+
+.speaker-grill {
+  width: 8px;
+  height: 40px;
+  background: linear-gradient(90deg, #333, #1a1a1a, #333);
+  border-radius: 4px;
+  box-shadow: inset 0 1px 3px rgba(0,0,0,0.5);
+  animation: speakerVibrate 2s infinite;
+}
+
+.speaker-grill:nth-child(2) {
+  animation-delay: 0.3s;
+}
+
+.speaker-grill:nth-child(3) {
+  animation-delay: 0.6s;
+}
+
+@keyframes speakerVibrate {
+  0%, 100% {
+    transform: scaleY(1);
+  }
+  50% {
+    transform: scaleY(0.95);
+  }
+}
+
+/* TV Brand */
+.tv-brand {
+  text-align: center;
+  margin-top: 10px;
+  color: rgba(255,255,255,0.2);
+  font-size: 12px;
+  font-weight: bold;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+}
 
 /* Form Side */
 .form-side {
@@ -635,150 +1033,6 @@ body {
   gap: 6px;
 }
 
-/* Responsive */
-@media (max-width: 768px) {
-  .register-container {
-    flex-direction: column;
-    max-width: 500px;
-  }
-  
-  .carousel-side {
-    height: 300px; /* Smaller height on mobile */
-    width: 100%;
-    align-self: flex-start; /* Keep at top on mobile */
-  }
-  
-  .logo-section {
-    padding: 25px 30px 10px 30px;
-  }
-  
-  .register-logo {
-    height: 80px;
-  }
-  
-  .form-section {
-    padding: 0 30px 30px 30px;
-  }
-  
-  .form-row {
-    flex-direction: column;
-    gap: 20px;
-  }
-
-  .custom-select-trigger {
-    padding: 10px 14px;
-    height: 44px;
-    font-size: 13px;
-  }
-  
-  .custom-select-option {
-    padding: 10px 14px;
-    font-size: 13px;
-  }
-  
-  .custom-select-dropdown {
-    max-height: 200px;
-  }
-
-  .address-section {
-    padding: 14px;
-  }
-  
-  .address-section .form-row {
-    flex-direction: column;
-    gap: 12px;
-    margin-bottom: 12px;
-  }
-}
-
-@media (max-width: 480px) {
-  .register-page {
-    padding: 10px;
-  }
-  
-  .carousel-side {
-    height: 250px; /* Even smaller on mobile */
-  }
-  
-  .logo-section {
-    padding: 20px 20px 8px 20px;
-  }
-  
-  .register-logo {
-    height: 70px;
-  }
-  
-  .form-section {
-    padding: 0 20px 25px 20px;
-  }
-  
-  .form-title {
-    font-size: 22px;
-  }
-  
-  .form-subtitle {
-    font-size: 13px;
-  }
-  
-  .form-input {
-    padding: 10px 14px;
-  }
-  
-  .submit-btn {
-    padding: 12px;
-  }
-
-  .custom-select-trigger {
-    padding: 10px 14px;
-    height: 42px;
-  }
-  
-  .custom-select-dropdown {
-    position: fixed;
-    top: auto;
-    bottom: 0;
-    left: 0;
-    right: 0;
-    max-height: 300px;
-    border-radius: var(--radius) var(--radius) 0 0;
-    animation: dropdownSlideUp 0.3s ease;
-  }
-  
-  @keyframes dropdownSlideUp {
-    from {
-      transform: translateY(100%);
-    }
-    to {
-      transform: translateY(0);
-    }
-  }
-  
-  .custom-select-option {
-    padding: 14px 16px;
-    text-align: center;
-  }
-
-  .address-section {
-    padding: 12px;
-  }
-  
-  .address-title {
-    font-size: 13px;
-    margin-bottom: 12px;
-  }
-}
-
-/* Ensure proper spacing in address section */
-.address-section .form-row:last-child {
-  margin-bottom: 0;
-}
-
-/* Fix for form-row with custom select */
-.form-row .form-group:has(.custom-select-container) {
-  flex: 1;
-}
-/* Add these styles at the end of your register.css file */
-
 /* Admin Login Link */
 .admin-login-container {
   margin-top: 20px;
@@ -810,8 +1064,47 @@ body {
   transform: translateY(0);
 }
 
-/* Responsive adjustments */
+/* Responsive */
 @media (max-width: 768px) {
+  .register-container {
+    flex-direction: column;
+    max-width: 500px;
+  }
+  
+  .tv-side {
+    padding: 30px 20px;
+  }
+  
+  .tv-set {
+    max-width: 350px;
+  }
+  
+  .logo-section {
+    padding: 25px 30px 10px 30px;
+  }
+  
+  .register-logo {
+    height: 80px;
+  }
+  
+  .form-section {
+    padding: 0 30px 30px 30px;
+  }
+  
+  .form-row {
+    flex-direction: column;
+    gap: 20px;
+  }
+  
+  .tv-controls {
+    flex-wrap: wrap;
+    justify-content: center;
+  }
+  
+  .tv-knobs {
+    margin-left: 0;
+  }
+  
   .admin-login-link {
     font-size: 12px;
     padding: 6px 12px;
@@ -819,6 +1112,66 @@ body {
 }
 
 @media (max-width: 480px) {
+  .register-page {
+    padding: 10px;
+  }
+  
+  .tv-side {
+    padding: 20px;
+  }
+  
+  .tv-set {
+    max-width: 280px;
+  }
+  
+  .logo-section {
+    padding: 20px 20px 8px 20px;
+  }
+  
+  .register-logo {
+    height: 70px;
+  }
+  
+  .form-section {
+    padding: 0 20px 25px 20px;
+  }
+  
+  .form-title {
+    font-size: 22px;
+  }
+  
+  .form-subtitle {
+    font-size: 13px;
+  }
+  
+  .form-input {
+    padding: 10px 14px;
+  }
+  
+  .submit-btn {
+    padding: 12px;
+  }
+  
+  .tv-off-text {
+    font-size: 18px;
+  }
+  
+  .tv-controls {
+    gap: 10px;
+  }
+  
+  .tv-power-button {
+    padding: 3px 8px;
+  }
+  
+  .power-text {
+    font-size: 10px;
+  }
+  
+  .channel-number {
+    font-size: 12px;
+  }
+  
   .admin-login-container {
     margin-top: 15px;
     padding-top: 12px;
