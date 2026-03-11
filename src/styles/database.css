@@ -1073,3 +1073,147 @@ tbody tr:nth-child(even) {
     }
   }
 }
+/* Add these new styles to your database.css */
+
+/* Address Cell with Expand Button */
+.address-cell {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  width: 100%;
+}
+
+.address-preview {
+  font-size: 12px;
+  color: var(--gray-700);
+  flex: 1;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.expand-address-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 24px;
+  height: 24px;
+  padding: 0;
+  background: none;
+  border: 1px solid var(--gray-300);
+  border-radius: 4px;
+  color: var(--gray-500);
+  font-size: 12px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  flex-shrink: 0;
+}
+
+.expand-address-btn:hover {
+  background-color: var(--gray-100);
+  border-color: var(--dark-blue);
+  color: var(--dark-blue);
+}
+
+.expand-address-btn.expanded {
+  background-color: var(--dark-blue);
+  border-color: var(--dark-blue);
+  color: white;
+  transform: rotate(180deg);
+}
+
+.expand-address-btn.expanded:hover {
+  background-color: var(--dark-blue-light);
+  border-color: var(--dark-blue-light);
+}
+
+/* Expanded Row */
+.expanded-row {
+  background-color: var(--gray-50);
+}
+
+.expanded-row td {
+  padding: 0;
+  border-bottom: 2px solid var(--gray-300);
+  background-color: var(--gray-50);
+}
+
+.expanded-address {
+  padding: 20px 24px;
+  animation: slideDown 0.2s ease;
+}
+
+@keyframes slideDown {
+  from {
+    opacity: 0;
+    transform: translateY(-10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.expanded-address-title {
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--gray-500);
+  text-transform: uppercase;
+  letter-spacing: 0.3px;
+  margin-bottom: 16px;
+}
+
+.expanded-address-content {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 16px;
+}
+
+.expanded-address-line {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.expanded-address-label {
+  font-size: 11px;
+  font-weight: 500;
+  color: var(--gray-500);
+  text-transform: uppercase;
+  letter-spacing: 0.2px;
+}
+
+.expanded-address-value {
+  font-size: 13px;
+  color: var(--gray-800);
+  line-height: 1.5;
+  word-break: break-word;
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+  .expanded-address-content {
+    grid-template-columns: 1fr;
+    gap: 12px;
+  }
+  
+  .expanded-address {
+    padding: 16px;
+  }
+}
+
+@media (max-width: 480px) {
+  .address-cell {
+    gap: 4px;
+  }
+  
+  .expand-address-btn {
+    width: 22px;
+    height: 22px;
+    font-size: 11px;
+  }
+  
+  .expanded-address-line {
+    gap: 2px;
+  }
+}

@@ -60,7 +60,7 @@ const CustomSelect = ({ value, onChange, options, placeholder }) => {
   );
 };
 
-// Philippine Regions data
+// Philippine Regions data with codes and names
 const PHILIPPINE_REGIONS = [
   { code: "NCR", name: "National Capital Region (NCR)" },
   { code: "CAR", name: "Cordillera Administrative Region (CAR)" },
@@ -81,6 +81,27 @@ const PHILIPPINE_REGIONS = [
   { code: "BARMM", name: "Bangsamoro Autonomous Region in Muslim Mindanao (BARMM)" }
 ];
 
+// Region mapping for filtering - maps region codes to possible values in database
+const REGION_FILTER_MAP = {
+  "NCR": ["NCR", "National Capital Region", "National Capital Region (NCR)"],
+  "CAR": ["CAR", "Cordillera Administrative Region", "Cordillera Administrative Region (CAR)"],
+  "I": ["I", "Region I", "Region I (Ilocos Region)", "Ilocos Region"],
+  "II": ["II", "Region II", "Region II (Cagayan Valley)", "Cagayan Valley"],
+  "III": ["III", "Region III", "Region III (Central Luzon)", "Central Luzon"],
+  "IV-A": ["IV-A", "Region IV-A", "Region IV-A (CALABARZON)", "CALABARZON"],
+  "MIMAROPA": ["MIMAROPA", "MIMAROPA Region"],
+  "V": ["V", "Region V", "Region V (Bicol Region)", "Bicol Region"],
+  "VI": ["VI", "Region VI", "Region VI (Western Visayas)", "Western Visayas"],
+  "VII": ["VII", "Region VII", "Region VII (Central Visayas)", "Central Visayas"],
+  "VIII": ["VIII", "Region VIII", "Region VIII (Eastern Visayas)", "Eastern Visayas"],
+  "IX": ["IX", "Region IX", "Region IX (Zamboanga Peninsula)", "Zamboanga Peninsula"],
+  "X": ["X", "Region X", "Region X (Northern Mindanao)", "Northern Mindanao"],
+  "XI": ["XI", "Region XI", "Region XI (Davao Region)", "Davao Region"],
+  "XII": ["XII", "Region XII", "Region XII (SOCCSKSARGEN)", "SOCCSKSARGEN"],
+  "XIII": ["XIII", "Region XIII", "Region XIII (Caraga)", "Caraga"],
+  "BARMM": ["BARMM", "Bangsamoro Autonomous Region", "Bangsamoro Autonomous Region in Muslim Mindanao (BARMM)"]
+};
+
 const Database = () => {
   const [users, setUsers] = useState([]);
   const [filteredUsers, setFilteredUsers] = useState([]);
@@ -92,6 +113,9 @@ const Database = () => {
   const [showConfirmDialog, setShowConfirmDialog] = useState(false);
   const [confirmAction, setConfirmAction] = useState(null);
   const [confirmData, setConfirmData] = useState(null);
+  
+  // State for expanded address rows
+  const [expandedRows, setExpandedRows] = useState(new Set());
   
   // Filter states
   const [searchName, setSearchName] = useState("");
@@ -181,12 +205,29 @@ const Database = () => {
       );
     }
 
-    // Filter by region
+    // Filter by region - FIXED VERSION
     if (filterRegion !== "all") {
       filtered = filtered.filter(user => {
-        const regionCode = filterRegion.split(' - ')[0];
-        const userRegion = user.region || '';
-        return userRegion.includes(regionCode) || userRegion.includes(filterRegion);
+        const userRegion = (user.region || '').toLowerCase().trim();
+        
+        // Extract region code from the selected filter value
+        let selectedRegionCode = null;
+        for (const region of PHILIPPINE_REGIONS) {
+          if (region.name === filterRegion) {
+            selectedRegionCode = region.code;
+            break;
+          }
+        }
+        
+        // If we found a region code, check if user region matches any variation
+        if (selectedRegionCode && REGION_FILTER_MAP[selectedRegionCode]) {
+          return REGION_FILTER_MAP[selectedRegionCode].some(variation => 
+            userRegion.includes(variation.toLowerCase())
+          );
+        }
+        
+        // Fallback: check if the user region contains the filter region string
+        return userRegion.includes(filterRegion.toLowerCase());
       });
     }
 
@@ -216,6 +257,17 @@ const Database = () => {
     setFilterDate("");
   };
 
+  // Toggle row expansion
+  const toggleRowExpansion = (userId) => {
+    const newExpandedRows = new Set(expandedRows);
+    if (expandedRows.has(userId)) {
+      newExpandedRows.delete(userId);
+    } else {
+      newExpandedRows.add(userId);
+    }
+    setExpandedRows(newExpandedRows);
+  };
+
   // Format full address for display
   const formatAddress = (user) => {
     const parts = [];
@@ -226,6 +278,18 @@ const Database = () => {
     if (user.region) parts.push(user.region);
     
     return parts.length > 0 ? parts.join(', ') : 'No address provided';
+  };
+
+  // Format address lines for expanded view
+  const formatAddressLines = (user) => {
+    const lines = [];
+    if (user.house_number) lines.push({ label: 'House/Bldg', value: user.house_number });
+    if (user.street_name) lines.push({ label: 'Street', value: user.street_name });
+    if (user.barangay) lines.push({ label: 'Barangay', value: user.barangay });
+    if (user.city) lines.push({ label: 'City', value: user.city });
+    if (user.region) lines.push({ label: 'Region', value: user.region });
+    
+    return lines;
   };
 
   // Excel Download Function
@@ -328,17 +392,14 @@ const Database = () => {
   const handleCreateEvent = async (e) => {
     e.preventDefault();
     try {
-      // Create a date object from the local datetime string
       const localDate = new Date(eventSchedule);
       
-      // Get local date components
       const year = localDate.getFullYear();
       const month = String(localDate.getMonth() + 1).padStart(2, '0');
       const day = String(localDate.getDate()).padStart(2, '0');
       const hours = String(localDate.getHours()).padStart(2, '0');
       const minutes = String(localDate.getMinutes()).padStart(2, '0');
       
-      // Format as "YYYY-MM-DD HH:MM:SS" which SQLite will treat as local time
       const localDateTimeString = `${year}-${month}-${day} ${hours}:${minutes}:00`;
       
       const eventData = {
@@ -368,10 +429,8 @@ const Database = () => {
     setEditingEvent(event);
     setEventName(event.event_name);
     
-    // Parse the date from database
     const eventDate = new Date(event.event_schedule);
     
-    // Format for datetime-local input (YYYY-MM-DDTHH:MM)
     const year = eventDate.getFullYear();
     const month = String(eventDate.getMonth() + 1).padStart(2, '0');
     const day = String(eventDate.getDate()).padStart(2, '0');
@@ -472,11 +531,12 @@ const Database = () => {
               <div className="section-header">
                 <h2>Registered Visitors</h2>
                 <button onClick={exportToExcel} className="export-btn" title="Export to Excel">
-                  📥 Export to Excel
+                  <span className="export-icon">📊</span>
+                  Export to Excel
                 </button>
               </div>
 
-              {/* Active Event Card - Displayed at top of Users tab */}
+              {/* Active Event Card */}
               {activeEvent && activeEvent.event_name && (
                 <div className="active-event-card">
                   <span className="card-dot"></span>
@@ -531,7 +591,10 @@ const Database = () => {
                     <CustomSelect
                       value={filterRegion}
                       onChange={setFilterRegion}
-                      options={PHILIPPINE_REGIONS.map(region => ({ value: region.name, label: region.name }))}
+                      options={PHILIPPINE_REGIONS.map(region => ({ 
+                        value: region.name,
+                        label: region.name 
+                      }))}
                       placeholder="Select Region"
                     />
                   </div>
@@ -596,43 +659,71 @@ const Database = () => {
                   <tbody>
                     {filteredUsers.length > 0 ? (
                       filteredUsers.map((user) => (
-                        <tr key={user.id}>
-                          <td>{user.full_name}</td>
-                          <td>
-                            <span className="company-badge">
-                              {user.company_name}
-                            </span>
-                          </td>
-                          <td>{user.phone}</td>
-                          <td>{user.email}</td>
-                          <td>
-                            <div className="address-preview" title={formatAddress(user)}>
-                              {formatAddress(user).substring(0, 40)}
-                              {formatAddress(user).length > 40 ? '...' : ''}
-                            </div>
-                          </td>
-                          <td>
-                            {user.event_name ? (
-                              <span className={`event-badge ${user.event_name === activeEvent?.event_name ? 'active' : ''}`}>
-                                {user.event_name}
+                        <React.Fragment key={user.id}>
+                          <tr>
+                            <td>{user.full_name}</td>
+                            <td>
+                              <span className="company-badge">
+                                {user.company_name}
                               </span>
-                            ) : (
-                              <span className="event-badge">—</span>
-                            )}
-                          </td>
-                          <td>{formatDate(user.created_at)}</td>
-                          <td>
-                            <div className="action-group">
-                              <button
-                                onClick={() => handleDeleteUser(user.id, user.full_name)}
-                                className="icon-btn delete"
-                                title="Delete user"
-                              >
-                                ×
-                              </button>
-                            </div>
-                          </td>
-                        </tr>
+                            </td>
+                            <td>{user.phone}</td>
+                            <td>{user.email}</td>
+                            <td>
+                              <div className="address-cell">
+                                <span className="address-preview">
+                                  {formatAddress(user).substring(0, 25)}
+                                  {formatAddress(user).length > 25 ? '...' : ''}
+                                </span>
+                                <button 
+                                  className={`expand-address-btn ${expandedRows.has(user.id) ? 'expanded' : ''}`}
+                                  onClick={() => toggleRowExpansion(user.id)}
+                                  title={expandedRows.has(user.id) ? "Hide full address" : "Show full address"}
+                                >
+                                  ▼
+                                </button>
+                              </div>
+                            </td>
+                            <td>
+                              {user.event_name ? (
+                                <span className={`event-badge ${user.event_name === activeEvent?.event_name ? 'active' : ''}`}>
+                                  {user.event_name}
+                                </span>
+                              ) : (
+                                <span className="event-badge">—</span>
+                              )}
+                            </td>
+                            <td>{formatDate(user.created_at)}</td>
+                            <td>
+                              <div className="action-group">
+                                <button
+                                  onClick={() => handleDeleteUser(user.id, user.full_name)}
+                                  className="icon-btn delete"
+                                  title="Delete user"
+                                >
+                                  ×
+                                </button>
+                              </div>
+                            </td>
+                          </tr>
+                          {expandedRows.has(user.id) && (
+                            <tr className="expanded-row">
+                              <td colSpan="8">
+                                <div className="expanded-address">
+                                  <div className="expanded-address-title">Full Address</div>
+                                  <div className="expanded-address-content">
+                                    {formatAddressLines(user).map((line, index) => (
+                                      <div key={index} className="expanded-address-line">
+                                        <span className="expanded-address-label">{line.label}:</span>
+                                        <span className="expanded-address-value">{line.value}</span>
+                                      </div>
+                                    ))}
+                                  </div>
+                                </div>
+                              </td>
+                            </tr>
+                          )}
+                        </React.Fragment>
                       ))
                     ) : (
                       <tr>

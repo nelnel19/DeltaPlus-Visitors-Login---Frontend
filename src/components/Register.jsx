@@ -52,198 +52,6 @@ const CustomSelect = ({ value, onChange, options, placeholder }) => {
   );
 };
 
-// Philippine Cities data (Major cities and municipalities) - Sorted Alphabetically
-const PHILIPPINE_CITIES = [
-  // A
-  { value: "Alaminos", label: "Alaminos" },
-  { value: "Angeles", label: "Angeles" },
-  { value: "Antipolo", label: "Antipolo" },
-
-  // B
-  { value: "Bacolod", label: "Bacolod" },
-  { value: "Bacoor", label: "Bacoor" },
-  { value: "Bago", label: "Bago" },
-  { value: "Baguio", label: "Baguio" },
-  { value: "Bais", label: "Bais" },
-  { value: "Balanga", label: "Balanga" },
-  { value: "Batangas", label: "Batangas" },
-  { value: "Bayawan", label: "Bayawan" },
-  { value: "Baybay", label: "Baybay" },
-  { value: "Bayugan", label: "Bayugan" },
-  { value: "Biñan", label: "Biñan" },
-  { value: "Bislig", label: "Bislig" },
-  { value: "Bogo", label: "Bogo" },
-  { value: "Borongan", label: "Borongan" },
-  { value: "Butuan", label: "Butuan" },
-
-  // C
-  { value: "Cabadbaran", label: "Cabadbaran" },
-  { value: "Cabanatuan", label: "Cabanatuan" },
-  { value: "Cabuyao", label: "Cabuyao" },
-  { value: "Cadiz", label: "Cadiz" },
-  { value: "Cagayan de Oro", label: "Cagayan de Oro" },
-  { value: "Calamba", label: "Calamba" },
-  { value: "Calapan", label: "Calapan" },
-  { value: "Calbayog", label: "Calbayog" },
-  { value: "Caloocan", label: "Caloocan" },
-  { value: "Candon", label: "Candon" },
-  { value: "Canlaon", label: "Canlaon" },
-  { value: "Carcar", label: "Carcar" },
-  { value: "Catbalogan", label: "Catbalogan" },
-  { value: "Cauayan", label: "Cauayan" },
-  { value: "Cavite", label: "Cavite" },
-  { value: "Cebu", label: "Cebu" },
-  { value: "Cotabato", label: "Cotabato" },
-
-  // D
-  { value: "Dagupan", label: "Dagupan" },
-  { value: "Danao", label: "Danao" },
-  { value: "Dapitan", label: "Dapitan" },
-  { value: "Dasmariñas", label: "Dasmariñas" },
-  { value: "Davao", label: "Davao" },
-  { value: "Digos", label: "Digos" },
-  { value: "Dipolog", label: "Dipolog" },
-  { value: "Dumaguete", label: "Dumaguete" },
-
-  // E
-  { value: "El Salvador", label: "El Salvador" },
-  { value: "Escalante", label: "Escalante" },
-
-  // G
-  { value: "Gapan", label: "Gapan" },
-  { value: "General Santos", label: "General Santos" },
-  { value: "General Trias", label: "General Trias" },
-  { value: "Gingoog", label: "Gingoog" },
-  { value: "Guihulngan", label: "Guihulngan" },
-
-  // H
-  { value: "Himamaylan", label: "Himamaylan" },
-  { value: "Iligan", label: "Iligan" },
-  { value: "Iloilo", label: "Iloilo" },
-  { value: "Imus", label: "Imus" },
-  { value: "Iriga", label: "Iriga" },
-  { value: "Isabela", label: "Isabela (Basilan)" },
-  { value: "Island Garden City of Samal", label: "Island Garden City of Samal" },
-
-  // K
-  { value: "Kabankalan", label: "Kabankalan" },
-  { value: "Kidapawan", label: "Kidapawan" },
-  { value: "Koronadal", label: "Koronadal" },
-
-  // L
-  { value: "La Carlota", label: "La Carlota" },
-  { value: "Lamitan", label: "Lamitan" },
-  { value: "Laoag", label: "Laoag" },
-  { value: "Lapu-Lapu", label: "Lapu-Lapu" },
-  { value: "Las Piñas", label: "Las Piñas" },
-  { value: "Legazpi", label: "Legazpi" },
-  { value: "Ligao", label: "Ligao" },
-  { value: "Lipa", label: "Lipa" },
-  { value: "Lucena", label: "Lucena" },
-
-  // M
-  { value: "Maasin", label: "Maasin" },
-  { value: "Mabalacat", label: "Mabalacat" },
-  { value: "Makati", label: "Makati" },
-  { value: "Malabon", label: "Malabon" },
-  { value: "Malaybalay", label: "Malaybalay" },
-  { value: "Malolos", label: "Malolos" },
-  { value: "Mandaluyong", label: "Mandaluyong" },
-  { value: "Mandaue", label: "Mandaue" },
-  { value: "Manila", label: "Manila" },
-  { value: "Marawi", label: "Marawi" },
-  { value: "Marikina", label: "Marikina" },
-  { value: "Masbate", label: "Masbate" },
-  { value: "Mati", label: "Mati" },
-  { value: "Meycauayan", label: "Meycauayan" },
-  { value: "Muntinlupa", label: "Muntinlupa" },
-
-  // N
-  { value: "Naga", label: "Naga" },
-  { value: "Naga (Cebu)", label: "Naga (Cebu)" },
-  { value: "Navotas", label: "Navotas" },
-
-  // O
-  { value: "Olongapo", label: "Olongapo" },
-  { value: "Ormoc", label: "Ormoc" },
-  { value: "Oroquieta", label: "Oroquieta" },
-  { value: "Ozamiz", label: "Ozamiz" },
-
-  // P
-  { value: "Pagadian", label: "Pagadian" },
-  { value: "Palayan", label: "Palayan" },
-  { value: "Panabo", label: "Panabo" },
-  { value: "Parañaque", label: "Parañaque" },
-  { value: "Pasay", label: "Pasay" },
-  { value: "Pasig", label: "Pasig" },
-  { value: "Passi", label: "Passi" },
-  { value: "Pateros", label: "Pateros" },
-  { value: "Puerto Princesa", label: "Puerto Princesa" },
-
-  // Q
-  { value: "Quezon City", label: "Quezon City" },
-
-  // R
-  { value: "Roxas", label: "Roxas" },
-
-  // S
-  { value: "Sagay", label: "Sagay" },
-  { value: "Samal", label: "Island Garden City of Samal" },
-  { value: "San Carlos", label: "San Carlos (Negros Occidental)" },
-  { value: "San Fernando", label: "San Fernando (La Union)" },
-  { value: "San Jose", label: "San Jose (Nueva Ecija)" },
-  { value: "San Jose Del Monte", label: "San Jose Del Monte" },
-  { value: "San Juan", label: "San Juan" },
-  { value: "San Pablo", label: "San Pablo" },
-  { value: "San Pedro", label: "San Pedro" },
-  { value: "Santa Rosa", label: "Santa Rosa" },
-  { value: "Santiago", label: "Santiago" },
-  { value: "Santo Tomas", label: "Santo Tomas (Batangas)" },
-  { value: "Science City of Muñoz", label: "Science City of Muñoz" },
-  { value: "Silay", label: "Silay" },
-  { value: "Sipalay", label: "Sipalay" },
-  { value: "Sorsogon", label: "Sorsogon" },
-  { value: "Surigao", label: "Surigao" },
-
-  // T
-  { value: "Tabaco", label: "Tabaco" },
-  { value: "Tabuk", label: "Tabuk" },
-  { value: "Tacloban", label: "Tacloban" },
-  { value: "Tacurong", label: "Tacurong" },
-  { value: "Tagaytay", label: "Tagaytay" },
-  { value: "Tagbilaran", label: "Tagbilaran" },
-  { value: "Taguig", label: "Taguig" },
-  { value: "Tagum", label: "Tagum" },
-  { value: "Talisay", label: "Talisay (Cebu)" },
-  { value: "Talisay (Negros Occidental)", label: "Talisay (Negros Occidental)" },
-  { value: "Tanauan", label: "Tanauan" },
-  { value: "Tandag", label: "Tandag" },
-  { value: "Tangub", label: "Tangub" },
-  { value: "Tanjay", label: "Tanjay" },
-  { value: "Tarlac", label: "Tarlac" },
-  { value: "Tayabas", label: "Tayabas" },
-  { value: "Toledo", label: "Toledo" },
-  { value: "Trece Martires", label: "Trece Martires" },
-  { value: "Tuguegarao", label: "Tuguegarao" },
-
-  // U
-  { value: "Urdaneta", label: "Urdaneta" },
-
-  // V
-  { value: "Valencia", label: "Valencia (Bukidnon)" },
-  { value: "Valenzuela", label: "Valenzuela" },
-  { value: "Victorias", label: "Victorias" },
-  { value: "Vigan", label: "Vigan" },
-
-  // Z
-  { value: "Zamboanga", label: "Zamboanga" }
-];
-
-// Sort cities alphabetically by label (just to be sure)
-const sortedCities = [...PHILIPPINE_CITIES].sort((a, b) => 
-  a.label.localeCompare(b.label)
-);
-
 // Philippine Regions data
 const PHILIPPINE_REGIONS = [
   { value: "NCR", label: "National Capital Region (NCR)" },
@@ -264,6 +72,230 @@ const PHILIPPINE_REGIONS = [
   { value: "XIII", label: "Region XIII (Caraga)" },
   { value: "BARMM", label: "Bangsamoro Autonomous Region in Muslim Mindanao (BARMM)" }
 ];
+
+// Cities organized by region
+const CITIES_BY_REGION = {
+  // NCR - National Capital Region
+  NCR: [
+    { value: "Caloocan", label: "Caloocan" },
+    { value: "Las Piñas", label: "Las Piñas" },
+    { value: "Makati", label: "Makati" },
+    { value: "Malabon", label: "Malabon" },
+    { value: "Mandaluyong", label: "Mandaluyong" },
+    { value: "Manila", label: "Manila" },
+    { value: "Marikina", label: "Marikina" },
+    { value: "Muntinlupa", label: "Muntinlupa" },
+    { value: "Navotas", label: "Navotas" },
+    { value: "Parañaque", label: "Parañaque" },
+    { value: "Pasay", label: "Pasay" },
+    { value: "Pasig", label: "Pasig" },
+    { value: "Pateros", label: "Pateros" },
+    { value: "Quezon City", label: "Quezon City" },
+    { value: "San Juan", label: "San Juan" },
+    { value: "Taguig", label: "Taguig" },
+    { value: "Valenzuela", label: "Valenzuela" }
+  ],
+
+  // CAR - Cordillera Administrative Region
+  CAR: [
+    { value: "Baguio", label: "Baguio" },
+    { value: "Tabuk", label: "Tabuk" }
+  ],
+
+  // Region I - Ilocos Region
+  I: [
+    { value: "Alaminos", label: "Alaminos" },
+    { value: "Dagupan", label: "Dagupan" },
+    { value: "Laoag", label: "Laoag" },
+    { value: "San Carlos", label: "San Carlos" },
+    { value: "Urdaneta", label: "Urdaneta" },
+    { value: "Vigan", label: "Vigan" }
+  ],
+
+  // Region II - Cagayan Valley
+  II: [
+    { value: "Cauayan", label: "Cauayan" },
+    { value: "Santiago", label: "Santiago" },
+    { value: "Tuguegarao", label: "Tuguegarao" }
+  ],
+
+  // Region III - Central Luzon
+  III: [
+    { value: "Angeles", label: "Angeles" },
+    { value: "Balanga", label: "Balanga" },
+    { value: "Cabanatuan", label: "Cabanatuan" },
+    { value: "Gapan", label: "Gapan" },
+    { value: "Mabalacat", label: "Mabalacat" },
+    { value: "Malolos", label: "Malolos" },
+    { value: "Meycauayan", label: "Meycauayan" },
+    { value: "Muñoz", label: "Science City of Muñoz" },
+    { value: "Olongapo", label: "Olongapo" },
+    { value: "Palayan", label: "Palayan" },
+    { value: "San Fernando", label: "San Fernando" },
+    { value: "San Jose", label: "San Jose" },
+    { value: "San Jose Del Monte", label: "San Jose Del Monte" },
+    { value: "Tarlac", label: "Tarlac" }
+  ],
+
+  // Region IV-A - CALABARZON
+  "IV-A": [
+    { value: "Antipolo", label: "Antipolo" },
+    { value: "Bacoor", label: "Bacoor" },
+    { value: "Batangas", label: "Batangas" },
+    { value: "Biñan", label: "Biñan" },
+    { value: "Cabuyao", label: "Cabuyao" },
+    { value: "Calamba", label: "Calamba" },
+    { value: "Cavite", label: "Cavite" },
+    { value: "Dasmariñas", label: "Dasmariñas" },
+    { value: "General Trias", label: "General Trias" },
+    { value: "Imus", label: "Imus" },
+    { value: "Lipa", label: "Lipa" },
+    { value: "Lucena", label: "Lucena" },
+    { value: "San Pablo", label: "San Pablo" },
+    { value: "San Pedro", label: "San Pedro" },
+    { value: "Santa Rosa", label: "Santa Rosa" },
+    { value: "Santo Tomas", label: "Santo Tomas" },
+    { value: "Tagaytay", label: "Tagaytay" },
+    { value: "Tanauan", label: "Tanauan" },
+    { value: "Tayabas", label: "Tayabas" },
+    { value: "Trece Martires", label: "Trece Martires" }
+  ],
+
+  // MIMAROPA
+  MIMAROPA: [
+    { value: "Calapan", label: "Calapan" },
+    { value: "Puerto Princesa", label: "Puerto Princesa" }
+  ],
+
+  // Region V - Bicol Region
+  V: [
+    { value: "Iriga", label: "Iriga" },
+    { value: "Legazpi", label: "Legazpi" },
+    { value: "Ligao", label: "Ligao" },
+    { value: "Masbate", label: "Masbate" },
+    { value: "Naga", label: "Naga" },
+    { value: "Sorsogon", label: "Sorsogon" },
+    { value: "Tabaco", label: "Tabaco" }
+  ],
+
+  // Region VI - Western Visayas
+  VI: [
+    { value: "Bacolod", label: "Bacolod" },
+    { value: "Bago", label: "Bago" },
+    { value: "Cadiz", label: "Cadiz" },
+    { value: "Escalante", label: "Escalante" },
+    { value: "Himamaylan", label: "Himamaylan" },
+    { value: "Iloilo", label: "Iloilo" },
+    { value: "Kabankalan", label: "Kabankalan" },
+    { value: "La Carlota", label: "La Carlota" },
+    { value: "Passi", label: "Passi" },
+    { value: "Roxas", label: "Roxas" },
+    { value: "Sagay", label: "Sagay" },
+    { value: "San Carlos", label: "San Carlos" },
+    { value: "Silay", label: "Silay" },
+    { value: "Sipalay", label: "Sipalay" },
+    { value: "Talisay", label: "Talisay" },
+    { value: "Victorias", label: "Victorias" }
+  ],
+
+  // Region VII - Central Visayas
+  VII: [
+    { value: "Bais", label: "Bais" },
+    { value: "Bayawan", label: "Bayawan" },
+    { value: "Bogo", label: "Bogo" },
+    { value: "Canlaon", label: "Canlaon" },
+    { value: "Carcar", label: "Carcar" },
+    { value: "Cebu", label: "Cebu" },
+    { value: "Danao", label: "Danao" },
+    { value: "Dumaguete", label: "Dumaguete" },
+    { value: "Guihulngan", label: "Guihulngan" },
+    { value: "Lapu-Lapu", label: "Lapu-Lapu" },
+    { value: "Mandaue", label: "Mandaue" },
+    { value: "Naga", label: "Naga (Cebu)" },
+    { value: "San Carlos", label: "San Carlos" },
+    { value: "Talisay", label: "Talisay" },
+    { value: "Tanjay", label: "Tanjay" },
+    { value: "Toledo", label: "Toledo" }
+  ],
+
+  // Region VIII - Eastern Visayas
+  VIII: [
+    { value: "Baybay", label: "Baybay" },
+    { value: "Borongan", label: "Borongan" },
+    { value: "Calbayog", label: "Calbayog" },
+    { value: "Catbalogan", label: "Catbalogan" },
+    { value: "Maasin", label: "Maasin" },
+    { value: "Ormoc", label: "Ormoc" },
+    { value: "Tacloban", label: "Tacloban" }
+  ],
+
+  // Region IX - Zamboanga Peninsula
+  IX: [
+    { value: "Dapitan", label: "Dapitan" },
+    { value: "Dipolog", label: "Dipolog" },
+    { value: "Isabela", label: "Isabela (Basilan)" },
+    { value: "Pagadian", label: "Pagadian" },
+    { value: "Zamboanga", label: "Zamboanga" }
+  ],
+
+  // Region X - Northern Mindanao
+  X: [
+    { value: "Cagayan de Oro", label: "Cagayan de Oro" },
+    { value: "El Salvador", label: "El Salvador" },
+    { value: "Gingoog", label: "Gingoog" },
+    { value: "Iligan", label: "Iligan" },
+    { value: "Malaybalay", label: "Malaybalay" },
+    { value: "Oroquieta", label: "Oroquieta" },
+    { value: "Ozamiz", label: "Ozamiz" },
+    { value: "Tangub", label: "Tangub" },
+    { value: "Valencia", label: "Valencia (Bukidnon)" }
+  ],
+
+  // Region XI - Davao Region
+  XI: [
+    { value: "Davao", label: "Davao" },
+    { value: "Digos", label: "Digos" },
+    { value: "Mati", label: "Mati" },
+    { value: "Panabo", label: "Panabo" },
+    { value: "Samal", label: "Island Garden City of Samal" },
+    { value: "Tagum", label: "Tagum" }
+  ],
+
+  // Region XII - SOCCSKSARGEN
+  XII: [
+    { value: "Cotabato", label: "Cotabato" },
+    { value: "General Santos", label: "General Santos" },
+    { value: "Kidapawan", label: "Kidapawan" },
+    { value: "Koronadal", label: "Koronadal" },
+    { value: "Tacurong", label: "Tacurong" }
+  ],
+
+  // Region XIII - Caraga
+  XIII: [
+    { value: "Bayugan", label: "Bayugan" },
+    { value: "Bislig", label: "Bislig" },
+    { value: "Butuan", label: "Butuan" },
+    { value: "Cabadbaran", label: "Cabadbaran" },
+    { value: "Surigao", label: "Surigao" },
+    { value: "Tandag", label: "Tandag" }
+  ],
+
+  // BARMM
+  BARMM: [
+    { value: "Lamitan", label: "Lamitan" },
+    { value: "Marawi", label: "Marawi" }
+  ]
+};
+
+// Get all cities for a region, sorted alphabetically
+const getCitiesForRegion = (regionCode) => {
+  if (!regionCode || !CITIES_BY_REGION[regionCode]) {
+    return [];
+  }
+  return [...CITIES_BY_REGION[regionCode]].sort((a, b) => 
+    a.label.localeCompare(b.label)
+  );
+};
 
 function Register() {
   const navigate = useNavigate();
@@ -286,6 +318,7 @@ function Register() {
   const [currentSlide, setCurrentSlide] = useState(0);
   const [tvPower, setTvPower] = useState(true);
   const [staticNoise, setStaticNoise] = useState(false);
+  const [availableCities, setAvailableCities] = useState([]);
 
   const slides = [
     {
@@ -299,7 +332,22 @@ function Register() {
     }
   ];
 
-  // Preload images to prevent blurriness
+  // Update available cities when region changes
+  useEffect(() => {
+    if (form.region) {
+      const cities = getCitiesForRegion(form.region);
+      setAvailableCities(cities);
+      // Clear city if current city is not in the new region
+      if (form.city && !cities.some(city => city.value === form.city)) {
+        setForm(prev => ({ ...prev, city: "" }));
+      }
+    } else {
+      setAvailableCities([]);
+      setForm(prev => ({ ...prev, city: "" }));
+    }
+  }, [form.region]);
+
+  // Preload images
   useEffect(() => {
     slides.forEach(slide => {
       const img = new Image();
@@ -318,7 +366,7 @@ function Register() {
   };
 
   const handleRegionChange = (value) => {
-    setForm({ ...form, region: value });
+    setForm({ ...form, region: value, city: "" });
     if (error) setError("");
   };
 
@@ -626,25 +674,28 @@ function Register() {
                   </div>
 
                   <div className="form-group">
-                    <label htmlFor="city">City / Municipality *</label>
+                    <label htmlFor="region">Region *</label>
                     <CustomSelect
-                      value={form.city}
-                      onChange={handleCityChange}
-                      options={sortedCities}
-                      placeholder="Select City/Municipality"
+                      value={form.region}
+                      onChange={handleRegionChange}
+                      options={PHILIPPINE_REGIONS}
+                      placeholder="Select Region First"
                     />
                   </div>
                 </div>
 
                 <div className="form-row">
                   <div className="form-group">
-                    <label htmlFor="region">Region *</label>
+                    <label htmlFor="city">City / Municipality *</label>
                     <CustomSelect
-                      value={form.region}
-                      onChange={handleRegionChange}
-                      options={PHILIPPINE_REGIONS}
-                      placeholder="Select Region"
+                      value={form.city}
+                      onChange={handleCityChange}
+                      options={availableCities}
+                      placeholder={form.region ? "Select City/Municipality" : "Select Region First"}
                     />
+                    {!form.region && (
+                      <small className="field-note">Please select a region first</small>
+                    )}
                   </div>
                 </div>
               </div>

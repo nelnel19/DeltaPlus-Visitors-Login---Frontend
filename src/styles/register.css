@@ -1181,3 +1181,12 @@ body {
     font-size: 12px;
   }
 }
+/* Add this to your register.css file */
+
+.field-note {
+  display: block;
+  font-size: 11px;
+  color: var(--gray-500);
+  margin-top: 4px;
+  font-style: italic;
+}
