@@ -60,7 +60,7 @@ const CustomSelect = ({ value, onChange, options, placeholder }) => {
   );
 };
 
-// Philippine Regions data with codes and names
+// Philippine Regions data with codes and full names
 const PHILIPPINE_REGIONS = [
   { code: "NCR", name: "National Capital Region (NCR)" },
   { code: "CAR", name: "Cordillera Administrative Region (CAR)" },
@@ -80,6 +80,26 @@ const PHILIPPINE_REGIONS = [
   { code: "XIII", name: "Region XIII (Caraga)" },
   { code: "BARMM", name: "Bangsamoro Autonomous Region in Muslim Mindanao (BARMM)" }
 ];
+
+// Helper function to extract region code from full region name
+const extractRegionCode = (regionName) => {
+  if (!regionName) return '';
+  
+  // Direct match for special regions
+  if (regionName.includes('NCR')) return 'NCR';
+  if (regionName.includes('CAR')) return 'CAR';
+  if (regionName.includes('MIMAROPA')) return 'MIMAROPA';
+  if (regionName.includes('BARMM')) return 'BARMM';
+  
+  // Match patterns like "Region I", "Region VI", "Region IV-A", etc.
+  const match = regionName.match(/Region\s+([IVXLCDM]+(?:-[A-Z]+)?)/i);
+  if (match) {
+    return match[1];
+  }
+  
+  // If no match, return the original (for backward compatibility)
+  return regionName;
+};
 
 const Database = () => {
   const [users, setUsers] = useState([]);
@@ -149,22 +169,14 @@ const Database = () => {
       );
     }
 
-    // Filter by region - FIXED VERSION
+    // Filter by region - IMPROVED VERSION
     if (filterRegion !== "all") {
       const selectedRegionName = filterRegion;
+      const selectedCode = extractRegionCode(selectedRegionName);
       
       filtered = filtered.filter(user => {
         const userRegion = user.region || '';
-        
-        // Extract the region code from the full region name for comparison
-        const getRegionCode = (regionName) => {
-          // Match patterns like "Region I", "Region VI", "Region IV-A", etc.
-          const match = regionName.match(/Region\s+([IVXLCDM]+(?:-[A-Z]+)?)/i);
-          return match ? match[1] : regionName;
-        };
-        
-        const selectedCode = getRegionCode(selectedRegionName);
-        const userCode = getRegionCode(userRegion);
+        const userCode = extractRegionCode(userRegion);
         
         // Exact match of region codes
         return userCode === selectedCode;
