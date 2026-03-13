@@ -81,33 +81,6 @@ const PHILIPPINE_REGIONS = [
   { code: "BARMM", name: "Bangsamoro Autonomous Region in Muslim Mindanao (BARMM)" }
 ];
 
-// Create a mapping of region codes to names for easy lookup
-const REGION_CODE_MAP = {
-  "NCR": "National Capital Region (NCR)",
-  "CAR": "Cordillera Administrative Region (CAR)",
-  "I": "Region I (Ilocos Region)",
-  "II": "Region II (Cagayan Valley)",
-  "III": "Region III (Central Luzon)",
-  "IV-A": "Region IV-A (CALABARZON)",
-  "MIMAROPA": "MIMAROPA Region",
-  "V": "Region V (Bicol Region)",
-  "VI": "Region VI (Western Visayas)",
-  "VII": "Region VII (Central Visayas)",
-  "VIII": "Region VIII (Eastern Visayas)",
-  "IX": "Region IX (Zamboanga Peninsula)",
-  "X": "Region X (Northern Mindanao)",
-  "XI": "Region XI (Davao Region)",
-  "XII": "Region XII (SOCCSKSARGEN)",
-  "XIII": "Region XIII (Caraga)",
-  "BARMM": "Bangsamoro Autonomous Region in Muslim Mindanao (BARMM)"
-};
-
-// Create reverse mapping for lookup by name
-const REGION_NAME_TO_CODE = {};
-Object.entries(REGION_CODE_MAP).forEach(([code, name]) => {
-  REGION_NAME_TO_CODE[name] = code;
-});
-
 const Database = () => {
   const [users, setUsers] = useState([]);
   const [filteredUsers, setFilteredUsers] = useState([]);
@@ -176,33 +149,25 @@ const Database = () => {
       );
     }
 
-    // Filter by region - FIXED VERSION using region codes
+    // Filter by region - FIXED VERSION
     if (filterRegion !== "all") {
+      const selectedRegionName = filterRegion;
+      
       filtered = filtered.filter(user => {
         const userRegion = user.region || '';
         
-        // If user has no region, exclude from filter
-        if (!userRegion) return false;
+        // Extract the region code from the full region name for comparison
+        const getRegionCode = (regionName) => {
+          // Match patterns like "Region I", "Region VI", "Region IV-A", etc.
+          const match = regionName.match(/Region\s+([IVXLCDM]+(?:-[A-Z]+)?)/i);
+          return match ? match[1] : regionName;
+        };
         
-        // Get the region code for this user
-        let userRegionCode = '';
+        const selectedCode = getRegionCode(selectedRegionName);
+        const userCode = getRegionCode(userRegion);
         
-        // Try to find the matching region code
-        for (const [code, name] of Object.entries(REGION_CODE_MAP)) {
-          // Check for exact match or if the user's region string contains the region name
-          // or if the region name contains the user's region string
-          if (userRegion === name || 
-              userRegion.includes(name) || 
-              name.includes(userRegion) ||
-              // Handle case where userRegion might be just the code
-              userRegion === code) {
-            userRegionCode = code;
-            break;
-          }
-        }
-        
-        // Compare using region codes instead of names
-        return userRegionCode === filterRegion;
+        // Exact match of region codes
+        return userCode === selectedCode;
       });
     }
 
@@ -670,7 +635,7 @@ const Database = () => {
                       value={filterRegion}
                       onChange={setFilterRegion}
                       options={PHILIPPINE_REGIONS.map(region => ({ 
-                        value: region.code, // Using code as value for accurate filtering
+                        value: region.name,
                         label: region.name 
                       }))}
                       placeholder="Select Region"
