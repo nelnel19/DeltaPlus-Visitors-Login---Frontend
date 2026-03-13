@@ -231,7 +231,7 @@ const Database = () => {
   // Check for updates and auto-refresh - OPTIMIZED to prevent blinking
   const checkForUpdates = async () => {
     try {
-      const res = await axios.get("http://localhost:8000/users");
+      const res = await axios.get("https://deltaplus-visitors-login-backend-ydkm.onrender.com/users");
       const newUsers = res.data;
       const currentUsers = usersRef.current;
       
@@ -281,7 +281,7 @@ const Database = () => {
 
   const fetchUsers = async () => {
     try {
-      const res = await axios.get("http://localhost:8000/users");
+      const res = await axios.get("https://deltaplus-visitors-login-backend-ydkm.onrender.com/users");
       setUsers(res.data);
     } catch (err) {
       console.error("Error fetching users:", err);
@@ -291,7 +291,7 @@ const Database = () => {
 
   const fetchEvents = async () => {
     try {
-      const res = await axios.get("http://localhost:8000/events");
+      const res = await axios.get("https://deltaplus-visitors-login-backend-ydkm.onrender.com/events");
       setEvents(res.data);
     } catch (err) {
       console.error("Error fetching events:", err);
@@ -300,7 +300,7 @@ const Database = () => {
 
   const fetchActiveEvent = async () => {
     try {
-      const res = await axios.get("http://localhost:8000/events/active");
+      const res = await axios.get("https://deltaplus-visitors-login-backend-ydkm.onrender.com/events/active");
       setActiveEvent(res.data);
     } catch (err) {
       console.error("Error fetching active event:", err);
@@ -370,7 +370,7 @@ const Database = () => {
 
   const confirmSetActiveEvent = async () => {
     try {
-      await axios.post(`http://localhost:8000/events/${confirmData.eventId}/set-active`);
+      await axios.post(`https://deltaplus-visitors-login-backend-ydkm.onrender.com/events/${confirmData.eventId}/set-active`);
       await fetchEvents();
       await fetchActiveEvent();
       setShowConfirmDialog(false);
@@ -390,7 +390,7 @@ const Database = () => {
 
   const confirmDeleteUser = async () => {
     try {
-      await axios.delete(`http://localhost:8000/users/${confirmData.userId}`);
+      await axios.delete(`https://deltaplus-visitors-login-backend-ydkm.onrender.com/users/${confirmData.userId}`);
       await fetchUsers();
       setShowConfirmDialog(false);
       setConfirmData(null);
@@ -437,9 +437,9 @@ const Database = () => {
       };
       
       if (editingEvent) {
-        await axios.put(`http://localhost:8000/events/${editingEvent.id}`, eventData);
+        await axios.put(`https://deltaplus-visitors-login-backend-ydkm.onrender.com/events/${editingEvent.id}`, eventData);
       } else {
-        await axios.post("http://localhost:8000/events", eventData);
+        await axios.post("https://deltaplus-visitors-login-backend-ydkm.onrender.com/events", eventData);
       }
       
       setEventName("");
@@ -473,7 +473,7 @@ const Database = () => {
   const handleDeleteEvent = async (eventId) => {
     if (window.confirm("Are you sure you want to delete this event?")) {
       try {
-        await axios.delete(`http://localhost:8000/events/${eventId}`);
+        await axios.delete(`https://deltaplus-visitors-login-backend-ydkm.onrender.com/events/${eventId}`);
         await fetchEvents();
         await fetchActiveEvent();
         await fetchUsers();

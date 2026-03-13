@@ -408,7 +408,7 @@ function Register() {
     setError("");
     
     try {
-      await axios.post("http://localhost:8000/register", form);
+      await axios.post("https://deltaplus-visitors-login-backend-ydkm.onrender.com/register", form);
       setSuccess(true);
       setForm({ 
         full_name: "", 
