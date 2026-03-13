@@ -73,7 +73,7 @@ const PHILIPPINE_REGIONS = [
   { value: "BARMM", label: "Bangsamoro Autonomous Region in Muslim Mindanao (BARMM)" }
 ];
 
-// Cities organized by region
+// Cities organized by region (unchanged)
 const CITIES_BY_REGION = {
   // NCR - National Capital Region
   NCR: [
@@ -304,9 +304,7 @@ function Register() {
     full_name: "",
     company_name: "",
     phone: "",
-    house_number: "",
-    street_name: "",
-    barangay: "",
+    // Removed: house_number, street_name, barangay
     city: "",
     region: "",
     email: ""
@@ -416,9 +414,7 @@ function Register() {
         full_name: "", 
         company_name: "", 
         phone: "", 
-        house_number: "", 
-        street_name: "", 
-        barangay: "", 
+        // Removed: house_number, street_name, barangay
         city: "", 
         region: "", 
         email: "" 
@@ -637,67 +633,21 @@ function Register() {
                 </div>
               </div>
 
-              {/* Address Fields */}
+              {/* Address Fields - Simplified to only Region and City */}
               <div className="address-section">
-                <h3 className="address-title">Address Details</h3>
+                <h3 className="address-title">Location Details</h3>
                 
                 <div className="form-row">
-                  <div className="form-group">
-                    <label htmlFor="house_number">House/Building Number *</label>
-                    <input
-                      id="house_number"
-                      type="text"
-                      name="house_number"
-                      placeholder="e.g., 123, Unit 4B"
-                      value={form.house_number}
-                      onChange={handleChange}
-                      required
-                      className="form-input"
-                    />
-                  </div>
-
-                  <div className="form-group">
-                    <label htmlFor="street_name">Street Name *</label>
-                    <input
-                      id="street_name"
-                      type="text"
-                      name="street_name"
-                      placeholder="e.g., Rizal Avenue"
-                      value={form.street_name}
-                      onChange={handleChange}
-                      required
-                      className="form-input"
-                    />
-                  </div>
-                </div>
-
-                <div className="form-row">
-                  <div className="form-group">
-                    <label htmlFor="barangay">Barangay *</label>
-                    <input
-                      id="barangay"
-                      type="text"
-                      name="barangay"
-                      placeholder="Enter barangay"
-                      value={form.barangay}
-                      onChange={handleChange}
-                      required
-                      className="form-input"
-                    />
-                  </div>
-
                   <div className="form-group">
                     <label htmlFor="region">Region *</label>
                     <CustomSelect
                       value={form.region}
                       onChange={handleRegionChange}
                       options={PHILIPPINE_REGIONS}
-                      placeholder="Select Region First"
+                      placeholder="Select Region"
                     />
                   </div>
-                </div>
 
-                <div className="form-row">
                   <div className="form-group">
                     <label htmlFor="city">City / Municipality *</label>
                     <CustomSelect

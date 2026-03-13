@@ -81,27 +81,6 @@ const PHILIPPINE_REGIONS = [
   { code: "BARMM", name: "Bangsamoro Autonomous Region in Muslim Mindanao (BARMM)" }
 ];
 
-// Simple direct mapping for region filtering
-const REGION_DIRECT_MATCH = {
-  "National Capital Region (NCR)": "NCR",
-  "Cordillera Administrative Region (CAR)": "CAR",
-  "Region I (Ilocos Region)": "I",
-  "Region II (Cagayan Valley)": "II",
-  "Region III (Central Luzon)": "III",
-  "Region IV-A (CALABARZON)": "IV-A",
-  "MIMAROPA Region": "MIMAROPA",
-  "Region V (Bicol Region)": "V",
-  "Region VI (Western Visayas)": "VI",
-  "Region VII (Central Visayas)": "VII",
-  "Region VIII (Eastern Visayas)": "VIII",
-  "Region IX (Zamboanga Peninsula)": "IX",
-  "Region X (Northern Mindanao)": "X",
-  "Region XI (Davao Region)": "XI",
-  "Region XII (SOCCSKSARGEN)": "XII",
-  "Region XIII (Caraga)": "XIII",
-  "Bangsamoro Autonomous Region in Muslim Mindanao (BARMM)": "BARMM"
-};
-
 const Database = () => {
   const [users, setUsers] = useState([]);
   const [filteredUsers, setFilteredUsers] = useState([]);
@@ -114,9 +93,6 @@ const Database = () => {
   const [confirmAction, setConfirmAction] = useState(null);
   const [confirmData, setConfirmData] = useState(null);
   
-  // State for expanded address rows
-  const [expandedRows, setExpandedRows] = useState(new Set());
-  
   // Filter states
   const [searchName, setSearchName] = useState("");
   const [searchCompany, setSearchCompany] = useState("");
@@ -125,17 +101,32 @@ const Database = () => {
   const [filterEvent, setFilterEvent] = useState("all");
   const [filterDate, setFilterDate] = useState("");
   
+  // Auto-refresh state
+  const [lastUpdate, setLastUpdate] = useState(Date.now());
+  const [showRefreshToast, setShowRefreshToast] = useState(false);
+  const [toastMessage, setToastMessage] = useState("");
+  
   // Event form state
   const [showEventForm, setShowEventForm] = useState(false);
   const [eventName, setEventName] = useState("");
   const [eventSchedule, setEventSchedule] = useState("");
   const [editingEvent, setEditingEvent] = useState(null);
   
+  // Refs to prevent blinking
+  const usersRef = useRef(users);
+  const isFirstLoad = useRef(true);
+  const pollingIntervalRef = useRef(null);
+  
   const navigate = useNavigate();
+
+  // Update ref when users change
+  useEffect(() => {
+    usersRef.current = users;
+  }, [users]);
 
   // Define applyFilters with useCallback to prevent unnecessary re-renders
   const applyFilters = useCallback(() => {
-    let filtered = [...users];
+    let filtered = [...usersRef.current];
 
     // Filter by name
     if (searchName.trim() !== "") {
@@ -158,22 +149,17 @@ const Database = () => {
       );
     }
 
-    // Filter by region - SIMPLIFIED AND RELIABLE VERSION
+    // Filter by region
     if (filterRegion !== "all") {
-      // Get the selected region name from the filter
       const selectedRegionName = filterRegion;
       
       filtered = filtered.filter(user => {
         const userRegion = user.region || '';
         
-        // Direct string comparison - check if user region exactly matches or contains the selected region name
-        // This works because the registration form stores the full region name
         if (userRegion === selectedRegionName) {
           return true;
         }
         
-        // For partial matches, check if the user region contains the selected region name
-        // or if the selected region name contains the user region (for variations)
         return userRegion.includes(selectedRegionName) || 
                selectedRegionName.includes(userRegion);
       });
@@ -194,8 +180,9 @@ const Database = () => {
     }
 
     setFilteredUsers(filtered);
-  }, [users, searchName, searchCompany, searchCity, filterRegion, filterEvent, filterDate]);
+  }, [searchName, searchCompany, searchCity, filterRegion, filterEvent, filterDate]);
 
+  // Initial data fetch
   useEffect(() => {
     const isAuthenticated = localStorage.getItem("isAuthenticated") === "true";
     if (!isAuthenticated) {
@@ -203,26 +190,102 @@ const Database = () => {
       return;
     }
     
-    fetchUsers();
-    fetchEvents();
-    fetchActiveEvent();
+    fetchAllData();
   }, [navigate]);
 
+  // Cleanup polling on unmount
   useEffect(() => {
-    // Apply filters whenever users or filter states change
+    return () => {
+      if (pollingIntervalRef.current) {
+        clearInterval(pollingIntervalRef.current);
+      }
+    };
+  }, []);
+
+  // Auto-refresh with polling (every 3 seconds) - OPTIMIZED to prevent blinking
+  useEffect(() => {
+    // Clear existing interval
+    if (pollingIntervalRef.current) {
+      clearInterval(pollingIntervalRef.current);
+    }
+
+    if (activeTab === "users") {
+      // Start new polling interval
+      pollingIntervalRef.current = setInterval(() => {
+        checkForUpdates();
+      }, 3000);
+    }
+
+    return () => {
+      if (pollingIntervalRef.current) {
+        clearInterval(pollingIntervalRef.current);
+      }
+    };
+  }, [activeTab]);
+
+  // Apply filters only when users reference changes
+  useEffect(() => {
     applyFilters();
-  }, [applyFilters]);
+  }, [users, applyFilters]);
+
+  // Check for updates and auto-refresh - OPTIMIZED to prevent blinking
+  const checkForUpdates = async () => {
+    try {
+      const res = await axios.get("http://localhost:8000/users");
+      const newUsers = res.data;
+      const currentUsers = usersRef.current;
+      
+      // Check if data has changed (by comparing length or content)
+      const hasChanges = newUsers.length !== currentUsers.length || 
+                        JSON.stringify(newUsers) !== JSON.stringify(currentUsers);
+      
+      if (hasChanges) {
+        // Update users state (this will trigger applyFilters via useEffect)
+        setUsers(newUsers);
+        setLastUpdate(Date.now());
+        
+        // Show toast notification
+        if (newUsers.length > currentUsers.length) {
+          const newCount = newUsers.length - currentUsers.length;
+          setToastMessage(`${newCount} new ${newCount === 1 ? 'visitor' : 'visitors'} registered!`);
+        } else {
+          setToastMessage("Visitor data updated");
+        }
+        setShowRefreshToast(true);
+        
+        // Auto-hide toast after 3 seconds
+        setTimeout(() => {
+          setShowRefreshToast(false);
+        }, 3000);
+      }
+    } catch (err) {
+      console.error("Error checking for updates:", err);
+    }
+  };
+
+  const fetchAllData = async () => {
+    setLoading(true);
+    try {
+      await Promise.all([
+        fetchUsers(),
+        fetchEvents(),
+        fetchActiveEvent()
+      ]);
+    } catch (err) {
+      console.error("Error fetching data:", err);
+    } finally {
+      setLoading(false);
+      isFirstLoad.current = false;
+    }
+  };
 
   const fetchUsers = async () => {
     try {
       const res = await axios.get("http://localhost:8000/users");
       setUsers(res.data);
-      setFilteredUsers(res.data);
-      setLoading(false);
     } catch (err) {
       console.error("Error fetching users:", err);
       setError("Failed to fetch users");
-      setLoading(false);
     }
   };
 
@@ -253,39 +316,13 @@ const Database = () => {
     setFilterDate("");
   };
 
-  // Toggle row expansion
-  const toggleRowExpansion = (userId) => {
-    const newExpandedRows = new Set(expandedRows);
-    if (expandedRows.has(userId)) {
-      newExpandedRows.delete(userId);
-    } else {
-      newExpandedRows.add(userId);
-    }
-    setExpandedRows(newExpandedRows);
-  };
-
-  // Format full address for display
-  const formatAddress = (user) => {
+  // Format location for display
+  const formatLocation = (user) => {
     const parts = [];
-    if (user.house_number) parts.push(user.house_number);
-    if (user.street_name) parts.push(user.street_name);
-    if (user.barangay) parts.push(user.barangay);
     if (user.city) parts.push(user.city);
     if (user.region) parts.push(user.region);
     
-    return parts.length > 0 ? parts.join(', ') : 'No address provided';
-  };
-
-  // Format address lines for expanded view
-  const formatAddressLines = (user) => {
-    const lines = [];
-    if (user.house_number) lines.push({ label: 'House/Bldg', value: user.house_number });
-    if (user.street_name) lines.push({ label: 'Street', value: user.street_name });
-    if (user.barangay) lines.push({ label: 'Barangay', value: user.barangay });
-    if (user.city) lines.push({ label: 'City', value: user.city });
-    if (user.region) lines.push({ label: 'Region', value: user.region });
-    
-    return lines;
+    return parts.length > 0 ? parts.join(', ') : 'No location provided';
   };
 
   // Excel Download Function
@@ -297,12 +334,9 @@ const Database = () => {
       'Company': user.company_name,
       'Phone': user.phone,
       'Email': user.email,
-      'House/Bldg #': user.house_number || '',
-      'Street': user.street_name || '',
-      'Barangay': user.barangay || '',
-      'City': user.city || '',
+      'City/Municipality': user.city || '',
       'Region': user.region || '',
-      'Full Address': formatAddress(user),
+      'Location': formatLocation(user),
       'Event': user.event_name || 'No Event',
       'Registered': formatDate(user.created_at)
     }));
@@ -311,8 +345,7 @@ const Database = () => {
     
     const colWidths = [
       { wch: 20 }, { wch: 20 }, { wch: 15 }, { wch: 25 },
-      { wch: 12 }, { wch: 15 }, { wch: 15 }, { wch: 15 },
-      { wch: 15 }, { wch: 40 }, { wch: 20 }, { wch: 20 }
+      { wch: 20 }, { wch: 30 }, { wch: 40 }, { wch: 20 }, { wch: 20 }
     ];
     ws['!cols'] = colWidths;
 
@@ -338,8 +371,8 @@ const Database = () => {
   const confirmSetActiveEvent = async () => {
     try {
       await axios.post(`http://localhost:8000/events/${confirmData.eventId}/set-active`);
-      fetchEvents();
-      fetchActiveEvent();
+      await fetchEvents();
+      await fetchActiveEvent();
       setShowConfirmDialog(false);
       setConfirmData(null);
       setConfirmAction(null);
@@ -358,7 +391,7 @@ const Database = () => {
   const confirmDeleteUser = async () => {
     try {
       await axios.delete(`http://localhost:8000/users/${confirmData.userId}`);
-      fetchUsers();
+      await fetchUsers();
       setShowConfirmDialog(false);
       setConfirmData(null);
       setConfirmAction(null);
@@ -413,8 +446,8 @@ const Database = () => {
       setEventSchedule("");
       setShowEventForm(false);
       setEditingEvent(null);
-      fetchEvents();
-      fetchActiveEvent();
+      await fetchEvents();
+      await fetchActiveEvent();
     } catch (err) {
       console.error("Error saving event:", err);
       setError("Failed to save event");
@@ -441,9 +474,9 @@ const Database = () => {
     if (window.confirm("Are you sure you want to delete this event?")) {
       try {
         await axios.delete(`http://localhost:8000/events/${eventId}`);
-        fetchEvents();
-        fetchActiveEvent();
-        fetchUsers();
+        await fetchEvents();
+        await fetchActiveEvent();
+        await fetchUsers();
       } catch (err) {
         console.error("Error deleting event:", err);
         setError("Failed to delete event");
@@ -469,7 +502,7 @@ const Database = () => {
     });
   };
 
-  if (loading) {
+  if (loading && isFirstLoad.current) {
     return <div className="loading">Loading...</div>;
   }
 
@@ -518,6 +551,14 @@ const Database = () => {
           {error && (
             <div className="error-alert">
               {error}
+            </div>
+          )}
+
+          {/* Auto-refresh Toast Notification */}
+          {showRefreshToast && (
+            <div className="refresh-toast">
+              <span className="refresh-icon">🔄</span>
+              <span className="refresh-message">{toastMessage}</span>
             </div>
           )}
 
@@ -646,7 +687,8 @@ const Database = () => {
                       <th>Company</th>
                       <th>Phone</th>
                       <th>Email</th>
-                      <th>Address</th>
+                      <th>City</th>
+                      <th>Region</th>
                       <th>Event</th>
                       <th>Registered</th>
                       <th>Actions</th>
@@ -655,75 +697,43 @@ const Database = () => {
                   <tbody>
                     {filteredUsers.length > 0 ? (
                       filteredUsers.map((user) => (
-                        <React.Fragment key={user.id}>
-                          <tr>
-                            <td>{user.full_name}</td>
-                            <td>
-                              <span className="company-badge">
-                                {user.company_name}
+                        <tr key={user.id}>
+                          <td>{user.full_name}</td>
+                          <td>
+                            <span className="company-badge">
+                              {user.company_name}
+                            </span>
+                          </td>
+                          <td>{user.phone}</td>
+                          <td>{user.email}</td>
+                          <td>{user.city || '—'}</td>
+                          <td>{user.region || '—'}</td>
+                          <td>
+                            {user.event_name ? (
+                              <span className={`event-badge ${user.event_name === activeEvent?.event_name ? 'active' : ''}`}>
+                                {user.event_name}
                               </span>
-                            </td>
-                            <td>{user.phone}</td>
-                            <td>{user.email}</td>
-                            <td>
-                              <div className="address-cell">
-                                <span className="address-preview">
-                                  {formatAddress(user).substring(0, 25)}
-                                  {formatAddress(user).length > 25 ? '...' : ''}
-                                </span>
-                                <button 
-                                  className={`expand-address-btn ${expandedRows.has(user.id) ? 'expanded' : ''}`}
-                                  onClick={() => toggleRowExpansion(user.id)}
-                                  title={expandedRows.has(user.id) ? "Hide full address" : "Show full address"}
-                                >
-                                  ▼
-                                </button>
-                              </div>
-                            </td>
-                            <td>
-                              {user.event_name ? (
-                                <span className={`event-badge ${user.event_name === activeEvent?.event_name ? 'active' : ''}`}>
-                                  {user.event_name}
-                                </span>
-                              ) : (
-                                <span className="event-badge">—</span>
-                              )}
-                            </td>
-                            <td>{formatDate(user.created_at)}</td>
-                            <td>
-                              <div className="action-group">
-                                <button
-                                  onClick={() => handleDeleteUser(user.id, user.full_name)}
-                                  className="icon-btn delete"
-                                  title="Delete user"
-                                >
-                                  ×
-                                </button>
-                              </div>
-                            </td>
-                          </tr>
-                          {expandedRows.has(user.id) && (
-                            <tr className="expanded-row">
-                              <td colSpan="8">
-                                <div className="expanded-address">
-                                  <div className="expanded-address-title">Full Address</div>
-                                  <div className="expanded-address-content">
-                                    {formatAddressLines(user).map((line, index) => (
-                                      <div key={index} className="expanded-address-line">
-                                        <span className="expanded-address-label">{line.label}:</span>
-                                        <span className="expanded-address-value">{line.value}</span>
-                                      </div>
-                                    ))}
-                                  </div>
-                                </div>
-                              </td>
-                            </tr>
-                          )}
-                        </React.Fragment>
+                            ) : (
+                              <span className="event-badge">—</span>
+                            )}
+                          </td>
+                          <td>{formatDate(user.created_at)}</td>
+                          <td>
+                            <div className="action-group">
+                              <button
+                                onClick={() => handleDeleteUser(user.id, user.full_name)}
+                                className="icon-btn delete"
+                                title="Delete user"
+                              >
+                                ×
+                              </button>
+                            </div>
+                          </td>
+                        </tr>
                       ))
                     ) : (
                       <tr>
-                        <td colSpan="8" className="empty-state">
+                        <td colSpan="9" className="empty-state">
                           No visitors match your filters
                         </td>
                       </tr>
