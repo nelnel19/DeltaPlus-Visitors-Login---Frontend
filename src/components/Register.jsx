@@ -52,28 +52,28 @@ const CustomSelect = ({ value, onChange, options, placeholder }) => {
   );
 };
 
-// Philippine Regions data
+// Philippine Regions data - Using both code and full name for compatibility
 const PHILIPPINE_REGIONS = [
-  { value: "NCR", label: "National Capital Region (NCR)" },
-  { value: "CAR", label: "Cordillera Administrative Region (CAR)" },
-  { value: "I", label: "Region I (Ilocos Region)" },
-  { value: "II", label: "Region II (Cagayan Valley)" },
-  { value: "III", label: "Region III (Central Luzon)" },
-  { value: "IV-A", label: "Region IV-A (CALABARZON)" },
-  { value: "MIMAROPA", label: "MIMAROPA Region" },
-  { value: "V", label: "Region V (Bicol Region)" },
-  { value: "VI", label: "Region VI (Western Visayas)" },
-  { value: "VII", label: "Region VII (Central Visayas)" },
-  { value: "VIII", label: "Region VIII (Eastern Visayas)" },
-  { value: "IX", label: "Region IX (Zamboanga Peninsula)" },
-  { value: "X", label: "Region X (Northern Mindanao)" },
-  { value: "XI", label: "Region XI (Davao Region)" },
-  { value: "XII", label: "Region XII (SOCCSKSARGEN)" },
-  { value: "XIII", label: "Region XIII (Caraga)" },
-  { value: "BARMM", label: "Bangsamoro Autonomous Region in Muslim Mindanao (BARMM)" }
+  { value: "NCR", label: "National Capital Region (NCR)", fullName: "National Capital Region (NCR)" },
+  { value: "CAR", label: "Cordillera Administrative Region (CAR)", fullName: "Cordillera Administrative Region (CAR)" },
+  { value: "I", label: "Region I (Ilocos Region)", fullName: "Region I (Ilocos Region)" },
+  { value: "II", label: "Region II (Cagayan Valley)", fullName: "Region II (Cagayan Valley)" },
+  { value: "III", label: "Region III (Central Luzon)", fullName: "Region III (Central Luzon)" },
+  { value: "IV-A", label: "Region IV-A (CALABARZON)", fullName: "Region IV-A (CALABARZON)" },
+  { value: "MIMAROPA", label: "MIMAROPA Region", fullName: "MIMAROPA Region" },
+  { value: "V", label: "Region V (Bicol Region)", fullName: "Region V (Bicol Region)" },
+  { value: "VI", label: "Region VI (Western Visayas)", fullName: "Region VI (Western Visayas)" },
+  { value: "VII", label: "Region VII (Central Visayas)", fullName: "Region VII (Central Visayas)" },
+  { value: "VIII", label: "Region VIII (Eastern Visayas)", fullName: "Region VIII (Eastern Visayas)" },
+  { value: "IX", label: "Region IX (Zamboanga Peninsula)", fullName: "Region IX (Zamboanga Peninsula)" },
+  { value: "X", label: "Region X (Northern Mindanao)", fullName: "Region X (Northern Mindanao)" },
+  { value: "XI", label: "Region XI (Davao Region)", fullName: "Region XI (Davao Region)" },
+  { value: "XII", label: "Region XII (SOCCSKSARGEN)", fullName: "Region XII (SOCCSKSARGEN)" },
+  { value: "XIII", label: "Region XIII (Caraga)", fullName: "Region XIII (Caraga)" },
+  { value: "BARMM", label: "Bangsamoro Autonomous Region in Muslim Mindanao (BARMM)", fullName: "Bangsamoro Autonomous Region in Muslim Mindanao (BARMM)" }
 ];
 
-// Cities organized by region (unchanged)
+// Complete cities organized by region code
 const CITIES_BY_REGION = {
   // NCR - National Capital Region
   NCR: [
@@ -99,7 +99,12 @@ const CITIES_BY_REGION = {
   // CAR - Cordillera Administrative Region
   CAR: [
     { value: "Baguio", label: "Baguio" },
-    { value: "Tabuk", label: "Tabuk" }
+    { value: "Tabuk", label: "Tabuk" },
+    { value: "Lamut", label: "Lamut" },
+    { value: "Lagawe", label: "Lagawe" },
+    { value: "Bontoc", label: "Bontoc" },
+    { value: "La Trinidad", label: "La Trinidad" },
+    { value: "Bauko", label: "Bauko" }
   ],
 
   // Region I - Ilocos Region
@@ -107,16 +112,19 @@ const CITIES_BY_REGION = {
     { value: "Alaminos", label: "Alaminos" },
     { value: "Dagupan", label: "Dagupan" },
     { value: "Laoag", label: "Laoag" },
-    { value: "San Carlos", label: "San Carlos" },
+    { value: "San Carlos (Pangasinan)", label: "San Carlos (Pangasinan)" },
     { value: "Urdaneta", label: "Urdaneta" },
-    { value: "Vigan", label: "Vigan" }
+    { value: "Vigan", label: "Vigan" },
+    { value: "Batac", label: "Batac" },
+    { value: "Candon", label: "Candon" }
   ],
 
   // Region II - Cagayan Valley
   II: [
     { value: "Cauayan", label: "Cauayan" },
     { value: "Santiago", label: "Santiago" },
-    { value: "Tuguegarao", label: "Tuguegarao" }
+    { value: "Tuguegarao", label: "Tuguegarao" },
+    { value: "Ilagan", label: "Ilagan" }
   ],
 
   // Region III - Central Luzon
@@ -131,10 +139,11 @@ const CITIES_BY_REGION = {
     { value: "Muñoz", label: "Science City of Muñoz" },
     { value: "Olongapo", label: "Olongapo" },
     { value: "Palayan", label: "Palayan" },
-    { value: "San Fernando", label: "San Fernando" },
-    { value: "San Jose", label: "San Jose" },
+    { value: "San Fernando (Pampanga)", label: "San Fernando (Pampanga)" },
+    { value: "San Jose (Nueva Ecija)", label: "San Jose (Nueva Ecija)" },
     { value: "San Jose Del Monte", label: "San Jose Del Monte" },
-    { value: "Tarlac", label: "Tarlac" }
+    { value: "Tarlac", label: "Tarlac" },
+    { value: "Baliwag", label: "Baliwag" }
   ],
 
   // Region IV-A - CALABARZON
@@ -158,13 +167,17 @@ const CITIES_BY_REGION = {
     { value: "Tagaytay", label: "Tagaytay" },
     { value: "Tanauan", label: "Tanauan" },
     { value: "Tayabas", label: "Tayabas" },
-    { value: "Trece Martires", label: "Trece Martires" }
+    { value: "Trece Martires", label: "Trece Martires" },
+    { value: "Silang", label: "Silang" },
+    { value: "Rosario", label: "Rosario" }
   ],
 
   // MIMAROPA
   MIMAROPA: [
     { value: "Calapan", label: "Calapan" },
-    { value: "Puerto Princesa", label: "Puerto Princesa" }
+    { value: "Puerto Princesa", label: "Puerto Princesa" },
+    { value: "Odiongan", label: "Odiongan" },
+    { value: "Roxas (Mindoro)", label: "Roxas" }
   ],
 
   // Region V - Bicol Region
@@ -173,9 +186,10 @@ const CITIES_BY_REGION = {
     { value: "Legazpi", label: "Legazpi" },
     { value: "Ligao", label: "Ligao" },
     { value: "Masbate", label: "Masbate" },
-    { value: "Naga", label: "Naga" },
+    { value: "Naga (Camarines Sur)", label: "Naga (Camarines Sur)" },
     { value: "Sorsogon", label: "Sorsogon" },
-    { value: "Tabaco", label: "Tabaco" }
+    { value: "Tabaco", label: "Tabaco" },
+    { value: "Daet", label: "Daet" }
   ],
 
   // Region VI - Western Visayas
@@ -189,13 +203,14 @@ const CITIES_BY_REGION = {
     { value: "Kabankalan", label: "Kabankalan" },
     { value: "La Carlota", label: "La Carlota" },
     { value: "Passi", label: "Passi" },
-    { value: "Roxas", label: "Roxas" },
+    { value: "Roxas (Capiz)", label: "Roxas" },
     { value: "Sagay", label: "Sagay" },
-    { value: "San Carlos", label: "San Carlos" },
+    { value: "San Carlos (Negros Occidental)", label: "San Carlos (Negros Occidental)" },
     { value: "Silay", label: "Silay" },
     { value: "Sipalay", label: "Sipalay" },
-    { value: "Talisay", label: "Talisay" },
-    { value: "Victorias", label: "Victorias" }
+    { value: "Talisay (Negros Occidental)", label: "Talisay" },
+    { value: "Victorias", label: "Victorias" },
+    { value: "Kalibo", label: "Kalibo" }
   ],
 
   // Region VII - Central Visayas
@@ -211,11 +226,12 @@ const CITIES_BY_REGION = {
     { value: "Guihulngan", label: "Guihulngan" },
     { value: "Lapu-Lapu", label: "Lapu-Lapu" },
     { value: "Mandaue", label: "Mandaue" },
-    { value: "Naga", label: "Naga (Cebu)" },
-    { value: "San Carlos", label: "San Carlos" },
-    { value: "Talisay", label: "Talisay" },
+    { value: "Naga (Cebu)", label: "Naga (Cebu)" },
+    { value: "San Carlos (Negros Oriental)", label: "San Carlos" },
+    { value: "Talisay (Cebu)", label: "Talisay" },
     { value: "Tanjay", label: "Tanjay" },
-    { value: "Toledo", label: "Toledo" }
+    { value: "Toledo", label: "Toledo" },
+    { value: "Tagbilaran", label: "Tagbilaran" }
   ],
 
   // Region VIII - Eastern Visayas
@@ -233,7 +249,7 @@ const CITIES_BY_REGION = {
   IX: [
     { value: "Dapitan", label: "Dapitan" },
     { value: "Dipolog", label: "Dipolog" },
-    { value: "Isabela", label: "Isabela (Basilan)" },
+    { value: "Isabela (Basilan)", label: "Isabela (Basilan)" },
     { value: "Pagadian", label: "Pagadian" },
     { value: "Zamboanga", label: "Zamboanga" }
   ],
@@ -248,7 +264,7 @@ const CITIES_BY_REGION = {
     { value: "Oroquieta", label: "Oroquieta" },
     { value: "Ozamiz", label: "Ozamiz" },
     { value: "Tangub", label: "Tangub" },
-    { value: "Valencia", label: "Valencia (Bukidnon)" }
+    { value: "Valencia (Bukidnon)", label: "Valencia" }
   ],
 
   // Region XI - Davao Region
@@ -258,7 +274,8 @@ const CITIES_BY_REGION = {
     { value: "Mati", label: "Mati" },
     { value: "Panabo", label: "Panabo" },
     { value: "Samal", label: "Island Garden City of Samal" },
-    { value: "Tagum", label: "Tagum" }
+    { value: "Tagum", label: "Tagum" },
+    { value: "Malita", label: "Malita" }
   ],
 
   // Region XII - SOCCSKSARGEN
@@ -267,7 +284,8 @@ const CITIES_BY_REGION = {
     { value: "General Santos", label: "General Santos" },
     { value: "Kidapawan", label: "Kidapawan" },
     { value: "Koronadal", label: "Koronadal" },
-    { value: "Tacurong", label: "Tacurong" }
+    { value: "Tacurong", label: "Tacurong" },
+    { value: "Polomolok", label: "Polomolok" }
   ],
 
   // Region XIII - Caraga
@@ -283,7 +301,9 @@ const CITIES_BY_REGION = {
   // BARMM
   BARMM: [
     { value: "Lamitan", label: "Lamitan" },
-    { value: "Marawi", label: "Marawi" }
+    { value: "Marawi", label: "Marawi" },
+    { value: "Jolo", label: "Jolo" },
+    { value: "Bongao", label: "Bongao" }
   ]
 };
 
@@ -304,7 +324,6 @@ function Register() {
     full_name: "",
     company_name: "",
     phone: "",
-    // Removed: house_number, street_name, barangay
     city: "",
     region: "",
     email: ""
@@ -375,6 +394,7 @@ function Register() {
   };
 
   const handleRegionChange = (value) => {
+    // When region changes, we store the region code
     setForm({ ...form, region: value, city: "" });
     if (error) setError("");
   };
@@ -407,14 +427,22 @@ function Register() {
     setLoading(true);
     setError("");
     
+    // Find the full region name from the selected code
+    const selectedRegion = PHILIPPINE_REGIONS.find(r => r.value === form.region);
+    
+    // Prepare form data with full region name for database compatibility
+    const formData = {
+      ...form,
+      region: selectedRegion ? selectedRegion.fullName : form.region // Send full name to database
+    };
+    
     try {
-      await axios.post("https://deltaplus-visitors-login-backend-ydkm.onrender.com/register", form);
+      await axios.post("https://deltaplus-visitors-login-backend-ydkm.onrender.com/register", formData);
       setSuccess(true);
       setForm({ 
         full_name: "", 
         company_name: "", 
         phone: "", 
-        // Removed: house_number, street_name, barangay
         city: "", 
         region: "", 
         email: "" 
