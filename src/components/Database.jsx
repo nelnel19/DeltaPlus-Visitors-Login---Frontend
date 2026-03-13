@@ -82,7 +82,7 @@ const PHILIPPINE_REGIONS = [
 ];
 
 // Simple direct mapping for region filtering
-const REGION_DIRECT_MATCH = {   
+const REGION_DIRECT_MATCH = {
   "National Capital Region (NCR)": "NCR",
   "Cordillera Administrative Region (CAR)": "CAR",
   "Region I (Ilocos Region)": "I",
