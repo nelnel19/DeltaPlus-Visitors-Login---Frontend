@@ -332,11 +332,13 @@ function Register() {
   const [loading, setLoading] = useState(false);
   const [success, setSuccess] = useState(false);
   const [error, setError] = useState("");
+  const [validationError, setValidationError] = useState("");
   const [currentSlide, setCurrentSlide] = useState(0);
   const [tvPower, setTvPower] = useState(true);
   const [staticNoise, setStaticNoise] = useState(false);
   const [availableCities, setAvailableCities] = useState([]);
   const [isMobile, setIsMobile] = useState(window.innerWidth <= 768);
+  const [touchedFields, setTouchedFields] = useState({});
 
   const slides = [
     {
@@ -383,20 +385,75 @@ function Register() {
     });
   }, []);
 
+  // Validate all form fields
+  const validateForm = () => {
+    if (!form.full_name.trim()) {
+      setValidationError("Full name is required");
+      return false;
+    }
+    if (!form.company_name.trim()) {
+      setValidationError("Company name is required");
+      return false;
+    }
+    if (!form.phone.trim()) {
+      setValidationError("Phone number is required");
+      return false;
+    }
+    if (!form.email.trim()) {
+      setValidationError("Email address is required");
+      return false;
+    }
+    if (!form.region) {
+      setValidationError("Please select a region");
+      return false;
+    }
+    if (!form.city) {
+      setValidationError("Please select a city/municipality");
+      return false;
+    }
+    
+    // Email validation
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!emailRegex.test(form.email)) {
+      setValidationError("Please enter a valid email address");
+      return false;
+    }
+    
+    // Phone validation (basic - at least 10 digits)
+    const phoneDigits = form.phone.replace(/\D/g, '');
+    if (phoneDigits.length < 10) {
+      setValidationError("Please enter a valid phone number with at least 10 digits");
+      return false;
+    }
+    
+    setValidationError("");
+    return true;
+  };
+
   const handleChange = (e) => {
-    setForm({ ...form, [e.target.name]: e.target.value });
+    const { name, value } = e.target;
+    setForm({ ...form, [name]: value });
+    setTouchedFields({ ...touchedFields, [name]: true });
+    setValidationError("");
     if (error) setError("");
   };
 
   const handleCityChange = (value) => {
     setForm({ ...form, city: value });
+    setTouchedFields({ ...touchedFields, city: true });
+    setValidationError("");
     if (error) setError("");
   };
 
   const handleRegionChange = (value) => {
-    // When region changes, we store the region code
     setForm({ ...form, region: value, city: "" });
+    setTouchedFields({ ...touchedFields, region: true, city: true });
+    setValidationError("");
     if (error) setError("");
+  };
+
+  const handleBlur = (fieldName) => {
+    setTouchedFields({ ...touchedFields, [fieldName]: true });
   };
 
   const createRipple = (event) => {
@@ -424,6 +481,18 @@ function Register() {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    
+    // Validate all fields before submission
+    if (!validateForm()) {
+      // Mark all fields as touched to show validation errors
+      const allTouched = {};
+      Object.keys(form).forEach(key => {
+        allTouched[key] = true;
+      });
+      setTouchedFields(allTouched);
+      return;
+    }
+    
     setLoading(true);
     setError("");
     
@@ -447,6 +516,7 @@ function Register() {
         region: "", 
         email: "" 
       });
+      setTouchedFields({});
       setTimeout(() => setSuccess(false), 5000);
     } catch (err) {
       setError("Registration failed: Email already registered.");
@@ -481,6 +551,14 @@ function Register() {
 
   const toggleTV = () => {
     setTvPower(!tvPower);
+  };
+
+  // Check if a field is invalid (touched and empty)
+  const isFieldInvalid = (fieldName) => {
+    if (fieldName === 'region' || fieldName === 'city') {
+      return touchedFields[fieldName] && !form[fieldName];
+    }
+    return touchedFields[fieldName] && !form[fieldName]?.trim();
   };
 
   return (
@@ -591,8 +669,19 @@ function Register() {
               </div>
             )}
 
-            {/* Error Message */}
-            {error && (
+            {/* Validation Error Message */}
+            {validationError && (
+              <div className="error-message">
+                <span className="error-icon">!</span>
+                <div className="error-content">
+                  <strong>Validation Error</strong>
+                  <p>{validationError}</p>
+                </div>
+              </div>
+            )}
+
+            {/* API Error Message */}
+            {error && !validationError && (
               <div className="error-message">
                 <span className="error-icon">!</span>
                 <div className="error-content">
@@ -602,7 +691,7 @@ function Register() {
               </div>
             )}
 
-            <form onSubmit={handleSubmit} className="registration-form">
+            <form onSubmit={handleSubmit} className="registration-form" noValidate>
               <div className="form-group">
                 <label htmlFor="full_name">Full Name *</label>
                 <input
@@ -612,9 +701,13 @@ function Register() {
                   placeholder="Enter your full name"
                   value={form.full_name}
                   onChange={handleChange}
+                  onBlur={() => handleBlur('full_name')}
                   required
-                  className="form-input"
+                  className={`form-input ${isFieldInvalid('full_name') ? 'error' : ''}`}
                 />
+                {isFieldInvalid('full_name') && (
+                  <small className="error-text">Full name is required</small>
+                )}
               </div>
 
               <div className="form-group">
@@ -626,9 +719,13 @@ function Register() {
                   placeholder="Enter your company name"
                   value={form.company_name}
                   onChange={handleChange}
+                  onBlur={() => handleBlur('company_name')}
                   required
-                  className="form-input"
+                  className={`form-input ${isFieldInvalid('company_name') ? 'error' : ''}`}
                 />
+                {isFieldInvalid('company_name') && (
+                  <small className="error-text">Company name is required</small>
+                )}
               </div>
 
               <div className="form-row">
@@ -641,9 +738,13 @@ function Register() {
                     placeholder="Enter phone number"
                     value={form.phone}
                     onChange={handleChange}
+                    onBlur={() => handleBlur('phone')}
                     required
-                    className="form-input"
+                    className={`form-input ${isFieldInvalid('phone') ? 'error' : ''}`}
                   />
+                  {isFieldInvalid('phone') && (
+                    <small className="error-text">Phone number is required</small>
+                  )}
                 </div>
 
                 <div className="form-group">
@@ -655,9 +756,13 @@ function Register() {
                     placeholder="Enter email address"
                     value={form.email}
                     onChange={handleChange}
+                    onBlur={() => handleBlur('email')}
                     required
-                    className="form-input"
+                    className={`form-input ${isFieldInvalid('email') ? 'error' : ''}`}
                   />
+                  {isFieldInvalid('email') && (
+                    <small className="error-text">Email address is required</small>
+                  )}
                 </div>
               </div>
 
@@ -674,6 +779,9 @@ function Register() {
                       options={PHILIPPINE_REGIONS}
                       placeholder="Select Region"
                     />
+                    {touchedFields.region && !form.region && (
+                      <small className="error-text">Please select a region</small>
+                    )}
                   </div>
 
                   <div className="form-group">
@@ -686,6 +794,9 @@ function Register() {
                     />
                     {!form.region && (
                       <small className="field-note">Please select a region first</small>
+                    )}
+                    {touchedFields.city && form.region && !form.city && (
+                      <small className="error-text">Please select a city/municipality</small>
                     )}
                   </div>
                 </div>
