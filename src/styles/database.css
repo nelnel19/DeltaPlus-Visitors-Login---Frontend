@@ -1217,3 +1217,233 @@ tbody tr:nth-child(even) {
     gap: 2px;
   }
 }
+/* Add these minimalist styles to your database.css */
+
+/* Header Actions Container */
+.header-actions {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+}
+
+/* Minimalist Refresh Button */
+.refresh-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  padding: 6px 12px;
+  background: transparent;
+  border: 1px solid var(--gray-300);
+  border-radius: 4px;
+  color: var(--gray-600);
+  font-size: 12px;
+  font-weight: 400;
+  cursor: pointer;
+  transition: all 0.15s ease;
+  min-width: 80px;
+  letter-spacing: 0.2px;
+}
+
+.refresh-btn:hover:not(:disabled) {
+  border-color: var(--gray-500);
+  color: var(--gray-800);
+  background: var(--gray-50);
+}
+
+.refresh-btn:active:not(:disabled) {
+  transform: translateY(1px);
+}
+
+.refresh-btn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+  border-color: var(--gray-200);
+  color: var(--gray-400);
+  background: var(--gray-50);
+}
+
+.refresh-icon {
+  font-size: 12px;
+  transition: transform 0.3s ease;
+  display: inline-block;
+}
+
+.refresh-btn:not(:disabled):hover .refresh-icon {
+  transform: rotate(180deg);
+}
+
+.refresh-btn:disabled .refresh-icon {
+  animation: minimalSpin 1s linear infinite;
+}
+
+@keyframes minimalSpin {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+/* Minimalist Export Button */
+.export-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  padding: 6px 14px;
+  background: var(--dark-blue);
+  border: 1px solid var(--dark-blue);
+  border-radius: 4px;
+  color: white;
+  font-size: 12px;
+  font-weight: 400;
+  cursor: pointer;
+  transition: all 0.15s ease;
+  letter-spacing: 0.2px;
+}
+
+.export-btn:hover {
+  background: var(--dark-blue-light);
+  border-color: var(--dark-blue-light);
+}
+
+.export-btn:active {
+  transform: translateY(1px);
+}
+
+.export-icon {
+  font-size: 12px;
+}
+
+/* Minimalist Toast Notification */
+.refresh-toast {
+  position: fixed;
+  bottom: 24px;
+  right: 24px;
+  background: white;
+  border: 1px solid var(--gray-200);
+  border-radius: 6px;
+  padding: 10px 16px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  z-index: 1100;
+  animation: fadeInUp 0.2s ease;
+  max-width: 300px;
+}
+
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.refresh-toast .refresh-icon {
+  font-size: 14px;
+  color: var(--success-green);
+}
+
+.refresh-message {
+  font-size: 12px;
+  color: var(--gray-700);
+  font-weight: 400;
+  flex: 1;
+  line-height: 1.4;
+}
+
+/* Minimalist Retry Button */
+.retry-btn {
+  margin-left: 12px;
+  padding: 4px 10px;
+  background: transparent;
+  border: 1px solid var(--gray-300);
+  border-radius: 4px;
+  color: var(--gray-600);
+  font-size: 11px;
+  font-weight: 400;
+  cursor: pointer;
+  transition: all 0.15s ease;
+  letter-spacing: 0.2px;
+}
+
+.retry-btn:hover {
+  border-color: var(--gray-500);
+  color: var(--gray-800);
+  background: var(--gray-50);
+}
+
+.retry-btn:active {
+  transform: translateY(1px);
+}
+
+/* Minimalist Error Alert Enhancement */
+.error-alert {
+  background: #fef2f2;
+  border: 1px solid #fee2e2;
+  border-radius: 6px;
+  padding: 12px 16px;
+  margin-bottom: 24px;
+  font-size: 13px;
+  color: #991b1b;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 12px;
+}
+
+/* Responsive Adjustments */
+@media (max-width: 768px) {
+  .header-actions {
+    width: 100%;
+    gap: 8px;
+  }
+  
+  .refresh-btn,
+  .export-btn {
+    flex: 1;
+    padding: 6px 10px;
+    min-width: 0;
+    font-size: 11px;
+  }
+  
+  .refresh-btn {
+    min-width: 0;
+  }
+  
+  .refresh-toast {
+    bottom: 16px;
+    right: 16px;
+    left: 16px;
+    max-width: none;
+  }
+}
+
+@media (max-width: 480px) {
+  .refresh-btn .refresh-icon,
+  .export-btn .export-icon {
+    font-size: 11px;
+  }
+  
+  .refresh-toast {
+    padding: 10px 14px;
+  }
+  
+  .error-alert {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+  
+  .retry-btn {
+    margin-left: 0;
+    width: 100%;
+  }
+}
