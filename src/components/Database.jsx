@@ -121,8 +121,7 @@ const Database = () => {
   const [filterEvent, setFilterEvent] = useState("all");
   const [filterDate, setFilterDate] = useState("");
   
-  // Auto-refresh state
-  const [lastUpdate, setLastUpdate] = useState(Date.now());
+  // Toast notification state
   const [showRefreshToast, setShowRefreshToast] = useState(false);
   const [toastMessage, setToastMessage] = useState("");
   
@@ -135,7 +134,6 @@ const Database = () => {
   // Refs to prevent blinking
   const usersRef = useRef(users);
   const isFirstLoad = useRef(true);
-  const pollingIntervalRef = useRef(null);
   
   const navigate = useNavigate();
 
@@ -169,7 +167,7 @@ const Database = () => {
       );
     }
 
-    // Filter by region - IMPROVED VERSION
+    // Filter by region
     if (filterRegion !== "all") {
       const selectedRegionName = filterRegion;
       const selectedCode = extractRegionCode(selectedRegionName);
@@ -211,75 +209,20 @@ const Database = () => {
     fetchAllData();
   }, [navigate]);
 
-  // Cleanup polling on unmount
-  useEffect(() => {
-    return () => {
-      if (pollingIntervalRef.current) {
-        clearInterval(pollingIntervalRef.current);
-      }
-    };
-  }, []);
-
-  // Auto-refresh with polling (every 3 seconds) - OPTIMIZED to prevent blinking
-  useEffect(() => {
-    // Clear existing interval
-    if (pollingIntervalRef.current) {
-      clearInterval(pollingIntervalRef.current);
-    }
-
-    if (activeTab === "users") {
-      // Start new polling interval
-      pollingIntervalRef.current = setInterval(() => {
-        checkForUpdates();
-      }, 3000);
-    }
-
-    return () => {
-      if (pollingIntervalRef.current) {
-        clearInterval(pollingIntervalRef.current);
-      }
-    };
-  }, [activeTab]);
-
   // Apply filters only when users reference changes
   useEffect(() => {
     applyFilters();
   }, [users, applyFilters]);
 
-  // Check for updates and auto-refresh - OPTIMIZED to prevent blinking
-  const checkForUpdates = async () => {
-    try {
-      const res = await axios.get("https://deltaplus-visitors-login-backend-ydkm.onrender.com/users");
-      const newUsers = res.data;
-      const currentUsers = usersRef.current;
-      
-      // Check if data has changed (by comparing length or content)
-      const hasChanges = newUsers.length !== currentUsers.length || 
-                        JSON.stringify(newUsers) !== JSON.stringify(currentUsers);
-      
-      if (hasChanges) {
-        // Update users state (this will trigger applyFilters via useEffect)
-        setUsers(newUsers);
-        setLastUpdate(Date.now());
-        
-        // Show toast notification
-        if (newUsers.length > currentUsers.length) {
-          const newCount = newUsers.length - currentUsers.length;
-          setToastMessage(`${newCount} new ${newCount === 1 ? 'visitor' : 'visitors'} registered!`);
-        } else {
-          setToastMessage("Visitor data updated");
-        }
-        setShowRefreshToast(true);
-        
-        // Auto-hide toast after 3 seconds
-        setTimeout(() => {
-          setShowRefreshToast(false);
-        }, 3000);
-      }
-    } catch (err) {
-      console.error("Error checking for updates:", err);
+  // Create axios instance with cache-busting
+  const api = axios.create({
+    baseURL: "https://deltaplus-visitors-login-backend-ydkm.onrender.com",
+    headers: {
+      'Cache-Control': 'no-cache, no-store, must-revalidate',
+      'Pragma': 'no-cache',
+      'Expires': '0',
     }
-  };
+  });
 
   const fetchAllData = async () => {
     setLoading(true);
@@ -289,8 +232,10 @@ const Database = () => {
         fetchEvents(),
         fetchActiveEvent()
       ]);
+      setError(null); // Clear any previous errors
     } catch (err) {
       console.error("Error fetching data:", err);
+      setError("Failed to load data. Please refresh the page.");
     } finally {
       setLoading(false);
       isFirstLoad.current = false;
@@ -299,30 +244,48 @@ const Database = () => {
 
   const fetchUsers = async () => {
     try {
-      const res = await axios.get("https://deltaplus-visitors-login-backend-ydkm.onrender.com/users");
+      const timestamp = new Date().getTime();
+      const res = await api.get(`/users?_=${timestamp}`);
+      console.log(`Fetched ${res.data.length} users`);
       setUsers(res.data);
     } catch (err) {
       console.error("Error fetching users:", err);
-      setError("Failed to fetch users");
+      throw err;
     }
   };
 
   const fetchEvents = async () => {
     try {
-      const res = await axios.get("https://deltaplus-visitors-login-backend-ydkm.onrender.com/events");
+      const timestamp = new Date().getTime();
+      const res = await api.get(`/events?_=${timestamp}`);
       setEvents(res.data);
     } catch (err) {
       console.error("Error fetching events:", err);
+      throw err;
     }
   };
 
   const fetchActiveEvent = async () => {
     try {
-      const res = await axios.get("https://deltaplus-visitors-login-backend-ydkm.onrender.com/events/active");
+      const timestamp = new Date().getTime();
+      const res = await api.get(`/events/active?_=${timestamp}`);
       setActiveEvent(res.data);
     } catch (err) {
       console.error("Error fetching active event:", err);
+      // Don't throw for active event, it's not critical
     }
+  };
+
+  // Manual refresh function
+  const handleManualRefresh = async () => {
+    setLoading(true);
+    await fetchAllData();
+    setLoading(false);
+    setToastMessage("Data refreshed successfully");
+    setShowRefreshToast(true);
+    setTimeout(() => {
+      setShowRefreshToast(false);
+    }, 2000);
   };
 
   const clearFilters = () => {
@@ -388,7 +351,7 @@ const Database = () => {
 
   const confirmSetActiveEvent = async () => {
     try {
-      await axios.post(`https://deltaplus-visitors-login-backend-ydkm.onrender.com/events/${confirmData.eventId}/set-active`);
+      await api.post(`/events/${confirmData.eventId}/set-active`);
       await fetchEvents();
       await fetchActiveEvent();
       setShowConfirmDialog(false);
@@ -408,7 +371,7 @@ const Database = () => {
 
   const confirmDeleteUser = async () => {
     try {
-      await axios.delete(`https://deltaplus-visitors-login-backend-ydkm.onrender.com/users/${confirmData.userId}`);
+      await api.delete(`/users/${confirmData.userId}`);
       await fetchUsers();
       setShowConfirmDialog(false);
       setConfirmData(null);
@@ -455,9 +418,9 @@ const Database = () => {
       };
       
       if (editingEvent) {
-        await axios.put(`https://deltaplus-visitors-login-backend-ydkm.onrender.com/events/${editingEvent.id}`, eventData);
+        await api.put(`/events/${editingEvent.id}`, eventData);
       } else {
-        await axios.post("https://deltaplus-visitors-login-backend-ydkm.onrender.com/events", eventData);
+        await api.post("/events", eventData);
       }
       
       setEventName("");
@@ -491,7 +454,7 @@ const Database = () => {
   const handleDeleteEvent = async (eventId) => {
     if (window.confirm("Are you sure you want to delete this event?")) {
       try {
-        await axios.delete(`https://deltaplus-visitors-login-backend-ydkm.onrender.com/events/${eventId}`);
+        await api.delete(`/events/${eventId}`);
         await fetchEvents();
         await fetchActiveEvent();
         await fetchUsers();
@@ -569,13 +532,16 @@ const Database = () => {
           {error && (
             <div className="error-alert">
               {error}
+              <button onClick={handleManualRefresh} className="retry-btn">
+                Retry
+              </button>
             </div>
           )}
 
-          {/* Auto-refresh Toast Notification */}
+          {/* Toast Notification */}
           {showRefreshToast && (
             <div className="refresh-toast">
-              <span className="refresh-icon">🔄</span>
+              <span className="refresh-icon">✓</span>
               <span className="refresh-message">{toastMessage}</span>
             </div>
           )}
@@ -585,10 +551,21 @@ const Database = () => {
             <div>
               <div className="section-header">
                 <h2>Registered Visitors</h2>
-                <button onClick={exportToExcel} className="export-btn" title="Export to Excel">
-                  <span className="export-icon">📊</span>
-                  Export to Excel
-                </button>
+                <div className="header-actions">
+                  <button 
+                    onClick={handleManualRefresh} 
+                    className="refresh-btn" 
+                    title="Refresh data"
+                    disabled={loading}
+                  >
+                    <span className="refresh-icon">🔄</span>
+                    {loading ? 'Refreshing...' : 'Refresh'}
+                  </button>
+                  <button onClick={exportToExcel} className="export-btn" title="Export to Excel">
+                    <span className="export-icon">📊</span>
+                    Export to Excel
+                  </button>
+                </div>
               </div>
 
               {/* Active Event Card */}
