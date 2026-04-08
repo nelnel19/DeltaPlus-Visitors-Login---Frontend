@@ -129,7 +129,9 @@ const Database = () => {
   // Event form state
   const [showEventForm, setShowEventForm] = useState(false);
   const [eventName, setEventName] = useState("");
-  const [eventSchedule, setEventSchedule] = useState("");
+  const [eventLocation, setEventLocation] = useState("");
+  const [eventStartDate, setEventStartDate] = useState("");
+  const [eventEndDate, setEventEndDate] = useState("");
   const [editingEvent, setEditingEvent] = useState(null);
   
   // Refs to prevent blinking
@@ -343,6 +345,20 @@ const Database = () => {
     return parts.length > 0 ? parts.join(', ') : 'No location provided';
   };
 
+  // Format date range for display
+  const formatDateRange = (startDate, endDate) => {
+    const start = new Date(startDate);
+    const end = new Date(endDate);
+    const startMonth = start.toLocaleDateString('en-US', { month: 'short' });
+    const endMonth = end.toLocaleDateString('en-US', { month: 'short' });
+    
+    if (startMonth === endMonth) {
+      return `${startMonth} ${start.getDate()} - ${end.getDate()}, ${end.getFullYear()}`;
+    } else {
+      return `${startMonth} ${start.getDate()} - ${endMonth} ${end.getDate()}, ${end.getFullYear()}`;
+    }
+  };
+
   // Excel Download Function
   const exportToExcel = () => {
     const dataToExport = (searchName || searchCompany || searchCity || filterRegion !== "all" || filterEvent !== "all" || filterDate) ? filteredUsers : users;
@@ -439,19 +455,11 @@ const Database = () => {
   const handleCreateEvent = async (e) => {
     e.preventDefault();
     try {
-      const localDate = new Date(eventSchedule);
-      
-      const year = localDate.getFullYear();
-      const month = String(localDate.getMonth() + 1).padStart(2, '0');
-      const day = String(localDate.getDate()).padStart(2, '0');
-      const hours = String(localDate.getHours()).padStart(2, '0');
-      const minutes = String(localDate.getMinutes()).padStart(2, '0');
-      
-      const localDateTimeString = `${year}-${month}-${day} ${hours}:${minutes}:00`;
-      
       const eventData = {
         event_name: eventName,
-        event_schedule: localDateTimeString
+        event_location: eventLocation,
+        event_start_date: eventStartDate,
+        event_end_date: eventEndDate
       };
       
       if (editingEvent) {
@@ -461,7 +469,9 @@ const Database = () => {
       }
       
       setEventName("");
-      setEventSchedule("");
+      setEventLocation("");
+      setEventStartDate("");
+      setEventEndDate("");
       setShowEventForm(false);
       setEditingEvent(null);
       await fetchEvents();
@@ -475,16 +485,9 @@ const Database = () => {
   const handleEditEvent = (event) => {
     setEditingEvent(event);
     setEventName(event.event_name);
-    
-    const eventDate = new Date(event.event_schedule);
-    
-    const year = eventDate.getFullYear();
-    const month = String(eventDate.getMonth() + 1).padStart(2, '0');
-    const day = String(eventDate.getDate()).padStart(2, '0');
-    const hours = String(eventDate.getHours()).padStart(2, '0');
-    const minutes = String(eventDate.getMinutes()).padStart(2, '0');
-    
-    setEventSchedule(`${year}-${month}-${day}T${hours}:${minutes}`);
+    setEventLocation(event.event_location);
+    setEventStartDate(event.event_start_date.split('T')[0]);
+    setEventEndDate(event.event_end_date.split('T')[0]);
     setShowEventForm(true);
   };
 
@@ -506,7 +509,9 @@ const Database = () => {
     setShowEventForm(false);
     setEditingEvent(null);
     setEventName("");
-    setEventSchedule("");
+    setEventLocation("");
+    setEventStartDate("");
+    setEventEndDate("");
   };
 
   const formatDate = (dateString) => {
@@ -598,8 +603,9 @@ const Database = () => {
                   <div className="card-content">
                     <span className="card-label">Current Active Event</span>
                     <span className="card-event">{activeEvent.event_name}</span>
+                    <span className="card-location">{activeEvent.event_location}</span>
                     <span className="card-schedule">
-                      {formatDate(activeEvent.event_schedule)}
+                      {formatDateRange(activeEvent.event_start_date, activeEvent.event_end_date)}
                     </span>
                   </div>
                 </div>
@@ -782,8 +788,9 @@ const Database = () => {
                   <div className="card-content">
                     <span className="card-label">Currently Active</span>
                     <span className="card-event">{activeEvent.event_name}</span>
+                    <span className="card-location">{activeEvent.event_location}</span>
                     <span className="card-schedule">
-                      {formatDate(activeEvent.event_schedule)}
+                      {formatDateRange(activeEvent.event_start_date, activeEvent.event_end_date)}
                     </span>
                     <span className="card-badge">Active</span>
                   </div>
@@ -806,11 +813,30 @@ const Database = () => {
                         />
                       </div>
                       <div className="form-group">
-                        <label>Schedule</label>
+                        <label>Location</label>
                         <input
-                          type="datetime-local"
-                          value={eventSchedule}
-                          onChange={(e) => setEventSchedule(e.target.value)}
+                          type="text"
+                          value={eventLocation}
+                          onChange={(e) => setEventLocation(e.target.value)}
+                          placeholder="e.g., SMX Convention Center"
+                          required
+                        />
+                      </div>
+                      <div className="form-group">
+                        <label>Start Date</label>
+                        <input
+                          type="date"
+                          value={eventStartDate}
+                          onChange={(e) => setEventStartDate(e.target.value)}
+                          required
+                        />
+                      </div>
+                      <div className="form-group">
+                        <label>End Date</label>
+                        <input
+                          type="date"
+                          value={eventEndDate}
+                          onChange={(e) => setEventEndDate(e.target.value)}
                           required
                         />
                       </div>
@@ -834,7 +860,8 @@ const Database = () => {
                     <tr>
                       <th>ID</th>
                       <th>Event Name</th>
-                      <th>Schedule</th>
+                      <th>Location</th>
+                      <th>Date Range</th>
                       <th>Status</th>
                       <th>Created</th>
                       <th>Actions</th>
@@ -844,13 +871,14 @@ const Database = () => {
                     {events.length > 0 ? (
                       events.map((event) => (
                         <tr key={event.id}>
-                          <td>#{event.id}</td>
+                          <td>#{event.id.slice(-6)}</td>
                           <td>
                             <span className={`event-badge ${event.is_active ? 'active' : ''}`}>
                               {event.event_name}
                             </span>
                           </td>
-                          <td>{formatDate(event.event_schedule)}</td>
+                          <td>{event.event_location}</td>
+                          <td>{formatDateRange(event.event_start_date, event.event_end_date)}</td>
                           <td>
                             <span className={`status-badge ${event.is_active ? 'active' : 'inactive'}`}>
                               {event.is_active ? 'Active' : 'Inactive'}
@@ -888,7 +916,7 @@ const Database = () => {
                       ))
                     ) : (
                       <tr>
-                        <td colSpan="6" className="empty-state">
+                        <td colSpan="7" className="empty-state">
                           No events created
                         </td>
                       </tr>

@@ -1217,3 +1217,52 @@ tbody tr:nth-child(even) {
     gap: 2px;
   }
 }
+/* Additional styles for event location and date range */
+.card-location {
+  font-size: 13px;
+  color: var(--gray-600);
+  padding: 2px 8px;
+  background: var(--gray-100);
+  border-radius: 4px;
+  margin-left: 8px;
+}
+
+.card-schedule {
+  font-size: 13px;
+  color: var(--gray-500);
+  font-weight: 500;
+}
+
+/* Update active event card to accommodate location */
+.active-event-card .card-content {
+  flex-wrap: wrap;
+  gap: 12px;
+}
+
+@media (max-width: 768px) {
+  .card-location {
+    margin-left: 0;
+    width: 100%;
+  }
+}
+
+/* Style for event location in table */
+td .event-location {
+  font-size: 12px;
+  color: var(--gray-600);
+}
+
+/* Date range styling */
+.date-range {
+  font-size: 12px;
+  color: var(--gray-700);
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.date-range .date-label {
+  font-size: 10px;
+  color: var(--gray-500);
+  text-transform: uppercase;
+}
