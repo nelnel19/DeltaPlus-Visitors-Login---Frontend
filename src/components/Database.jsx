@@ -468,12 +468,15 @@ const Database = () => {
         await axios.post("https://deltaplus-visitors-login-backend-ydkm.onrender.com/events", eventData);
       }
       
+      // Reset form
       setEventName("");
       setEventLocation("");
       setEventStartDate("");
       setEventEndDate("");
       setShowEventForm(false);
       setEditingEvent(null);
+      
+      // Refresh data
       await fetchEvents();
       await fetchActiveEvent();
     } catch (err) {
@@ -483,11 +486,32 @@ const Database = () => {
   };
 
   const handleEditEvent = (event) => {
+    // Set editing event
     setEditingEvent(event);
+    
+    // Populate form fields
     setEventName(event.event_name);
-    setEventLocation(event.event_location);
-    setEventStartDate(event.event_start_date.split('T')[0]);
-    setEventEndDate(event.event_end_date.split('T')[0]);
+    setEventLocation(event.event_location || "");
+    
+    // Format dates for input fields (YYYY-MM-DD)
+    const startDate = event.event_start_date ? new Date(event.event_start_date) : null;
+    const endDate = event.event_end_date ? new Date(event.event_end_date) : null;
+    
+    if (startDate) {
+      const year = startDate.getFullYear();
+      const month = String(startDate.getMonth() + 1).padStart(2, '0');
+      const day = String(startDate.getDate()).padStart(2, '0');
+      setEventStartDate(`${year}-${month}-${day}`);
+    }
+    
+    if (endDate) {
+      const year = endDate.getFullYear();
+      const month = String(endDate.getMonth() + 1).padStart(2, '0');
+      const day = String(endDate.getDate()).padStart(2, '0');
+      setEventEndDate(`${year}-${month}-${day}`);
+    }
+    
+    // Show the form
     setShowEventForm(true);
   };
 
@@ -842,7 +866,7 @@ const Database = () => {
                       </div>
                       <div className="form-actions">
                         <button type="submit" className="primary-btn">
-                          {editingEvent ? "Update" : "Create"}
+                          {editingEvent ? "Update Event" : "Create Event"}
                         </button>
                         <button type="button" onClick={cancelEventForm} className="cancel-btn">
                           Cancel
