@@ -714,17 +714,17 @@ function Register() {
             {/* Active Event Display */}
             {activeEvent && activeEvent.event_name && (
               <div className="active-event-banner">
-                <div className="active-event-icon"></div>
+                <div className="active-event-icon">📢</div>
                 <div className="active-event-content">
                   <div className="active-event-name">{activeEvent.event_name}</div>
                   {activeEvent.event_location && (
                     <div className="active-event-location">
-                      <span className="location-icon"></span> {activeEvent.event_location}
+                      <span className="location-icon">📍</span> {activeEvent.event_location}
                     </div>
                   )}
                   {activeEvent.event_start_date && activeEvent.event_end_date && (
                     <div className="active-event-date">
-                      <span className="date-icon"></span> {formatDateRange(activeEvent.event_start_date, activeEvent.event_end_date)}
+                      <span className="date-icon">📅</span> {formatDateRange(activeEvent.event_start_date, activeEvent.event_end_date)}
                     </div>
                   )}
                 </div>
