@@ -75,7 +75,6 @@ const PHILIPPINE_REGIONS = [
 
 // Complete cities organized by region code
 const CITIES_BY_REGION = {
-  // NCR - National Capital Region
   NCR: [
     { value: "Caloocan", label: "Caloocan" },
     { value: "Las Piñas", label: "Las Piñas" },
@@ -95,8 +94,6 @@ const CITIES_BY_REGION = {
     { value: "Taguig", label: "Taguig" },
     { value: "Valenzuela", label: "Valenzuela" }
   ],
-
-  // CAR - Cordillera Administrative Region
   CAR: [
     { value: "Baguio", label: "Baguio" },
     { value: "Tabuk", label: "Tabuk" },
@@ -106,8 +103,6 @@ const CITIES_BY_REGION = {
     { value: "La Trinidad", label: "La Trinidad" },
     { value: "Bauko", label: "Bauko" }
   ],
-
-  // Region I - Ilocos Region
   I: [
     { value: "Alaminos", label: "Alaminos" },
     { value: "Dagupan", label: "Dagupan" },
@@ -118,16 +113,12 @@ const CITIES_BY_REGION = {
     { value: "Batac", label: "Batac" },
     { value: "Candon", label: "Candon" }
   ],
-
-  // Region II - Cagayan Valley
   II: [
     { value: "Cauayan", label: "Cauayan" },
     { value: "Santiago", label: "Santiago" },
     { value: "Tuguegarao", label: "Tuguegarao" },
     { value: "Ilagan", label: "Ilagan" }
   ],
-
-  // Region III - Central Luzon
   III: [
     { value: "Angeles", label: "Angeles" },
     { value: "Balanga", label: "Balanga" },
@@ -145,8 +136,6 @@ const CITIES_BY_REGION = {
     { value: "Tarlac", label: "Tarlac" },
     { value: "Baliwag", label: "Baliwag" }
   ],
-
-  // Region IV-A - CALABARZON
   "IV-A": [
     { value: "Antipolo", label: "Antipolo" },
     { value: "Bacoor", label: "Bacoor" },
@@ -171,16 +160,12 @@ const CITIES_BY_REGION = {
     { value: "Silang", label: "Silang" },
     { value: "Rosario", label: "Rosario" }
   ],
-
-  // MIMAROPA
   MIMAROPA: [
     { value: "Calapan", label: "Calapan" },
     { value: "Puerto Princesa", label: "Puerto Princesa" },
     { value: "Odiongan", label: "Odiongan" },
     { value: "Roxas (Mindoro)", label: "Roxas" }
   ],
-
-  // Region V - Bicol Region
   V: [
     { value: "Iriga", label: "Iriga" },
     { value: "Legazpi", label: "Legazpi" },
@@ -191,8 +176,6 @@ const CITIES_BY_REGION = {
     { value: "Tabaco", label: "Tabaco" },
     { value: "Daet", label: "Daet" }
   ],
-
-  // Region VI - Western Visayas
   VI: [
     { value: "Bacolod", label: "Bacolod" },
     { value: "Bago", label: "Bago" },
@@ -212,8 +195,6 @@ const CITIES_BY_REGION = {
     { value: "Victorias", label: "Victorias" },
     { value: "Kalibo", label: "Kalibo" }
   ],
-
-  // Region VII - Central Visayas
   VII: [
     { value: "Bais", label: "Bais" },
     { value: "Bayawan", label: "Bayawan" },
@@ -233,8 +214,6 @@ const CITIES_BY_REGION = {
     { value: "Toledo", label: "Toledo" },
     { value: "Tagbilaran", label: "Tagbilaran" }
   ],
-
-  // Region VIII - Eastern Visayas
   VIII: [
     { value: "Baybay", label: "Baybay" },
     { value: "Borongan", label: "Borongan" },
@@ -244,8 +223,6 @@ const CITIES_BY_REGION = {
     { value: "Ormoc", label: "Ormoc" },
     { value: "Tacloban", label: "Tacloban" }
   ],
-
-  // Region IX - Zamboanga Peninsula
   IX: [
     { value: "Dapitan", label: "Dapitan" },
     { value: "Dipolog", label: "Dipolog" },
@@ -253,8 +230,6 @@ const CITIES_BY_REGION = {
     { value: "Pagadian", label: "Pagadian" },
     { value: "Zamboanga", label: "Zamboanga" }
   ],
-
-  // Region X - Northern Mindanao
   X: [
     { value: "Cagayan de Oro", label: "Cagayan de Oro" },
     { value: "El Salvador", label: "El Salvador" },
@@ -266,8 +241,6 @@ const CITIES_BY_REGION = {
     { value: "Tangub", label: "Tangub" },
     { value: "Valencia (Bukidnon)", label: "Valencia" }
   ],
-
-  // Region XI - Davao Region
   XI: [
     { value: "Davao", label: "Davao" },
     { value: "Digos", label: "Digos" },
@@ -277,8 +250,6 @@ const CITIES_BY_REGION = {
     { value: "Tagum", label: "Tagum" },
     { value: "Malita", label: "Malita" }
   ],
-
-  // Region XII - SOCCSKSARGEN
   XII: [
     { value: "Cotabato", label: "Cotabato" },
     { value: "General Santos", label: "General Santos" },
@@ -287,8 +258,6 @@ const CITIES_BY_REGION = {
     { value: "Tacurong", label: "Tacurong" },
     { value: "Polomolok", label: "Polomolok" }
   ],
-
-  // Region XIII - Caraga
   XIII: [
     { value: "Bayugan", label: "Bayugan" },
     { value: "Bislig", label: "Bislig" },
@@ -297,8 +266,6 @@ const CITIES_BY_REGION = {
     { value: "Surigao", label: "Surigao" },
     { value: "Tandag", label: "Tandag" }
   ],
-
-  // BARMM
   BARMM: [
     { value: "Lamitan", label: "Lamitan" },
     { value: "Marawi", label: "Marawi" },
@@ -319,23 +286,17 @@ const getCitiesForRegion = (regionCode) => {
 
 // Phone number formatting and validation functions
 const formatPhilippineNumber = (value) => {
-  // Remove all non-digit characters
   let cleaned = value.replace(/\D/g, '');
-  
-  // If empty, return empty
   if (!cleaned) return '';
   
-  // Handle different input scenarios
   if (cleaned.startsWith('63')) {
     cleaned = '0' + cleaned.substring(2);
   }
   
-  // Limit to 11 digits (0 + 10 digits for mobile)
   if (cleaned.length > 11) {
     cleaned = cleaned.slice(0, 11);
   }
   
-  // Format as +63 XXX XXX XXXX or display as 09XX XXX XXXX
   if (cleaned.length >= 4) {
     const prefix = cleaned.slice(0, 4);
     const rest = cleaned.slice(4);
@@ -351,15 +312,13 @@ const formatPhilippineNumber = (value) => {
 };
 
 const validatePhilippineNumber = (phoneNumber) => {
-  // Remove all spaces and non-digit characters except +
   let cleaned = phoneNumber.replace(/\s/g, '').replace(/[^0-9+]/g, '');
   
-  // Check if it's a valid Philippine mobile number
   const patterns = [
-    /^09\d{9}$/,           // 09123456789 (11 digits)
-    /^\+639\d{9}$/,        // +639123456789 (13 digits with +)
-    /^639\d{9}$/,          // 639123456789 (12 digits)
-    /^9\d{9}$/             // 9123456789 (10 digits, missing leading 0)
+    /^09\d{9}$/,
+    /^\+639\d{9}$/,
+    /^639\d{9}$/,
+    /^9\d{9}$/
   ];
   
   let isValid = false;
@@ -368,7 +327,6 @@ const validatePhilippineNumber = (phoneNumber) => {
   for (const pattern of patterns) {
     if (pattern.test(cleaned)) {
       isValid = true;
-      // Normalize to 09XXXXXXXXX format
       if (cleaned.startsWith('+63')) {
         normalizedNumber = '0' + cleaned.substring(3);
       } else if (cleaned.startsWith('63')) {
@@ -381,6 +339,21 @@ const validatePhilippineNumber = (phoneNumber) => {
   }
   
   return { isValid, normalizedNumber };
+};
+
+// Format date range for display
+const formatDateRange = (startDate, endDate) => {
+  if (!startDate) return '';
+  const start = new Date(startDate);
+  const end = new Date(endDate);
+  const startMonth = start.toLocaleDateString('en-US', { month: 'short' });
+  const endMonth = end.toLocaleDateString('en-US', { month: 'short' });
+  
+  if (startMonth === endMonth) {
+    return `${startMonth} ${start.getDate()} - ${end.getDate()}, ${end.getFullYear()}`;
+  } else {
+    return `${startMonth} ${start.getDate()} - ${endMonth} ${end.getDate()}, ${end.getFullYear()}`;
+  }
 };
 
 function Register() {
@@ -405,18 +378,27 @@ function Register() {
   const [availableCities, setAvailableCities] = useState([]);
   const [isMobile, setIsMobile] = useState(window.innerWidth <= 768);
   const [touchedFields, setTouchedFields] = useState({});
+  const [activeEvent, setActiveEvent] = useState(null);
 
   const slides = [
-    {
-      image: "/delta1.png",
-    },
-    {
-      image: "/delta2.png",
-    },
-    {
-      image: "/delta3.jpg",
-    }
+    { image: "/delta1.png" },
+    { image: "/delta2.png" },
+    { image: "/delta3.jpg" }
   ];
+
+  // Fetch active event on component mount
+  useEffect(() => {
+    fetchActiveEvent();
+  }, []);
+
+  const fetchActiveEvent = async () => {
+    try {
+      const res = await axios.get("https://deltaplus-visitors-login-backend-ydkm.onrender.com/events/active");
+      setActiveEvent(res.data);
+    } catch (err) {
+      console.error("Error fetching active event:", err);
+    }
+  };
 
   // Handle resize events
   useEffect(() => {
@@ -433,7 +415,6 @@ function Register() {
     if (form.region) {
       const cities = getCitiesForRegion(form.region);
       setAvailableCities(cities);
-      // Clear city if current city is not in the new region
       if (form.city && !cities.some(city => city.value === form.city)) {
         setForm(prev => ({ ...prev, city: "" }));
       }
@@ -478,21 +459,18 @@ function Register() {
       return false;
     }
     
-    // Email validation
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
     if (!emailRegex.test(form.email)) {
       setValidationError("Please enter a valid email address");
       return false;
     }
     
-    // Enhanced phone validation for Philippine numbers
     const { isValid, normalizedNumber } = validatePhilippineNumber(form.phone);
     if (!isValid) {
       setValidationError("Please enter a valid Philippine mobile number (e.g., 09123456789 or +639123456789)");
       return false;
     }
     
-    // Update form with normalized number if needed
     if (normalizedNumber !== form.phone) {
       setForm(prev => ({ ...prev, phone: normalizedNumber }));
     }
@@ -505,7 +483,6 @@ function Register() {
     const { name, value } = e.target;
     
     if (name === 'phone') {
-      // Format the phone number as user types
       const formatted = formatPhilippineNumber(value);
       setForm({ ...form, phone: formatted });
     } else {
@@ -534,7 +511,6 @@ function Register() {
   const handleBlur = (fieldName) => {
     setTouchedFields({ ...touchedFields, [fieldName]: true });
     
-    // Validate and format phone number on blur
     if (fieldName === 'phone' && form.phone) {
       const { isValid, normalizedNumber } = validatePhilippineNumber(form.phone);
       if (isValid && normalizedNumber !== form.phone) {
@@ -571,9 +547,7 @@ function Register() {
   const handleSubmit = async (e) => {
     e.preventDefault();
     
-    // Validate all fields before submission
     if (!validateForm()) {
-      // Mark all fields as touched to show validation errors
       const allTouched = {};
       Object.keys(form).forEach(key => {
         allTouched[key] = true;
@@ -585,13 +559,11 @@ function Register() {
     setLoading(true);
     setError("");
     
-    // Find the full region name from the selected code
     const selectedRegion = PHILIPPINE_REGIONS.find(r => r.value === form.region);
     
-    // Prepare form data with full region name for database compatibility
     const formData = {
       ...form,
-      region: selectedRegion ? selectedRegion.fullName : form.region // Send full name to database
+      region: selectedRegion ? selectedRegion.fullName : form.region
     };
     
     try {
@@ -614,15 +586,7 @@ function Register() {
     }
   };
 
-  const goToSlide = (index) => {
-    setStaticNoise(true);
-    setTimeout(() => {
-      setCurrentSlide(index);
-      setStaticNoise(false);
-    }, 150);
-  };
-
-  // Auto-advance slides every 4 seconds with TV channel change effect
+  // Auto-advance slides every 4 seconds
   useEffect(() => {
     const timer = setInterval(() => {
       setStaticNoise(true);
@@ -642,13 +606,11 @@ function Register() {
     setTvPower(!tvPower);
   };
 
-  // Check if a field is invalid (touched and empty)
   const isFieldInvalid = (fieldName) => {
     if (fieldName === 'region' || fieldName === 'city') {
       return touchedFields[fieldName] && !form[fieldName];
     }
     if (fieldName === 'phone') {
-      // For phone, check if it's touched and either empty or invalid format
       if (touchedFields[fieldName] && !form[fieldName]) return true;
       if (touchedFields[fieldName] && form[fieldName]) {
         const { isValid } = validatePhilippineNumber(form[fieldName]);
@@ -666,16 +628,13 @@ function Register() {
         {!isMobile && (
           <div className="tv-side">
             <div className="tv-set">
-              {/* TV Antenna */}
               <div className="tv-antenna">
                 <div className="antenna-left"></div>
                 <div className="antenna-right"></div>
                 <div className="antenna-base"></div>
               </div>
               
-              {/* TV Body */}
               <div className="tv-body">
-                {/* TV Screen */}
                 <div className="tv-screen-container">
                   <div className="tv-screen">
                     {tvPower ? (
@@ -705,7 +664,6 @@ function Register() {
                   </div>
                 </div>
                 
-                {/* TV Controls */}
                 <div className="tv-controls">
                   <div className="tv-power-button" onClick={toggleTV}>
                     <span className={`power-led ${tvPower ? 'on' : 'off'}`}></span>
@@ -725,14 +683,12 @@ function Register() {
                   </div>
                 </div>
                 
-                {/* TV Speaker */}
                 <div className="tv-speaker">
                   <div className="speaker-grill"></div>
                   <div className="speaker-grill"></div>
                   <div className="speaker-grill"></div>
                 </div>
                 
-                {/* TV Brand */}
                 <div className="tv-brand">RETROVISION</div>
               </div>
             </div>
@@ -741,7 +697,6 @@ function Register() {
 
         {/* Right Side - Registration Form */}
         <div className={`form-side ${isMobile ? 'mobile-full' : ''}`}>
-          {/* Logo at top */}
           <div className="logo-section">
             <img 
               src="/deltaplus.png" 
@@ -752,9 +707,30 @@ function Register() {
 
           <div className="form-section">
             <div className="form-header">
-              <h2 className="form-title">Visitor's Login</h2>
+              <h2 className="form-title">Visitor's Registration</h2>
               <p className="form-subtitle">Please fill in your details below</p>
             </div>
+
+            {/* Active Event Display */}
+            {activeEvent && activeEvent.event_name && (
+              <div className="active-event-banner">
+                <div className="active-event-icon">📢</div>
+                <div className="active-event-content">
+                  <div className="active-event-label">You are registering for:</div>
+                  <div className="active-event-name">{activeEvent.event_name}</div>
+                  {activeEvent.event_location && (
+                    <div className="active-event-location">
+                      <span className="location-icon">📍</span> {activeEvent.event_location}
+                    </div>
+                  )}
+                  {activeEvent.event_start_date && activeEvent.event_end_date && (
+                    <div className="active-event-date">
+                      <span className="date-icon">📅</span> {formatDateRange(activeEvent.event_start_date, activeEvent.event_end_date)}
+                    </div>
+                  )}
+                </div>
+              </div>
+            )}
 
             {/* Success Message */}
             {success && (
@@ -762,7 +738,7 @@ function Register() {
                 <span className="success-icon">✓</span>
                 <div className="success-content">
                   <strong>Registration Successful!</strong>
-                  <p>You have been registered for the event.</p>
+                  <p>You have been registered for {activeEvent?.event_name || 'the event'}.</p>
                 </div>
               </div>
             )}
@@ -867,7 +843,7 @@ function Register() {
                 </div>
               </div>
 
-              {/* Address Fields - Simplified to only Region and City */}
+              {/* Address Fields */}
               <div className="address-section">
                 <h3 className="address-title">Location Details</h3>
                 
@@ -916,11 +892,10 @@ function Register() {
                       Registering...
                     </>
                   ) : (
-                    'Sign In'
+                    'Register Now'
                   )}
                 </button>
                 
-                {/* Admin Login Link */}
                 <div className="admin-login-container">
                   <button 
                     type="button"
