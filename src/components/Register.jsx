@@ -317,6 +317,72 @@ const getCitiesForRegion = (regionCode) => {
   );
 };
 
+// Phone number formatting and validation functions
+const formatPhilippineNumber = (value) => {
+  // Remove all non-digit characters
+  let cleaned = value.replace(/\D/g, '');
+  
+  // If empty, return empty
+  if (!cleaned) return '';
+  
+  // Handle different input scenarios
+  if (cleaned.startsWith('63')) {
+    cleaned = '0' + cleaned.substring(2);
+  }
+  
+  // Limit to 11 digits (0 + 10 digits for mobile)
+  if (cleaned.length > 11) {
+    cleaned = cleaned.slice(0, 11);
+  }
+  
+  // Format as +63 XXX XXX XXXX or display as 09XX XXX XXXX
+  if (cleaned.length >= 4) {
+    const prefix = cleaned.slice(0, 4);
+    const rest = cleaned.slice(4);
+    if (rest.length >= 3) {
+      return `${prefix} ${rest.slice(0, 3)} ${rest.slice(3, 7)}`.trim();
+    } else if (rest.length > 0) {
+      return `${prefix} ${rest}`.trim();
+    }
+    return prefix;
+  }
+  
+  return cleaned;
+};
+
+const validatePhilippineNumber = (phoneNumber) => {
+  // Remove all spaces and non-digit characters except +
+  let cleaned = phoneNumber.replace(/\s/g, '').replace(/[^0-9+]/g, '');
+  
+  // Check if it's a valid Philippine mobile number
+  const patterns = [
+    /^09\d{9}$/,           // 09123456789 (11 digits)
+    /^\+639\d{9}$/,        // +639123456789 (13 digits with +)
+    /^639\d{9}$/,          // 639123456789 (12 digits)
+    /^9\d{9}$/             // 9123456789 (10 digits, missing leading 0)
+  ];
+  
+  let isValid = false;
+  let normalizedNumber = cleaned;
+  
+  for (const pattern of patterns) {
+    if (pattern.test(cleaned)) {
+      isValid = true;
+      // Normalize to 09XXXXXXXXX format
+      if (cleaned.startsWith('+63')) {
+        normalizedNumber = '0' + cleaned.substring(3);
+      } else if (cleaned.startsWith('63')) {
+        normalizedNumber = '0' + cleaned.substring(2);
+      } else if (cleaned.startsWith('9') && cleaned.length === 10) {
+        normalizedNumber = '0' + cleaned;
+      }
+      break;
+    }
+  }
+  
+  return { isValid, normalizedNumber };
+};
+
 function Register() {
   const navigate = useNavigate();
   
@@ -419,11 +485,16 @@ function Register() {
       return false;
     }
     
-    // Phone validation (basic - at least 10 digits)
-    const phoneDigits = form.phone.replace(/\D/g, '');
-    if (phoneDigits.length < 10) {
-      setValidationError("Please enter a valid phone number with at least 10 digits");
+    // Enhanced phone validation for Philippine numbers
+    const { isValid, normalizedNumber } = validatePhilippineNumber(form.phone);
+    if (!isValid) {
+      setValidationError("Please enter a valid Philippine mobile number (e.g., 09123456789 or +639123456789)");
       return false;
+    }
+    
+    // Update form with normalized number if needed
+    if (normalizedNumber !== form.phone) {
+      setForm(prev => ({ ...prev, phone: normalizedNumber }));
     }
     
     setValidationError("");
@@ -432,7 +503,15 @@ function Register() {
 
   const handleChange = (e) => {
     const { name, value } = e.target;
-    setForm({ ...form, [name]: value });
+    
+    if (name === 'phone') {
+      // Format the phone number as user types
+      const formatted = formatPhilippineNumber(value);
+      setForm({ ...form, phone: formatted });
+    } else {
+      setForm({ ...form, [name]: value });
+    }
+    
     setTouchedFields({ ...touchedFields, [name]: true });
     setValidationError("");
     if (error) setError("");
@@ -454,6 +533,16 @@ function Register() {
 
   const handleBlur = (fieldName) => {
     setTouchedFields({ ...touchedFields, [fieldName]: true });
+    
+    // Validate and format phone number on blur
+    if (fieldName === 'phone' && form.phone) {
+      const { isValid, normalizedNumber } = validatePhilippineNumber(form.phone);
+      if (isValid && normalizedNumber !== form.phone) {
+        setForm(prev => ({ ...prev, phone: normalizedNumber }));
+      } else if (!isValid && form.phone) {
+        setValidationError("Please enter a valid Philippine mobile number");
+      }
+    }
   };
 
   const createRipple = (event) => {
@@ -557,6 +646,15 @@ function Register() {
   const isFieldInvalid = (fieldName) => {
     if (fieldName === 'region' || fieldName === 'city') {
       return touchedFields[fieldName] && !form[fieldName];
+    }
+    if (fieldName === 'phone') {
+      // For phone, check if it's touched and either empty or invalid format
+      if (touchedFields[fieldName] && !form[fieldName]) return true;
+      if (touchedFields[fieldName] && form[fieldName]) {
+        const { isValid } = validatePhilippineNumber(form[fieldName]);
+        return !isValid;
+      }
+      return false;
     }
     return touchedFields[fieldName] && !form[fieldName]?.trim();
   };
@@ -730,12 +828,12 @@ function Register() {
 
               <div className="form-row">
                 <div className="form-group">
-                  <label htmlFor="phone">Phone Number *</label>
+                  <label htmlFor="phone">Mobile Number *</label>
                   <input
                     id="phone"
                     type="tel"
                     name="phone"
-                    placeholder="Enter phone number"
+                    placeholder="0912 345 6789"
                     value={form.phone}
                     onChange={handleChange}
                     onBlur={() => handleBlur('phone')}
@@ -743,7 +841,10 @@ function Register() {
                     className={`form-input ${isFieldInvalid('phone') ? 'error' : ''}`}
                   />
                   {isFieldInvalid('phone') && (
-                    <small className="error-text">Phone number is required</small>
+                    <small className="error-text">Please enter a valid Philippine mobile number (e.g., 09123456789)</small>
+                  )}
+                  {!isFieldInvalid('phone') && form.phone && (
+                    <small className="field-note">✓ Valid Philippine mobile number format</small>
                   )}
                 </div>
 
