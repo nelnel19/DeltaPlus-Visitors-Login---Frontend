@@ -1,26 +1,49 @@
-// Register.jsx - Updated version with modal success notification
+// Register.jsx - Complete with searchable dropdowns
 
 import React, { useState, useEffect, useRef } from "react";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
 import "../styles/register.css";
 
-// Custom Select Component for dropdowns
-const CustomSelect = ({ value, onChange, options, placeholder }) => {
+// Searchable Custom Select Component for dropdowns
+const SearchableSelect = ({ value, onChange, options, placeholder }) => {
   const [isOpen, setIsOpen] = useState(false);
+  const [searchTerm, setSearchTerm] = useState("");
   const dropdownRef = useRef(null);
+  const searchInputRef = useRef(null);
 
   useEffect(() => {
     const handleClickOutside = (event) => {
       if (dropdownRef.current && !dropdownRef.current.contains(event.target)) {
         setIsOpen(false);
+        setSearchTerm("");
       }
     };
     document.addEventListener('mousedown', handleClickOutside);
     return () => document.removeEventListener('mousedown', handleClickOutside);
   }, []);
 
+  // Focus search input when dropdown opens
+  useEffect(() => {
+    if (isOpen && searchInputRef.current) {
+      setTimeout(() => {
+        searchInputRef.current.focus();
+      }, 100);
+    }
+  }, [isOpen]);
+
   const selectedOption = options.find(opt => opt.value === value);
+  
+  // Filter options based on search term
+  const filteredOptions = options.filter(option =>
+    option.label.toLowerCase().includes(searchTerm.toLowerCase())
+  );
+
+  const handleSelect = (optionValue) => {
+    onChange(optionValue);
+    setIsOpen(false);
+    setSearchTerm("");
+  };
 
   return (
     <div className="custom-select-container" ref={dropdownRef}>
@@ -34,19 +57,43 @@ const CustomSelect = ({ value, onChange, options, placeholder }) => {
         <span className={`custom-select-arrow ${isOpen ? 'open' : ''}`}>▼</span>
       </div>
       {isOpen && (
-        <div className="custom-select-dropdown">
-          {options.map(option => (
-            <div 
-              key={option.value}
-              className={`custom-select-option ${value === option.value ? 'selected' : ''}`}
-              onClick={() => {
-                onChange(option.value);
-                setIsOpen(false);
-              }}
-            >
-              {option.label}
-            </div>
-          ))}
+        <div className="custom-select-dropdown searchable">
+          <div className="search-input-wrapper">
+            <input
+              ref={searchInputRef}
+              type="text"
+              className="search-input"
+              placeholder={`Search ${placeholder.toLowerCase()}...`}
+              value={searchTerm}
+              onChange={(e) => setSearchTerm(e.target.value)}
+              onClick={(e) => e.stopPropagation()}
+            />
+            {searchTerm && (
+              <button 
+                className="search-clear"
+                onClick={() => setSearchTerm("")}
+              >
+                ✕
+              </button>
+            )}
+          </div>
+          <div className="options-list">
+            {filteredOptions.length > 0 ? (
+              filteredOptions.map(option => (
+                <div 
+                  key={option.value}
+                  className={`custom-select-option ${value === option.value ? 'selected' : ''}`}
+                  onClick={() => handleSelect(option.value)}
+                >
+                  {option.label}
+                </div>
+              ))
+            ) : (
+              <div className="no-options">
+                No results found for "{searchTerm}"
+              </div>
+            )}
+          </div>
         </div>
       )}
     </div>
@@ -243,7 +290,7 @@ const CITIES_BY_REGION = {
     { value: "Valencia (Bukidnon)", label: "Valencia" }
   ],
   XI: [
-    { value: "Davao", label: "Davao" },
+    { value: "Davao", label: "Davao City" },
     { value: "Digos", label: "Digos" },
     { value: "Mati", label: "Mati" },
     { value: "Panabo", label: "Panabo" },
@@ -252,7 +299,7 @@ const CITIES_BY_REGION = {
     { value: "Malita", label: "Malita" }
   ],
   XII: [
-    { value: "Cotabato", label: "Cotabato" },
+    { value: "Cotabato", label: "Cotabato City" },
     { value: "General Santos", label: "General Santos" },
     { value: "Kidapawan", label: "Kidapawan" },
     { value: "Koronadal", label: "Koronadal" },
@@ -870,7 +917,7 @@ function Register() {
                 <div className="form-row">
                   <div className="form-group">
                     <label htmlFor="region">Region *</label>
-                    <CustomSelect
+                    <SearchableSelect
                       value={form.region}
                       onChange={handleRegionChange}
                       options={PHILIPPINE_REGIONS}
@@ -883,7 +930,7 @@ function Register() {
 
                   <div className="form-group">
                     <label htmlFor="city">City / Municipality *</label>
-                    <CustomSelect
+                    <SearchableSelect
                       value={form.city}
                       onChange={handleCityChange}
                       options={availableCities}
