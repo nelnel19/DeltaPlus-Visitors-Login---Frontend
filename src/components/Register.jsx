@@ -1,4 +1,4 @@
-// Register.jsx - Complete with searchable dropdowns
+// Register.jsx - Complete with fixed dropdown positioning
 
 import React, { useState, useEffect, useRef } from "react";
 import axios from "axios";
@@ -11,6 +11,7 @@ const SearchableSelect = ({ value, onChange, options, placeholder }) => {
   const [searchTerm, setSearchTerm] = useState("");
   const dropdownRef = useRef(null);
   const searchInputRef = useRef(null);
+  const [dropdownPosition, setDropdownPosition] = useState("bottom");
 
   useEffect(() => {
     const handleClickOutside = (event) => {
@@ -22,6 +23,23 @@ const SearchableSelect = ({ value, onChange, options, placeholder }) => {
     document.addEventListener('mousedown', handleClickOutside);
     return () => document.removeEventListener('mousedown', handleClickOutside);
   }, []);
+
+  // Calculate dropdown position to avoid overlapping
+  useEffect(() => {
+    if (isOpen && dropdownRef.current) {
+      const rect = dropdownRef.current.getBoundingClientRect();
+      const windowHeight = window.innerHeight;
+      const spaceBelow = windowHeight - rect.bottom;
+      const spaceAbove = rect.top;
+      const dropdownHeight = 320;
+      
+      if (spaceBelow < dropdownHeight && spaceAbove > spaceBelow) {
+        setDropdownPosition("top");
+      } else {
+        setDropdownPosition("bottom");
+      }
+    }
+  }, [isOpen]);
 
   // Focus search input when dropdown opens
   useEffect(() => {
@@ -57,7 +75,7 @@ const SearchableSelect = ({ value, onChange, options, placeholder }) => {
         <span className={`custom-select-arrow ${isOpen ? 'open' : ''}`}>▼</span>
       </div>
       {isOpen && (
-        <div className="custom-select-dropdown searchable">
+        <div className={`custom-select-dropdown searchable ${dropdownPosition}`}>
           <div className="search-input-wrapper">
             <input
               ref={searchInputRef}
@@ -72,6 +90,7 @@ const SearchableSelect = ({ value, onChange, options, placeholder }) => {
               <button 
                 className="search-clear"
                 onClick={() => setSearchTerm("")}
+                type="button"
               >
                 ✕
               </button>
@@ -230,7 +249,7 @@ const CITIES_BY_REGION = {
     { value: "Cadiz", label: "Cadiz" },
     { value: "Escalante", label: "Escalante" },
     { value: "Himamaylan", label: "Himamaylan" },
-    { value: "Iloilo", label: "Iloilo" },
+    { value: "Iloilo", label: "Iloilo City" },
     { value: "Kabankalan", label: "Kabankalan" },
     { value: "La Carlota", label: "La Carlota" },
     { value: "Passi", label: "Passi" },
@@ -249,7 +268,7 @@ const CITIES_BY_REGION = {
     { value: "Bogo", label: "Bogo" },
     { value: "Canlaon", label: "Canlaon" },
     { value: "Carcar", label: "Carcar" },
-    { value: "Cebu", label: "Cebu" },
+    { value: "Cebu", label: "Cebu City" },
     { value: "Danao", label: "Danao" },
     { value: "Dumaguete", label: "Dumaguete" },
     { value: "Guihulngan", label: "Guihulngan" },
@@ -276,7 +295,7 @@ const CITIES_BY_REGION = {
     { value: "Dipolog", label: "Dipolog" },
     { value: "Isabela (Basilan)", label: "Isabela (Basilan)" },
     { value: "Pagadian", label: "Pagadian" },
-    { value: "Zamboanga", label: "Zamboanga" }
+    { value: "Zamboanga", label: "Zamboanga City" }
   ],
   X: [
     { value: "Cagayan de Oro", label: "Cagayan de Oro" },
@@ -630,7 +649,6 @@ function Register() {
     try {
       await axios.post("https://deltaplus-visitors-login-backend-ydkm.onrender.com/register", formData);
       
-      // Store registered user data for modal
       setRegisteredUser({
         full_name: form.full_name,
         company_name: form.company_name,
@@ -639,10 +657,8 @@ function Register() {
         event_name: activeEvent?.event_name || 'the event'
       });
       
-      // Show success modal instead of banner
       setShowSuccessModal(true);
       
-      // Reset form
       setForm({ 
         full_name: "", 
         company_name: "", 
@@ -703,7 +719,6 @@ function Register() {
   return (
     <div className="register-page">
       <div className="register-container">
-        {/* Left Side - Mini TV Carousel - Hidden on mobile */}
         {!isMobile && (
           <div className="tv-side">
             <div className="tv-set">
@@ -774,7 +789,6 @@ function Register() {
           </div>
         )}
 
-        {/* Right Side - Registration Form */}
         <div className={`form-side ${isMobile ? 'mobile-full' : ''}`}>
           <div className="logo-section">
             <img 
@@ -790,7 +804,6 @@ function Register() {
               <p className="form-subtitle">Please fill in your details below</p>
             </div>
 
-            {/* Active Event Display */}
             {activeEvent && activeEvent.event_name && (
               <div className="active-event-banner">
                 <div className="active-event-icon">📢</div>
@@ -810,7 +823,6 @@ function Register() {
               </div>
             )}
 
-            {/* Validation Error Message */}
             {validationError && (
               <div className="error-message">
                 <span className="error-icon">!</span>
@@ -821,7 +833,6 @@ function Register() {
               </div>
             )}
 
-            {/* API Error Message */}
             {error && !validationError && (
               <div className="error-message">
                 <span className="error-icon">!</span>
@@ -910,7 +921,6 @@ function Register() {
                 </div>
               </div>
 
-              {/* Address Fields */}
               <div className="address-section">
                 <h3 className="address-title">Location Details</h3>
                 
@@ -978,7 +988,6 @@ function Register() {
         </div>
       </div>
 
-      {/* Success Modal */}
       {showSuccessModal && registeredUser && (
         <div className="success-modal-overlay" onClick={closeSuccessModal}>
           <div className="success-modal" onClick={(e) => e.stopPropagation()}>
