@@ -113,6 +113,7 @@ const Database = () => {
   // Filter states
   const [searchName, setSearchName] = useState("");
   const [searchCompany, setSearchCompany] = useState("");
+  const [searchPosition, setSearchPosition] = useState("");
   const [searchCity, setSearchCity] = useState("");
   const [filterRegion, setFilterRegion] = useState("all");
   const [filterEvent, setFilterEvent] = useState("all");
@@ -164,6 +165,12 @@ const Database = () => {
       );
     }
 
+    if (searchPosition.trim() !== "") {
+      filtered = filtered.filter(user => 
+        user.position && user.position.toLowerCase().includes(searchPosition.toLowerCase())
+      );
+    }
+
     if (searchCity.trim() !== "") {
       filtered = filtered.filter(user => 
         user.city && user.city.toLowerCase().includes(searchCity.toLowerCase())
@@ -201,7 +208,7 @@ const Database = () => {
     }
 
     setFilteredUsers(filtered);
-  }, [searchName, searchCompany, searchCity, filterRegion, filterEvent, filterDate, searchInquiry]);
+  }, [searchName, searchCompany, searchPosition, searchCity, filterRegion, filterEvent, filterDate, searchInquiry]);
 
   // Initial data fetch
   useEffect(() => {
@@ -325,11 +332,22 @@ const Database = () => {
   const clearFilters = () => {
     setSearchName("");
     setSearchCompany("");
+    setSearchPosition("");
     setSearchCity("");
     setFilterRegion("all");
     setFilterEvent("all");
     setFilterDate("");
     setSearchInquiry("");
+  };
+
+  // Helper function to check if user has inquiry
+  const hasInquiry = (user) => {
+    return user.inquiry && user.inquiry.trim() !== "";
+  };
+
+  // Get dynamic inquiry count based on filtered users
+  const getFilteredInquiryCount = () => {
+    return filteredUsers.filter(user => hasInquiry(user)).length;
   };
 
   const formatLocation = (user) => {
@@ -353,11 +371,12 @@ const Database = () => {
   };
 
   const exportToExcel = () => {
-    const dataToExport = (searchName || searchCompany || searchCity || filterRegion !== "all" || filterEvent !== "all" || filterDate || searchInquiry) ? filteredUsers : users;
+    const dataToExport = (searchName || searchCompany || searchPosition || searchCity || filterRegion !== "all" || filterEvent !== "all" || filterDate || searchInquiry) ? filteredUsers : users;
     
     const excelData = dataToExport.map(user => ({
       'Name': user.full_name,
       'Company': user.company_name,
+      'Position': user.position || '',
       'Phone': user.phone,
       'Email': user.email,
       'City/Municipality': user.city || '',
@@ -371,9 +390,9 @@ const Database = () => {
     const ws = XLSX.utils.json_to_sheet(excelData);
     
     const colWidths = [
-      { wch: 20 }, { wch: 20 }, { wch: 15 }, { wch: 25 },
-      { wch: 20 }, { wch: 30 }, { wch: 40 }, { wch: 20 },
-      { wch: 50 }, { wch: 20 }
+      { wch: 20 }, { wch: 20 }, { wch: 15 }, { wch: 15 },
+      { wch: 25 }, { wch: 20 }, { wch: 30 }, { wch: 40 },
+      { wch: 20 }, { wch: 50 }, { wch: 20 }
     ];
     ws['!cols'] = colWidths;
 
@@ -381,7 +400,7 @@ const Database = () => {
     XLSX.utils.book_append_sheet(wb, ws, 'Visitors');
 
     let filename = 'visitors';
-    if (searchName || searchCompany || searchCity || filterRegion !== "all" || filterEvent !== "all" || filterDate || searchInquiry) {
+    if (searchName || searchCompany || searchPosition || searchCity || filterRegion !== "all" || filterEvent !== "all" || filterDate || searchInquiry) {
       filename += '_filtered';
     }
     filename += `_${new Date().toISOString().split('T')[0]}.xlsx`;
@@ -536,10 +555,6 @@ const Database = () => {
     });
   };
 
-  const hasInquiry = (user) => {
-    return user.inquiry && user.inquiry.trim() !== "";
-  };
-
   const truncateInquiry = (inquiry, maxLength = 60) => {
     if (!inquiry) return "";
     if (inquiry.length <= maxLength) return inquiry;
@@ -556,16 +571,18 @@ const Database = () => {
     setSelectedInquiry(null);
   };
 
-  const getInquiryStats = () => {
-    const totalWithInquiries = users.filter(user => hasInquiry(user)).length;
-    return { totalWithInquiries, total: users.length };
+  // Get total inquiry count from all users
+  const getTotalInquiryCount = () => {
+    return users.filter(user => hasInquiry(user)).length;
   };
 
   if (loading && isFirstLoad.current) {
     return <div className="loading">Loading...</div>;
   }
 
-  const inquiryStats = getInquiryStats();
+  const filteredInquiryCount = getFilteredInquiryCount();
+  const totalInquiryCount = getTotalInquiryCount();
+  const isFilterApplied = searchName || searchCompany || searchPosition || searchCity || filterRegion !== "all" || filterEvent !== "all" || filterDate || searchInquiry;
 
   return (
     <div className="dashboard">
@@ -630,7 +647,10 @@ const Database = () => {
                 <h2>Registered Visitors</h2>
                 <div className="header-stats">
                   <span className="stats-badge inquiries-badge">
-                    📝 {inquiryStats.totalWithInquiries} with inquiries
+                    📝 {isFilterApplied && filteredInquiryCount !== totalInquiryCount ? `${filteredInquiryCount} / ${totalInquiryCount}` : totalInquiryCount} with inquiries
+                    {isFilterApplied && filteredInquiryCount !== totalInquiryCount && (
+                      <span className="filtered-hint"> (filtered)</span>
+                    )}
                   </span>
                   <button onClick={exportToExcel} className="export-btn" title="Export to Excel">
                     <span className="export-icon">📊</span>
@@ -675,6 +695,17 @@ const Database = () => {
                       placeholder="Search company..."
                       value={searchCompany}
                       onChange={(e) => setSearchCompany(e.target.value)}
+                      className="filter-input"
+                    />
+                  </div>
+
+                  <div className="filter-group">
+                    <label>Position</label>
+                    <input
+                      type="text"
+                      placeholder="Search position..."
+                      value={searchPosition}
+                      onChange={(e) => setSearchPosition(e.target.value)}
                       className="filter-input"
                     />
                   </div>
@@ -754,20 +785,26 @@ const Database = () => {
                 
                 <div className="filter-results">
                   Showing {filteredUsers.length} of {users.length} visitors
-                  {filteredUsers.filter(u => hasInquiry(u)).length > 0 && (
+                  {filteredInquiryCount > 0 && (
                     <span className="inquiry-filter-hint">
-                      ({filteredUsers.filter(u => hasInquiry(u)).length} with inquiries)
-                  </span>
+                      ({filteredInquiryCount} with inquiries)
+                    </span>
+                  )}
+                  {isFilterApplied && (
+                    <button onClick={clearFilters} className="clear-filters-link">
+                      Clear all filters
+                    </button>
                   )}
                 </div>
               </div>
 
               <div className="table-container">
-                <table>
+                <table className="visitors-table">
                   <thead>
                     <tr>
                       <th>Name</th>
                       <th>Company</th>
+                      <th>Position</th>
                       <th>Phone</th>
                       <th>Email</th>
                       <th>City</th>
@@ -788,6 +825,11 @@ const Database = () => {
                           <td>
                             <span className="company-badge">
                               {user.company_name}
+                            </span>
+                          </td>
+                          <td>
+                            <span className="position-badge">
+                              {user.position || '—'}
                             </span>
                           </td>
                           <td>{user.phone}</td>
@@ -812,6 +854,7 @@ const Database = () => {
                               >
                                 <span className="inquiry-icon">💬</span>
                                 <span className="inquiry-text">{truncateInquiry(user.inquiry, 50)}</span>
+                                <span className="view-icon">👁️</span>
                               </button>
                             ) : (
                               <span className="no-inquiry">
@@ -836,7 +879,7 @@ const Database = () => {
                       ))
                     ) : (
                       <tr>
-                        <td colSpan="10" className="empty-state">
+                        <td colSpan="11" className="empty-state">
                           No visitors match your filters
                         </td>
                       </tr>
@@ -934,7 +977,7 @@ const Database = () => {
 
               {/* Events Table */}
               <div className="table-container">
-                <table>
+                <table className="events-table">
                   <thead>
                     <tr>
                       <th>ID</th>
@@ -1026,6 +1069,10 @@ const Database = () => {
                     <div className="user-info-row">
                       <span className="info-label">Company:</span>
                       <span className="info-value">{selectedInquiry.company_name}</span>
+                    </div>
+                    <div className="user-info-row">
+                      <span className="info-label">Position:</span>
+                      <span className="info-value">{selectedInquiry.position || '—'}</span>
                     </div>
                     <div className="user-info-row">
                       <span className="info-label">Email:</span>
