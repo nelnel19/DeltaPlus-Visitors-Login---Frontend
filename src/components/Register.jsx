@@ -1,4 +1,4 @@
-// Register.jsx - Complete with fixed dropdown positioning
+// Register.jsx - Complete with flexible mobile number validation
 
 import React, { useState, useEffect, useRef } from "react";
 import axios from "axios";
@@ -351,61 +351,51 @@ const getCitiesForRegion = (regionCode) => {
   );
 };
 
-// Phone number formatting and validation functions
+// Format phone number - only remove special characters and spaces
 const formatPhilippineNumber = (value) => {
+  // Only get digits
   let cleaned = value.replace(/\D/g, '');
-  if (!cleaned) return '';
   
-  if (cleaned.startsWith('63')) {
-    cleaned = '0' + cleaned.substring(2);
-  }
-  
+  // Limit to 11 digits
   if (cleaned.length > 11) {
     cleaned = cleaned.slice(0, 11);
   }
   
+  // Format for display: add spaces every 3-4 digits for readability
   if (cleaned.length >= 4) {
-    const prefix = cleaned.slice(0, 4);
-    const rest = cleaned.slice(4);
-    if (rest.length >= 3) {
-      return `${prefix} ${rest.slice(0, 3)} ${rest.slice(3, 7)}`.trim();
-    } else if (rest.length > 0) {
-      return `${prefix} ${rest}`.trim();
+    if (cleaned.length <= 4) {
+      return cleaned;
+    } else if (cleaned.length <= 7) {
+      return `${cleaned.slice(0, 4)} ${cleaned.slice(4)}`;
+    } else if (cleaned.length <= 11) {
+      return `${cleaned.slice(0, 4)} ${cleaned.slice(4, 7)} ${cleaned.slice(7, 11)}`.trim();
     }
-    return prefix;
   }
   
   return cleaned;
 };
 
+// Validate phone number - only check length and that it contains digits
 const validatePhilippineNumber = (phoneNumber) => {
-  let cleaned = phoneNumber.replace(/\s/g, '').replace(/[^0-9+]/g, '');
+  // Remove all non-digit characters
+  let cleaned = phoneNumber.replace(/\D/g, '');
   
-  const patterns = [
-    /^09\d{9}$/,
-    /^\+639\d{9}$/,
-    /^639\d{9}$/,
-    /^9\d{9}$/
-  ];
-  
-  let isValid = false;
-  let normalizedNumber = cleaned;
-  
-  for (const pattern of patterns) {
-    if (pattern.test(cleaned)) {
-      isValid = true;
-      if (cleaned.startsWith('+63')) {
-        normalizedNumber = '0' + cleaned.substring(3);
-      } else if (cleaned.startsWith('63')) {
-        normalizedNumber = '0' + cleaned.substring(2);
-      } else if (cleaned.startsWith('9') && cleaned.length === 10) {
-        normalizedNumber = '0' + cleaned;
-      }
-      break;
-    }
+  // Check if empty
+  if (!cleaned) {
+    return { isValid: false, normalizedNumber: '', error: 'Phone number is required' };
   }
   
-  return { isValid, normalizedNumber };
+  // Check length (must be between 7 and 11 digits for Philippine numbers)
+  if (cleaned.length < 7) {
+    return { isValid: false, normalizedNumber: cleaned, error: 'Phone number must have at least 7 digits' };
+  }
+  
+  if (cleaned.length > 11) {
+    return { isValid: false, normalizedNumber: cleaned.slice(0, 11), error: 'Phone number cannot exceed 11 digits' };
+  }
+  
+  // Valid phone number
+  return { isValid: true, normalizedNumber: cleaned, error: '' };
 };
 
 // Format date range for display
@@ -545,13 +535,14 @@ function Register() {
       return false;
     }
     
-    const { isValid, normalizedNumber } = validatePhilippineNumber(form.phone);
+    const { isValid, error: phoneError, normalizedNumber } = validatePhilippineNumber(form.phone);
     if (!isValid) {
-      setValidationError("Please enter a valid Philippine mobile number (e.g., 09123456789 or +639123456789)");
+      setValidationError(phoneError);
       return false;
     }
     
-    if (normalizedNumber !== form.phone) {
+    // Update form with normalized phone number (only digits)
+    if (normalizedNumber !== form.phone.replace(/\D/g, '')) {
       setForm(prev => ({ ...prev, phone: normalizedNumber }));
     }
     
@@ -592,11 +583,11 @@ function Register() {
     setTouchedFields({ ...touchedFields, [fieldName]: true });
     
     if (fieldName === 'phone' && form.phone) {
-      const { isValid, normalizedNumber } = validatePhilippineNumber(form.phone);
-      if (isValid && normalizedNumber !== form.phone) {
+      const { isValid, error: phoneError, normalizedNumber } = validatePhilippineNumber(form.phone);
+      if (isValid && normalizedNumber !== form.phone.replace(/\D/g, '')) {
         setForm(prev => ({ ...prev, phone: normalizedNumber }));
       } else if (!isValid && form.phone) {
-        setValidationError("Please enter a valid Philippine mobile number");
+        setValidationError(phoneError);
       }
     }
   };
@@ -641,9 +632,16 @@ function Register() {
     
     const selectedRegion = PHILIPPINE_REGIONS.find(r => r.value === form.region);
     
+    // Get only digits for phone number
+    const phoneDigits = form.phone.replace(/\D/g, '');
+    
     const formData = {
-      ...form,
-      region: selectedRegion ? selectedRegion.fullName : form.region
+      full_name: form.full_name,
+      company_name: form.company_name,
+      phone: phoneDigits,
+      city: form.city,
+      region: selectedRegion ? selectedRegion.fullName : form.region,
+      email: form.email
     };
     
     try {
@@ -653,7 +651,7 @@ function Register() {
         full_name: form.full_name,
         company_name: form.company_name,
         email: form.email,
-        phone: form.phone,
+        phone: phoneDigits,
         event_name: activeEvent?.event_name || 'the event'
       });
       
@@ -713,7 +711,25 @@ function Register() {
       }
       return false;
     }
+    if (fieldName === 'email') {
+      if (touchedFields[fieldName] && !form[fieldName]) return true;
+      if (touchedFields[fieldName] && form[fieldName]) {
+        const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+        return !emailRegex.test(form[fieldName]);
+      }
+      return false;
+    }
     return touchedFields[fieldName] && !form[fieldName]?.trim();
+  };
+
+  const getPhoneValidationMessage = () => {
+    if (!touchedFields.phone) return null;
+    if (!form.phone) return "Phone number is required";
+    
+    const digits = form.phone.replace(/\D/g, '');
+    if (digits.length < 7) return "Phone number must have at least 7 digits";
+    if (digits.length > 11) return "Phone number cannot exceed 11 digits";
+    return null;
   };
 
   return (
@@ -887,19 +903,20 @@ function Register() {
                     id="phone"
                     type="tel"
                     name="phone"
-                    placeholder="0912 345 6789"
+                    placeholder="09123456789"
                     value={form.phone}
                     onChange={handleChange}
                     onBlur={() => handleBlur('phone')}
                     required
                     className={`form-input ${isFieldInvalid('phone') ? 'error' : ''}`}
                   />
-                  {isFieldInvalid('phone') && (
-                    <small className="error-text">Please enter a valid Philippine mobile number (e.g., 09123456789)</small>
+                  {getPhoneValidationMessage() && (
+                    <small className="error-text">{getPhoneValidationMessage()}</small>
                   )}
-                  {!isFieldInvalid('phone') && form.phone && (
-                    <small className="field-note">✓ Valid Philippine mobile number format</small>
+                  {!isFieldInvalid('phone') && form.phone && getPhoneValidationMessage() === null && (
+                    <small className="field-note">✓ Valid phone number format</small>
                   )}
+                  <small className="field-hint">Enter any phone number (7-11 digits)</small>
                 </div>
 
                 <div className="form-group">
@@ -908,15 +925,18 @@ function Register() {
                     id="email"
                     type="email"
                     name="email"
-                    placeholder="Enter email address"
+                    placeholder="you@example.com"
                     value={form.email}
                     onChange={handleChange}
                     onBlur={() => handleBlur('email')}
                     required
                     className={`form-input ${isFieldInvalid('email') ? 'error' : ''}`}
                   />
-                  {isFieldInvalid('email') && (
+                  {isFieldInvalid('email') && !form.email && (
                     <small className="error-text">Email address is required</small>
+                  )}
+                  {isFieldInvalid('email') && form.email && (
+                    <small className="error-text">Please enter a valid email address</small>
                   )}
                 </div>
               </div>
