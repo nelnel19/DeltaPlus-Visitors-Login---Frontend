@@ -85,19 +85,16 @@ const PHILIPPINE_REGIONS = [
 const extractRegionCode = (regionName) => {
   if (!regionName) return '';
   
-  // Direct match for special regions
   if (regionName.includes('NCR')) return 'NCR';
   if (regionName.includes('CAR')) return 'CAR';
   if (regionName.includes('MIMAROPA')) return 'MIMAROPA';
   if (regionName.includes('BARMM')) return 'BARMM';
   
-  // Match patterns like "Region I", "Region VI", "Region IV-A", etc.
   const match = regionName.match(/Region\s+([IVXLCDM]+(?:-[A-Z]+)?)/i);
   if (match) {
     return match[1];
   }
   
-  // If no match, return the original (for backward compatibility)
   return regionName;
 };
 
@@ -120,6 +117,7 @@ const Database = () => {
   const [filterRegion, setFilterRegion] = useState("all");
   const [filterEvent, setFilterEvent] = useState("all");
   const [filterDate, setFilterDate] = useState("");
+  const [searchInquiry, setSearchInquiry] = useState("");
   
   // Auto-refresh state
   const [lastUpdate, setLastUpdate] = useState(Date.now());
@@ -133,6 +131,10 @@ const Database = () => {
   const [eventStartDate, setEventStartDate] = useState("");
   const [eventEndDate, setEventEndDate] = useState("");
   const [editingEvent, setEditingEvent] = useState(null);
+  
+  // Modal states for inquiry view
+  const [selectedInquiry, setSelectedInquiry] = useState(null);
+  const [showInquiryModal, setShowInquiryModal] = useState(false);
   
   // Refs to prevent blinking
   const usersRef = useRef(users);
@@ -150,28 +152,24 @@ const Database = () => {
   const applyFilters = useCallback(() => {
     let filtered = [...usersRef.current];
 
-    // Filter by name
     if (searchName.trim() !== "") {
       filtered = filtered.filter(user => 
         user.full_name.toLowerCase().includes(searchName.toLowerCase())
       );
     }
 
-    // Filter by company
     if (searchCompany.trim() !== "") {
       filtered = filtered.filter(user => 
         user.company_name.toLowerCase().includes(searchCompany.toLowerCase())
       );
     }
 
-    // Filter by city
     if (searchCity.trim() !== "") {
       filtered = filtered.filter(user => 
         user.city && user.city.toLowerCase().includes(searchCity.toLowerCase())
       );
     }
 
-    // Filter by region - IMPROVED VERSION
     if (filterRegion !== "all") {
       const selectedRegionName = filterRegion;
       const selectedCode = extractRegionCode(selectedRegionName);
@@ -179,18 +177,14 @@ const Database = () => {
       filtered = filtered.filter(user => {
         const userRegion = user.region || '';
         const userCode = extractRegionCode(userRegion);
-        
-        // Exact match of region codes
         return userCode === selectedCode;
       });
     }
 
-    // Filter by event
     if (filterEvent !== "all") {
       filtered = filtered.filter(user => user.event_name === filterEvent);
     }
 
-    // Filter by date
     if (filterDate) {
       const selectedDate = new Date(filterDate).toDateString();
       filtered = filtered.filter(user => {
@@ -199,8 +193,15 @@ const Database = () => {
       });
     }
 
+    if (searchInquiry.trim() !== "") {
+      filtered = filtered.filter(user => {
+        const inquiryText = user.inquiry || '';
+        return inquiryText.toLowerCase().includes(searchInquiry.toLowerCase());
+      });
+    }
+
     setFilteredUsers(filtered);
-  }, [searchName, searchCompany, searchCity, filterRegion, filterEvent, filterDate]);
+  }, [searchName, searchCompany, searchCity, filterRegion, filterEvent, filterDate, searchInquiry]);
 
   // Initial data fetch
   useEffect(() => {
@@ -222,15 +223,13 @@ const Database = () => {
     };
   }, []);
 
-  // Auto-refresh with polling (every 3 seconds) - OPTIMIZED to prevent blinking
+  // Auto-refresh with polling (every 3 seconds)
   useEffect(() => {
-    // Clear existing interval
     if (pollingIntervalRef.current) {
       clearInterval(pollingIntervalRef.current);
     }
 
     if (activeTab === "users") {
-      // Start new polling interval
       pollingIntervalRef.current = setInterval(() => {
         checkForUpdates();
       }, 3000);
@@ -248,23 +247,20 @@ const Database = () => {
     applyFilters();
   }, [users, applyFilters]);
 
-  // Check for updates and auto-refresh - OPTIMIZED to prevent blinking
+  // Check for updates and auto-refresh
   const checkForUpdates = async () => {
     try {
       const res = await axios.get("https://deltaplus-visitors-login-backend-ydkm.onrender.com/users");
       const newUsers = res.data;
       const currentUsers = usersRef.current;
       
-      // Check if data has changed (by comparing length or content)
       const hasChanges = newUsers.length !== currentUsers.length || 
                         JSON.stringify(newUsers) !== JSON.stringify(currentUsers);
       
       if (hasChanges) {
-        // Update users state (this will trigger applyFilters via useEffect)
         setUsers(newUsers);
         setLastUpdate(Date.now());
         
-        // Show toast notification
         if (newUsers.length > currentUsers.length) {
           const newCount = newUsers.length - currentUsers.length;
           setToastMessage(`${newCount} new ${newCount === 1 ? 'visitor' : 'visitors'} registered!`);
@@ -273,7 +269,6 @@ const Database = () => {
         }
         setShowRefreshToast(true);
         
-        // Auto-hide toast after 3 seconds
         setTimeout(() => {
           setShowRefreshToast(false);
         }, 3000);
@@ -334,18 +329,16 @@ const Database = () => {
     setFilterRegion("all");
     setFilterEvent("all");
     setFilterDate("");
+    setSearchInquiry("");
   };
 
-  // Format location for display
   const formatLocation = (user) => {
     const parts = [];
     if (user.city) parts.push(user.city);
     if (user.region) parts.push(user.region);
-    
     return parts.length > 0 ? parts.join(', ') : 'No location provided';
   };
 
-  // Format date range for display
   const formatDateRange = (startDate, endDate) => {
     const start = new Date(startDate);
     const end = new Date(endDate);
@@ -359,9 +352,8 @@ const Database = () => {
     }
   };
 
-  // Excel Download Function
   const exportToExcel = () => {
-    const dataToExport = (searchName || searchCompany || searchCity || filterRegion !== "all" || filterEvent !== "all" || filterDate) ? filteredUsers : users;
+    const dataToExport = (searchName || searchCompany || searchCity || filterRegion !== "all" || filterEvent !== "all" || filterDate || searchInquiry) ? filteredUsers : users;
     
     const excelData = dataToExport.map(user => ({
       'Name': user.full_name,
@@ -372,6 +364,7 @@ const Database = () => {
       'Region': user.region || '',
       'Location': formatLocation(user),
       'Event': user.event_name || 'No Event',
+      'Inquiry': user.inquiry || 'No inquiries',
       'Registered': formatDate(user.created_at)
     }));
 
@@ -379,7 +372,8 @@ const Database = () => {
     
     const colWidths = [
       { wch: 20 }, { wch: 20 }, { wch: 15 }, { wch: 25 },
-      { wch: 20 }, { wch: 30 }, { wch: 40 }, { wch: 20 }, { wch: 20 }
+      { wch: 20 }, { wch: 30 }, { wch: 40 }, { wch: 20 },
+      { wch: 50 }, { wch: 20 }
     ];
     ws['!cols'] = colWidths;
 
@@ -387,7 +381,7 @@ const Database = () => {
     XLSX.utils.book_append_sheet(wb, ws, 'Visitors');
 
     let filename = 'visitors';
-    if (searchName || searchCompany || searchCity || filterRegion !== "all" || filterEvent !== "all" || filterDate) {
+    if (searchName || searchCompany || searchCity || filterRegion !== "all" || filterEvent !== "all" || filterDate || searchInquiry) {
       filename += '_filtered';
     }
     filename += `_${new Date().toISOString().split('T')[0]}.xlsx`;
@@ -468,7 +462,6 @@ const Database = () => {
         await axios.post("https://deltaplus-visitors-login-backend-ydkm.onrender.com/events", eventData);
       }
       
-      // Reset form
       setEventName("");
       setEventLocation("");
       setEventStartDate("");
@@ -476,7 +469,6 @@ const Database = () => {
       setShowEventForm(false);
       setEditingEvent(null);
       
-      // Refresh data
       await fetchEvents();
       await fetchActiveEvent();
     } catch (err) {
@@ -486,14 +478,10 @@ const Database = () => {
   };
 
   const handleEditEvent = (event) => {
-    // Set editing event
     setEditingEvent(event);
-    
-    // Populate form fields
     setEventName(event.event_name);
     setEventLocation(event.event_location || "");
     
-    // Format dates for input fields (YYYY-MM-DD)
     const startDate = event.event_start_date ? new Date(event.event_start_date) : null;
     const endDate = event.event_end_date ? new Date(event.event_end_date) : null;
     
@@ -511,7 +499,6 @@ const Database = () => {
       setEventEndDate(`${year}-${month}-${day}`);
     }
     
-    // Show the form
     setShowEventForm(true);
   };
 
@@ -549,9 +536,36 @@ const Database = () => {
     });
   };
 
+  const hasInquiry = (user) => {
+    return user.inquiry && user.inquiry.trim() !== "";
+  };
+
+  const truncateInquiry = (inquiry, maxLength = 60) => {
+    if (!inquiry) return "";
+    if (inquiry.length <= maxLength) return inquiry;
+    return inquiry.substring(0, maxLength) + "...";
+  };
+
+  const openInquiryModal = (user) => {
+    setSelectedInquiry(user);
+    setShowInquiryModal(true);
+  };
+
+  const closeInquiryModal = () => {
+    setShowInquiryModal(false);
+    setSelectedInquiry(null);
+  };
+
+  const getInquiryStats = () => {
+    const totalWithInquiries = users.filter(user => hasInquiry(user)).length;
+    return { totalWithInquiries, total: users.length };
+  };
+
   if (loading && isFirstLoad.current) {
     return <div className="loading">Loading...</div>;
   }
+
+  const inquiryStats = getInquiryStats();
 
   return (
     <div className="dashboard">
@@ -614,10 +628,15 @@ const Database = () => {
             <div>
               <div className="section-header">
                 <h2>Registered Visitors</h2>
-                <button onClick={exportToExcel} className="export-btn" title="Export to Excel">
-                  <span className="export-icon">📊</span>
-                  Export to Excel
-                </button>
+                <div className="header-stats">
+                  <span className="stats-badge inquiries-badge">
+                    📝 {inquiryStats.totalWithInquiries} with inquiries
+                  </span>
+                  <button onClick={exportToExcel} className="export-btn" title="Export to Excel">
+                    <span className="export-icon">📊</span>
+                    Export to Excel
+                  </button>
+                </div>
               </div>
 
               {/* Active Event Card */}
@@ -710,6 +729,17 @@ const Database = () => {
                     />
                   </div>
 
+                  <div className="filter-group">
+                    <label>Inquiry</label>
+                    <input
+                      type="text"
+                      placeholder="Search inquiries..."
+                      value={searchInquiry}
+                      onChange={(e) => setSearchInquiry(e.target.value)}
+                      className="filter-input"
+                    />
+                  </div>
+
                   <div className="filter-group filter-clear-group">
                     <label>&nbsp;</label>
                     <button 
@@ -724,6 +754,11 @@ const Database = () => {
                 
                 <div className="filter-results">
                   Showing {filteredUsers.length} of {users.length} visitors
+                  {filteredUsers.filter(u => hasInquiry(u)).length > 0 && (
+                    <span className="inquiry-filter-hint">
+                      ({filteredUsers.filter(u => hasInquiry(u)).length} with inquiries)
+                  </span>
+                  )}
                 </div>
               </div>
 
@@ -738,6 +773,7 @@ const Database = () => {
                       <th>City</th>
                       <th>Region</th>
                       <th>Event</th>
+                      <th>Inquiry</th>
                       <th>Registered</th>
                       <th>Actions</th>
                     </tr>
@@ -746,7 +782,9 @@ const Database = () => {
                     {filteredUsers.length > 0 ? (
                       filteredUsers.map((user) => (
                         <tr key={user.id}>
-                          <td>{user.full_name}</td>
+                          <td>
+                            <strong>{user.full_name}</strong>
+                          </td>
                           <td>
                             <span className="company-badge">
                               {user.company_name}
@@ -765,6 +803,24 @@ const Database = () => {
                               <span className="event-badge">—</span>
                             )}
                           </td>
+                          <td className="inquiry-cell">
+                            {hasInquiry(user) ? (
+                              <button
+                                onClick={() => openInquiryModal(user)}
+                                className="inquiry-view-btn"
+                                title="View inquiry"
+                              >
+                                <span className="inquiry-icon">💬</span>
+                                <span className="inquiry-text">{truncateInquiry(user.inquiry, 50)}</span>
+                                <span className="view-icon">👁️</span>
+                              </button>
+                            ) : (
+                              <span className="no-inquiry">
+                                <span className="no-inquiry-icon">—</span>
+                                <span className="no-inquiry-text">No inquiries</span>
+                              </span>
+                            )}
+                          </td>
                           <td>{formatDate(user.created_at)}</td>
                           <td>
                             <div className="action-group">
@@ -781,7 +837,7 @@ const Database = () => {
                       ))
                     ) : (
                       <tr>
-                        <td colSpan="9" className="empty-state">
+                        <td colSpan="10" className="empty-state">
                           No visitors match your filters
                         </td>
                       </tr>
@@ -947,6 +1003,57 @@ const Database = () => {
                     )}
                   </tbody>
                 </table>
+              </div>
+            </div>
+          )}
+
+          {/* Inquiry Modal */}
+          {showInquiryModal && selectedInquiry && (
+            <div className="modal-overlay" onClick={closeInquiryModal}>
+              <div className="inquiry-modal" onClick={(e) => e.stopPropagation()}>
+                <div className="inquiry-modal-header">
+                  <h3 className="inquiry-modal-title">
+                    <span className="inquiry-header-icon">💬</span>
+                    Visitor Inquiry
+                  </h3>
+                  <button className="inquiry-modal-close" onClick={closeInquiryModal}>×</button>
+                </div>
+                <div className="inquiry-modal-body">
+                  <div className="inquiry-user-info">
+                    <div className="user-info-row">
+                      <span className="info-label">Name:</span>
+                      <span className="info-value">{selectedInquiry.full_name}</span>
+                    </div>
+                    <div className="user-info-row">
+                      <span className="info-label">Company:</span>
+                      <span className="info-value">{selectedInquiry.company_name}</span>
+                    </div>
+                    <div className="user-info-row">
+                      <span className="info-label">Email:</span>
+                      <span className="info-value">{selectedInquiry.email}</span>
+                    </div>
+                    <div className="user-info-row">
+                      <span className="info-label">Phone:</span>
+                      <span className="info-value">{selectedInquiry.phone}</span>
+                    </div>
+                    <div className="user-info-row">
+                      <span className="info-label">Event:</span>
+                      <span className="info-value">{selectedInquiry.event_name || 'No event assigned'}</span>
+                    </div>
+                  </div>
+                  <div className="inquiry-content-box">
+                    <div className="inquiry-label">Inquiry/Question:</div>
+                    <div className="inquiry-text">{selectedInquiry.inquiry}</div>
+                    <div className="inquiry-date">
+                      Submitted on: {formatDate(selectedInquiry.created_at)}
+                    </div>
+                  </div>
+                </div>
+                <div className="inquiry-modal-footer">
+                  <button onClick={closeInquiryModal} className="inquiry-modal-btn">
+                    Close
+                  </button>
+                </div>
               </div>
             </div>
           )}
