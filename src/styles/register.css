@@ -1946,3 +1946,38 @@ body {
     font-size: 9px;
   }
 }
+/* Position Field Styles - Add to your existing register.css */
+
+/* Position field specific styling */
+.form-group input[name="position"] {
+  text-transform: capitalize;
+}
+
+/* Optional: Add a hint tooltip for position field */
+.form-group[data-field="position"] .field-hint {
+  font-size: 11px;
+  color: var(--gray-500);
+  margin-top: 4px;
+  display: block;
+}
+
+/* Position badge style for success modal */
+.success-modal-detail-item .detail-value.position-value {
+  font-weight: 600;
+  color: var(--dark-blue);
+}
+
+/* Responsive adjustments for position field */
+@media (max-width: 768px) {
+  .form-group input[name="position"] {
+    font-size: 15px;
+    padding: 12px 14px;
+  }
+}
+
+@media (max-width: 480px) {
+  .form-group input[name="position"] {
+    font-size: 14px;
+    padding: 10px 12px;
+  }
+}
