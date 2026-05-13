@@ -1266,3 +1266,362 @@ td .event-location {
   color: var(--gray-500);
   text-transform: uppercase;
 }
+/* Add these styles to your existing database.css */
+
+/* Inquiry Column Styles */
+.inquiry-cell {
+  max-width: 250px;
+  min-width: 200px;
+}
+
+.inquiry-view-btn {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 6px 10px;
+  background: rgba(245, 193, 7, 0.1);
+  border: 1px solid rgba(245, 193, 7, 0.3);
+  border-radius: 6px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  width: 100%;
+}
+
+.inquiry-view-btn:hover {
+  background: rgba(245, 193, 7, 0.2);
+  border-color: var(--primary-yellow);
+  transform: translateX(2px);
+}
+
+.inquiry-icon {
+  font-size: 14px;
+  flex-shrink: 0;
+}
+
+.inquiry-text {
+  font-size: 12px;
+  color: var(--gray-700);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  flex: 1;
+  text-align: left;
+}
+
+.view-icon {
+  font-size: 12px;
+  flex-shrink: 0;
+  opacity: 0.7;
+}
+
+.no-inquiry {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 6px 10px;
+  background: var(--gray-100);
+  border-radius: 6px;
+  color: var(--gray-500);
+  font-size: 12px;
+  width: fit-content;
+}
+
+.no-inquiry-icon {
+  font-size: 12px;
+}
+
+.no-inquiry-text {
+  font-style: italic;
+}
+
+/* Inquiry Modal Styles */
+.inquiry-modal {
+  background: white;
+  border-radius: 16px;
+  width: 90%;
+  max-width: 550px;
+  max-height: 85vh;
+  overflow: hidden;
+  animation: modalSlideUp 0.3s ease;
+}
+
+.inquiry-modal-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 20px 24px;
+  background: linear-gradient(135deg, var(--dark-blue) 0%, var(--dark-blue-light) 100%);
+  color: white;
+}
+
+.inquiry-modal-title {
+  font-size: 18px;
+  font-weight: 600;
+  margin: 0;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.inquiry-header-icon {
+  font-size: 20px;
+}
+
+.inquiry-modal-close {
+  background: none;
+  border: none;
+  font-size: 28px;
+  cursor: pointer;
+  color: white;
+  transition: opacity 0.2s;
+  line-height: 1;
+}
+
+.inquiry-modal-close:hover {
+  opacity: 0.8;
+}
+
+.inquiry-modal-body {
+  padding: 24px;
+  max-height: 60vh;
+  overflow-y: auto;
+}
+
+.inquiry-user-info {
+  background: var(--gray-50);
+  border-radius: 12px;
+  padding: 16px;
+  margin-bottom: 20px;
+  border: 1px solid var(--gray-200);
+}
+
+.user-info-row {
+  display: flex;
+  padding: 8px 0;
+  border-bottom: 1px solid var(--gray-200);
+}
+
+.user-info-row:last-child {
+  border-bottom: none;
+}
+
+.info-label {
+  font-weight: 600;
+  color: var(--gray-700);
+  width: 80px;
+  font-size: 13px;
+}
+
+.info-value {
+  color: var(--gray-800);
+  font-size: 13px;
+  flex: 1;
+}
+
+.inquiry-content-box {
+  background: #fff9e6;
+  border: 1px solid var(--primary-yellow);
+  border-radius: 12px;
+  padding: 16px;
+}
+
+.inquiry-label {
+  font-weight: 600;
+  color: var(--dark-blue);
+  font-size: 13px;
+  margin-bottom: 12px;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.inquiry-label::before {
+  content: "❓";
+  font-size: 14px;
+}
+
+.inquiry-text {
+  font-size: 14px;
+  line-height: 1.6;
+  color: var(--gray-800);
+  margin-bottom: 16px;
+  white-space: pre-wrap;
+  word-wrap: break-word;
+}
+
+.inquiry-date {
+  font-size: 11px;
+  color: var(--gray-500);
+  font-style: italic;
+  padding-top: 12px;
+  border-top: 1px solid rgba(245, 193, 7, 0.3);
+}
+
+.inquiry-modal-footer {
+  padding: 16px 24px;
+  border-top: 1px solid var(--gray-200);
+  display: flex;
+  justify-content: flex-end;
+}
+
+.inquiry-modal-btn {
+  padding: 10px 24px;
+  background: var(--dark-blue);
+  color: white;
+  border: none;
+  border-radius: 8px;
+  font-size: 14px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.inquiry-modal-btn:hover {
+  background: var(--dark-blue-light);
+  transform: translateY(-1px);
+}
+
+/* Header Stats */
+.header-stats {
+  display: flex;
+  align-items: center;
+  gap: 15px;
+}
+
+.stats-badge {
+  padding: 6px 12px;
+  border-radius: 20px;
+  font-size: 13px;
+  font-weight: 500;
+}
+
+.inquiries-badge {
+  background: rgba(245, 193, 7, 0.15);
+  color: var(--dark-blue);
+  border: 1px solid rgba(245, 193, 7, 0.3);
+}
+
+/* Inquiry Filter Hint */
+.inquiry-filter-hint {
+  margin-left: 10px;
+  padding: 2px 8px;
+  background: rgba(245, 193, 7, 0.1);
+  border-radius: 12px;
+  font-size: 11px;
+  color: var(--dark-blue);
+}
+
+/* Refresh Toast */
+.refresh-toast {
+  position: fixed;
+  bottom: 20px;
+  right: 20px;
+  background: var(--dark-blue);
+  color: white;
+  padding: 12px 20px;
+  border-radius: 8px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  z-index: 1100;
+  animation: slideInRight 0.3s ease;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+}
+
+.refresh-icon {
+  font-size: 16px;
+  animation: spin 1s linear infinite;
+}
+
+.refresh-message {
+  font-size: 13px;
+  font-weight: 500;
+}
+
+@keyframes slideInRight {
+  from {
+    transform: translateX(100%);
+    opacity: 0;
+  }
+  to {
+    transform: translateX(0);
+    opacity: 1;
+  }
+}
+
+@keyframes spin {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+@keyframes modalSlideUp {
+  from {
+    opacity: 0;
+    transform: translateY(30px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Responsive Adjustments */
+@media (max-width: 1200px) {
+  .inquiry-cell {
+    max-width: 200px;
+    min-width: 180px;
+  }
+  
+  .inquiry-text {
+    max-width: 120px;
+  }
+}
+
+@media (max-width: 992px) {
+  .inquiry-cell {
+    max-width: 180px;
+    min-width: 150px;
+  }
+  
+  .inquiry-text {
+    max-width: 100px;
+    font-size: 11px;
+  }
+  
+  .inquiry-view-btn {
+    padding: 4px 8px;
+  }
+}
+
+@media (max-width: 768px) {
+  .inquiry-modal {
+    width: 95%;
+    max-width: 95%;
+  }
+  
+  .user-info-row {
+    flex-direction: column;
+    gap: 4px;
+  }
+  
+  .info-label {
+    width: auto;
+  }
+  
+  .header-stats {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 8px;
+  }
+  
+  .refresh-toast {
+    bottom: 10px;
+    right: 10px;
+    left: 10px;
+    justify-content: center;
+  }
+}
