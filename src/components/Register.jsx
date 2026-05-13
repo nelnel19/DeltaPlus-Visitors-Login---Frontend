@@ -1,4 +1,4 @@
-// Register.jsx - Complete with flexible mobile number validation, optional inquiries field, and POSITION field
+// Register.jsx - Complete with flexible mobile number validation, optional inquiries field, POSITION field, and duplicate email allowed
 import React, { useState, useEffect, useRef } from "react";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
@@ -418,7 +418,7 @@ function Register() {
   const [form, setForm] = useState({
     full_name: "",
     company_name: "",
-    position: "",  // NEW POSITION FIELD
+    position: "",
     phone: "",
     city: "",
     region: "",
@@ -514,7 +514,7 @@ function Register() {
       setValidationError("Company name is required");
       return false;
     }
-    if (!form.position.trim()) {  // NEW POSITION VALIDATION
+    if (!form.position.trim()) {
       setValidationError("Position is required");
       return false;
     }
@@ -644,7 +644,7 @@ function Register() {
     const formData = {
       full_name: form.full_name,
       company_name: form.company_name,
-      position: form.position,  // NEW POSITION FIELD
+      position: form.position,
       phone: phoneDigits,
       city: form.city,
       region: selectedRegion ? selectedRegion.fullName : form.region,
@@ -658,7 +658,7 @@ function Register() {
       setRegisteredUser({
         full_name: form.full_name,
         company_name: form.company_name,
-        position: form.position,  // NEW POSITION FIELD
+        position: form.position,
         email: form.email,
         phone: phoneDigits,
         event_name: activeEvent?.event_name || 'the event',
@@ -670,7 +670,7 @@ function Register() {
       setForm({ 
         full_name: "", 
         company_name: "",
-        position: "",  // NEW POSITION FIELD
+        position: "",
         phone: "", 
         city: "", 
         region: "", 
@@ -681,7 +681,8 @@ function Register() {
       setShowInquiryField(false);
       
     } catch (err) {
-      setError("Registration failed: Email already registered.");
+      console.error("Registration error:", err);
+      setError("Registration failed. Please try again.");
     } finally {
       setLoading(false);
     }
