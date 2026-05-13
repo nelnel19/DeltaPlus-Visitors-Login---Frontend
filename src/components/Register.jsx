@@ -916,7 +916,6 @@ function Register() {
                   {!isFieldInvalid('phone') && form.phone && getPhoneValidationMessage() === null && (
                     <small className="field-note">✓ Valid phone number format</small>
                   )}
-                  <small className="field-hint">Enter any phone number (7-11 digits)</small>
                 </div>
 
                 <div className="form-group">
