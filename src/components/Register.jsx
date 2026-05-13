@@ -1,5 +1,4 @@
-// Register.jsx - Complete with flexible mobile number validation and optional inquiries field
-
+// Register.jsx - Complete with flexible mobile number validation, optional inquiries field, and POSITION field
 import React, { useState, useEffect, useRef } from "react";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
@@ -419,11 +418,12 @@ function Register() {
   const [form, setForm] = useState({
     full_name: "",
     company_name: "",
+    position: "",  // NEW POSITION FIELD
     phone: "",
     city: "",
     region: "",
     email: "",
-    inquiry: ""  // New optional inquiry field
+    inquiry: ""
   });
   
   const [loading, setLoading] = useState(false);
@@ -512,6 +512,10 @@ function Register() {
     }
     if (!form.company_name.trim()) {
       setValidationError("Company name is required");
+      return false;
+    }
+    if (!form.position.trim()) {  // NEW POSITION VALIDATION
+      setValidationError("Position is required");
       return false;
     }
     if (!form.phone.trim()) {
@@ -640,11 +644,12 @@ function Register() {
     const formData = {
       full_name: form.full_name,
       company_name: form.company_name,
+      position: form.position,  // NEW POSITION FIELD
       phone: phoneDigits,
       city: form.city,
       region: selectedRegion ? selectedRegion.fullName : form.region,
       email: form.email,
-      inquiry: form.inquiry.trim() || null  // Include inquiry if provided
+      inquiry: form.inquiry.trim() || null
     };
     
     try {
@@ -653,6 +658,7 @@ function Register() {
       setRegisteredUser({
         full_name: form.full_name,
         company_name: form.company_name,
+        position: form.position,  // NEW POSITION FIELD
         email: form.email,
         phone: phoneDigits,
         event_name: activeEvent?.event_name || 'the event',
@@ -663,7 +669,8 @@ function Register() {
       
       setForm({ 
         full_name: "", 
-        company_name: "", 
+        company_name: "",
+        position: "",  // NEW POSITION FIELD
         phone: "", 
         city: "", 
         region: "", 
@@ -902,6 +909,24 @@ function Register() {
                 )}
               </div>
 
+              <div className="form-group">
+                <label htmlFor="position">Position *</label>
+                <input
+                  id="position"
+                  type="text"
+                  name="position"
+                  placeholder="e.g., Manager, Director, Sales Representative"
+                  value={form.position}
+                  onChange={handleChange}
+                  onBlur={() => handleBlur('position')}
+                  required
+                  className={`form-input ${isFieldInvalid('position') ? 'error' : ''}`}
+                />
+                {isFieldInvalid('position') && (
+                  <small className="error-text">Position is required</small>
+                )}
+              </div>
+
               <div className="form-row">
                 <div className="form-group">
                   <label htmlFor="phone">Mobile Number *</label>
@@ -1068,6 +1093,10 @@ function Register() {
               <div className="success-modal-detail-item">
                 <span className="detail-label">Company:</span>
                 <span className="detail-value">{registeredUser.company_name}</span>
+              </div>
+              <div className="success-modal-detail-item">
+                <span className="detail-label">Position:</span>
+                <span className="detail-value">{registeredUser.position}</span>
               </div>
               <div className="success-modal-detail-item">
                 <span className="detail-label">Email:</span>
