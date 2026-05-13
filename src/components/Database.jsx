@@ -812,7 +812,6 @@ const Database = () => {
                               >
                                 <span className="inquiry-icon">💬</span>
                                 <span className="inquiry-text">{truncateInquiry(user.inquiry, 50)}</span>
-                                <span className="view-icon">👁️</span>
                               </button>
                             ) : (
                               <span className="no-inquiry">
