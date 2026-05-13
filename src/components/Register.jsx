@@ -1,4 +1,4 @@
-// Register.jsx - Complete with flexible mobile number validation
+// Register.jsx - Complete with flexible mobile number validation and optional inquiries field
 
 import React, { useState, useEffect, useRef } from "react";
 import axios from "axios";
@@ -422,7 +422,8 @@ function Register() {
     phone: "",
     city: "",
     region: "",
-    email: ""
+    email: "",
+    inquiry: ""  // New optional inquiry field
   });
   
   const [loading, setLoading] = useState(false);
@@ -437,6 +438,7 @@ function Register() {
   const [isMobile, setIsMobile] = useState(window.innerWidth <= 768);
   const [touchedFields, setTouchedFields] = useState({});
   const [activeEvent, setActiveEvent] = useState(null);
+  const [showInquiryField, setShowInquiryField] = useState(false);
 
   const slides = [
     { image: "/delta1.png" },
@@ -641,7 +643,8 @@ function Register() {
       phone: phoneDigits,
       city: form.city,
       region: selectedRegion ? selectedRegion.fullName : form.region,
-      email: form.email
+      email: form.email,
+      inquiry: form.inquiry.trim() || null  // Include inquiry if provided
     };
     
     try {
@@ -652,7 +655,8 @@ function Register() {
         company_name: form.company_name,
         email: form.email,
         phone: phoneDigits,
-        event_name: activeEvent?.event_name || 'the event'
+        event_name: activeEvent?.event_name || 'the event',
+        inquiry: form.inquiry.trim() || null
       });
       
       setShowSuccessModal(true);
@@ -663,9 +667,11 @@ function Register() {
         phone: "", 
         city: "", 
         region: "", 
-        email: "" 
+        email: "",
+        inquiry: "" 
       });
       setTouchedFields({});
+      setShowInquiryField(false);
       
     } catch (err) {
       setError("Registration failed: Email already registered.");
@@ -975,6 +981,41 @@ function Register() {
                 </div>
               </div>
 
+              {/* Optional Inquiries Section */}
+              <div className="inquiry-section">
+                <div className="inquiry-header">
+                  <button
+                    type="button"
+                    className={`inquiry-toggle-btn ${showInquiryField ? 'active' : ''}`}
+                    onClick={() => setShowInquiryField(!showInquiryField)}
+                  >
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none">
+                      <path d="M12 8V12M12 16H12.01M21 12C21 16.9706 16.9706 21 12 21C7.02944 21 3 16.9706 3 12C3 7.02944 7.02944 3 12 3C16.9706 3 21 7.02944 21 12Z" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round"/>
+                    </svg>
+                    <span>Have a question or inquiry? <span className="optional-tag">Optional</span></span>
+                    <span className={`toggle-icon ${showInquiryField ? 'open' : ''}`}>▼</span>
+                  </button>
+                </div>
+                
+                {showInquiryField && (
+                  <div className="inquiry-content">
+                    <div className="form-group">
+                      <label htmlFor="inquiry">Your Inquiry / Question</label>
+                      <textarea
+                        id="inquiry"
+                        name="inquiry"
+                        rows="4"
+                        placeholder="Please type your questions or inquiries here... (e.g., event details, registration concerns, special requests, etc.)"
+                        value={form.inquiry}
+                        onChange={handleChange}
+                        className="form-textarea"
+                      ></textarea>
+                      <small className="field-note">This field is optional. Your inquiry will be sent to our team for assistance.</small>
+                    </div>
+                  </div>
+                )}
+              </div>
+
               <div className="form-footer">
                 <button 
                   type="submit" 
@@ -1036,7 +1077,21 @@ function Register() {
                 <span className="detail-label">Phone:</span>
                 <span className="detail-value">{registeredUser.phone}</span>
               </div>
+              {registeredUser.inquiry && (
+                <div className="success-modal-detail-item inquiry-item">
+                  <span className="detail-label">Inquiry Sent:</span>
+                  <span className="detail-value inquiry-value">✓ Your question has been submitted</span>
+                </div>
+              )}
             </div>
+            {registeredUser.inquiry && (
+              <div className="inquiry-confirmation">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none">
+                  <path d="M12 8V12M12 16H12.01M21 12C21 16.9706 16.9706 21 12 21C7.02944 21 3 16.9706 3 12C3 7.02944 7.02944 3 12 3C16.9706 3 21 7.02944 21 12Z" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round"/>
+                </svg>
+                <span>Our team will contact you regarding your inquiry within 24-48 hours.</span>
+              </div>
+            )}
             <button className="success-modal-button" onClick={closeSuccessModal}>
               Got it
             </button>
