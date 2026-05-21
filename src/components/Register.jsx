@@ -1,10 +1,10 @@
-// Register.jsx - Complete with flexible mobile number validation, optional inquiries field, POSITION field, and duplicate email allowed
+// Register.jsx - Complete with full Philippine Regions, Cities, and Municipalities
 import React, { useState, useEffect, useRef } from "react";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
 import "../styles/register.css";
 
-// Searchable Custom Select Component for dropdowns
+// Searchable Custom Select Component for dropdowns with auto-positioning
 const SearchableSelect = ({ value, onChange, options, placeholder }) => {
   const [isOpen, setIsOpen] = useState(false);
   const [searchTerm, setSearchTerm] = useState("");
@@ -40,7 +40,6 @@ const SearchableSelect = ({ value, onChange, options, placeholder }) => {
     }
   }, [isOpen]);
 
-  // Focus search input when dropdown opens
   useEffect(() => {
     if (isOpen && searchInputRef.current) {
       setTimeout(() => {
@@ -51,7 +50,6 @@ const SearchableSelect = ({ value, onChange, options, placeholder }) => {
 
   const selectedOption = options.find(opt => opt.value === value);
   
-  // Filter options based on search term
   const filteredOptions = options.filter(option =>
     option.label.toLowerCase().includes(searchTerm.toLowerCase())
   );
@@ -118,7 +116,7 @@ const SearchableSelect = ({ value, onChange, options, placeholder }) => {
   );
 };
 
-// Philippine Regions data - Using both code and full name for compatibility
+// Philippine Regions data
 const PHILIPPINE_REGIONS = [
   { value: "NCR", label: "National Capital Region (NCR)", fullName: "National Capital Region (NCR)" },
   { value: "CAR", label: "Cordillera Administrative Region (CAR)", fullName: "Cordillera Administrative Region (CAR)" },
@@ -129,6 +127,7 @@ const PHILIPPINE_REGIONS = [
   { value: "MIMAROPA", label: "MIMAROPA Region", fullName: "MIMAROPA Region" },
   { value: "V", label: "Region V (Bicol Region)", fullName: "Region V (Bicol Region)" },
   { value: "VI", label: "Region VI (Western Visayas)", fullName: "Region VI (Western Visayas)" },
+  { value: "NIR", label: "Negros Island Region (NIR)", fullName: "Negros Island Region (NIR)" },
   { value: "VII", label: "Region VII (Central Visayas)", fullName: "Region VII (Central Visayas)" },
   { value: "VIII", label: "Region VIII (Eastern Visayas)", fullName: "Region VIII (Eastern Visayas)" },
   { value: "IX", label: "Region IX (Zamboanga Peninsula)", fullName: "Region IX (Zamboanga Peninsula)" },
@@ -139,8 +138,9 @@ const PHILIPPINE_REGIONS = [
   { value: "BARMM", label: "Bangsamoro Autonomous Region in Muslim Mindanao (BARMM)", fullName: "Bangsamoro Autonomous Region in Muslim Mindanao (BARMM)" }
 ];
 
-// Complete cities organized by region code
+// COMPLETE CITIES AND MUNICIPALITIES ORGANIZED BY REGION
 const CITIES_BY_REGION = {
+  // National Capital Region (NCR) - 16 Cities, 1 Municipality
   NCR: [
     { value: "Caloocan", label: "Caloocan" },
     { value: "Las Piñas", label: "Las Piñas" },
@@ -160,187 +160,605 @@ const CITIES_BY_REGION = {
     { value: "Taguig", label: "Taguig" },
     { value: "Valenzuela", label: "Valenzuela" }
   ],
+  // Cordillera Administrative Region (CAR) - 2 Cities, 75 Municipalities
   CAR: [
     { value: "Baguio", label: "Baguio" },
     { value: "Tabuk", label: "Tabuk" },
-    { value: "Lamut", label: "Lamut" },
-    { value: "Lagawe", label: "Lagawe" },
-    { value: "Bontoc", label: "Bontoc" },
-    { value: "La Trinidad", label: "La Trinidad" },
-    { value: "Bauko", label: "Bauko" }
+    { value: "Bangued", label: "Bangued" }, { value: "Boliney", label: "Boliney" }, { value: "Bucay", label: "Bucay" },
+    { value: "Bucloc", label: "Bucloc" }, { value: "Daguioman", label: "Daguioman" }, { value: "Danglas", label: "Danglas" },
+    { value: "Dolores", label: "Dolores" }, { value: "La Paz", label: "La Paz" }, { value: "Lacub", label: "Lacub" },
+    { value: "Lagangilang", label: "Lagangilang" }, { value: "Lagayan", label: "Lagayan" }, { value: "Langiden", label: "Langiden" },
+    { value: "Licuan-Baay", label: "Licuan-Baay" }, { value: "Luba", label: "Luba" }, { value: "Malibcong", label: "Malibcong" },
+    { value: "Manabo", label: "Manabo" }, { value: "Peñarrubia", label: "Peñarrubia" }, { value: "Pidigan", label: "Pidigan" },
+    { value: "Pilar", label: "Pilar" }, { value: "Sallapadan", label: "Sallapadan" }, { value: "San Isidro", label: "San Isidro" },
+    { value: "San Juan", label: "San Juan" }, { value: "San Quintin", label: "San Quintin" }, { value: "Tayum", label: "Tayum" },
+    { value: "Tineg", label: "Tineg" }, { value: "Tubo", label: "Tubo" }, { value: "Villaviciosa", label: "Villaviciosa" },
+    { value: "Calanasan", label: "Calanasan" }, { value: "Conner", label: "Conner" }, { value: "Flora", label: "Flora" },
+    { value: "Kabugao", label: "Kabugao" }, { value: "Luna", label: "Luna" }, { value: "Pudtol", label: "Pudtol" },
+    { value: "Santa Marcela", label: "Santa Marcela" }, { value: "Atok", label: "Atok" }, { value: "Bakun", label: "Bakun" },
+    { value: "Bokod", label: "Bokod" }, { value: "Buguias", label: "Buguias" }, { value: "Itogon", label: "Itogon" },
+    { value: "Kabayan", label: "Kabayan" }, { value: "Kapangan", label: "Kapangan" }, { value: "Kibungan", label: "Kibungan" },
+    { value: "La Trinidad", label: "La Trinidad" }, { value: "Mankayan", label: "Mankayan" }, { value: "Sablan", label: "Sablan" },
+    { value: "Tuba", label: "Tuba" }, { value: "Tublay", label: "Tublay" }, { value: "Aguinaldo", label: "Aguinaldo" },
+    { value: "Alfonso Lista", label: "Alfonso Lista" }, { value: "Asipulo", label: "Asipulo" }, { value: "Banaue", label: "Banaue" },
+    { value: "Hingyon", label: "Hingyon" }, { value: "Hungduan", label: "Hungduan" }, { value: "Kiangan", label: "Kiangan" },
+    { value: "Lagawe", label: "Lagawe" }, { value: "Lamut", label: "Lamut" }, { value: "Mayoyao", label: "Mayoyao" },
+    { value: "Tinoc", label: "Tinoc" }, { value: "Balbalan", label: "Balbalan" }, { value: "Lubuagan", label: "Lubuagan" },
+    { value: "Pasil", label: "Pasil" }, { value: "Pinukpuk", label: "Pinukpuk" }, { value: "Rizal", label: "Rizal" },
+    { value: "Tanudan", label: "Tanudan" }, { value: "Tinglayan", label: "Tinglayan" }, { value: "Barlig", label: "Barlig" },
+    { value: "Bauko", label: "Bauko" }, { value: "Besao", label: "Besao" }, { value: "Bontoc", label: "Bontoc" },
+    { value: "Natonin", label: "Natonin" }, { value: "Paracelis", label: "Paracelis" }, { value: "Sabangan", label: "Sabangan" },
+    { value: "Sadanga", label: "Sadanga" }, { value: "Sagada", label: "Sagada" }, { value: "Tadian", label: "Tadian" }
   ],
+  // Region I - Ilocos Region (9 Cities, 116 Municipalities)
   I: [
-    { value: "Alaminos", label: "Alaminos" },
-    { value: "Dagupan", label: "Dagupan" },
-    { value: "Laoag", label: "Laoag" },
-    { value: "San Carlos (Pangasinan)", label: "San Carlos (Pangasinan)" },
-    { value: "Urdaneta", label: "Urdaneta" },
-    { value: "Vigan", label: "Vigan" },
-    { value: "Batac", label: "Batac" },
-    { value: "Candon", label: "Candon" }
+    { value: "Alaminos", label: "Alaminos" }, { value: "Batac", label: "Batac" }, { value: "Candon", label: "Candon" },
+    { value: "Dagupan", label: "Dagupan" }, { value: "Laoag", label: "Laoag" }, { value: "San Carlos (Pangasinan)", label: "San Carlos (Pangasinan)" },
+    { value: "San Fernando (La Union)", label: "San Fernando (La Union)" }, { value: "Urdaneta", label: "Urdaneta" }, { value: "Vigan", label: "Vigan" },
+    { value: "Adams", label: "Adams" }, { value: "Bacarra", label: "Bacarra" }, { value: "Badoc", label: "Badoc" },
+    { value: "Bangui", label: "Bangui" }, { value: "Banna", label: "Banna" }, { value: "Burgos", label: "Burgos" },
+    { value: "Carasi", label: "Carasi" }, { value: "Currimao", label: "Currimao" }, { value: "Dingras", label: "Dingras" },
+    { value: "Dumalneg", label: "Dumalneg" }, { value: "Marcos", label: "Marcos" }, { value: "Nueva Era", label: "Nueva Era" },
+    { value: "Pagudpud", label: "Pagudpud" }, { value: "Paoay", label: "Paoay" }, { value: "Pasuquin", label: "Pasuquin" },
+    { value: "Piddig", label: "Piddig" }, { value: "Pinili", label: "Pinili" }, { value: "San Nicolas", label: "San Nicolas" },
+    { value: "Sarrat", label: "Sarrat" }, { value: "Solsona", label: "Solsona" }, { value: "Vintar", label: "Vintar" },
+    { value: "Banayoyo", label: "Banayoyo" }, { value: "Bantay", label: "Bantay" }, { value: "Cabugao", label: "Cabugao" },
+    { value: "Caoayan", label: "Caoayan" }, { value: "Cervantes", label: "Cervantes" }, { value: "Galimuyod", label: "Galimuyod" },
+    { value: "Gregorio del Pilar", label: "Gregorio del Pilar" }, { value: "Lidlidda", label: "Lidlidda" }, { value: "Magsingal", label: "Magsingal" },
+    { value: "Nagbukel", label: "Nagbukel" }, { value: "Narvacan", label: "Narvacan" }, { value: "Quirino", label: "Quirino" },
+    { value: "Salcedo", label: "Salcedo" }, { value: "San Emilio", label: "San Emilio" }, { value: "San Esteban", label: "San Esteban" },
+    { value: "San Ildefonso", label: "San Ildefonso" }, { value: "San Juan", label: "San Juan" }, { value: "San Vicente", label: "San Vicente" },
+    { value: "Santa", label: "Santa" }, { value: "Santa Catalina", label: "Santa Catalina" }, { value: "Santa Cruz", label: "Santa Cruz" },
+    { value: "Santa Lucia", label: "Santa Lucia" }, { value: "Santa Maria", label: "Santa Maria" }, { value: "Santiago", label: "Santiago" },
+    { value: "Santo Domingo", label: "Santo Domingo" }, { value: "Sigay", label: "Sigay" }, { value: "Sinait", label: "Sinait" },
+    { value: "Sugpon", label: "Sugpon" }, { value: "Suyo", label: "Suyo" }, { value: "Tagudin", label: "Tagudin" },
+    { value: "Agoo", label: "Agoo" }, { value: "Aringay", label: "Aringay" }, { value: "Bacnotan", label: "Bacnotan" },
+    { value: "Bagulin", label: "Bagulin" }, { value: "Balaoan", label: "Balaoan" }, { value: "Bangar", label: "Bangar" },
+    { value: "Bauang", label: "Bauang" }, { value: "Burgos", label: "Burgos" }, { value: "Caba", label: "Caba" },
+    { value: "Luna", label: "Luna" }, { value: "Naguilian", label: "Naguilian" }, { value: "Pugo", label: "Pugo" },
+    { value: "Rosario", label: "Rosario" }, { value: "San Gabriel", label: "San Gabriel" }, { value: "San Juan", label: "San Juan" },
+    { value: "Santo Tomas", label: "Santo Tomas" }, { value: "Santol", label: "Santol" }, { value: "Sudipen", label: "Sudipen" },
+    { value: "Tubao", label: "Tubao" }, { value: "Agno", label: "Agno" }, { value: "Aguilar", label: "Aguilar" },
+    { value: "Alcala", label: "Alcala" }, { value: "Anda", label: "Anda" }, { value: "Asingan", label: "Asingan" },
+    { value: "Balungao", label: "Balungao" }, { value: "Bani", label: "Bani" }, { value: "Basista", label: "Basista" },
+    { value: "Bautista", label: "Bautista" }, { value: "Bayambang", label: "Bayambang" }, { value: "Binalonan", label: "Binalonan" },
+    { value: "Binmaley", label: "Binmaley" }, { value: "Bolinao", label: "Bolinao" }, { value: "Bugallon", label: "Bugallon" },
+    { value: "Burgos", label: "Burgos" }, { value: "Calasiao", label: "Calasiao" }, { value: "Dasol", label: "Dasol" },
+    { value: "Infanta", label: "Infanta" }, { value: "Labrador", label: "Labrador" }, { value: "Laoac", label: "Laoac" },
+    { value: "Lingayen", label: "Lingayen" }, { value: "Mabini", label: "Mabini" }, { value: "Malasiqui", label: "Malasiqui" },
+    { value: "Manaoag", label: "Manaoag" }, { value: "Mangaldan", label: "Mangaldan" }, { value: "Mangatarem", label: "Mangatarem" },
+    { value: "Mapandan", label: "Mapandan" }, { value: "Natividad", label: "Natividad" }, { value: "Pozorrubio", label: "Pozorrubio" },
+    { value: "Rosales", label: "Rosales" }, { value: "San Fabian", label: "San Fabian" }, { value: "San Jacinto", label: "San Jacinto" },
+    { value: "San Manuel", label: "San Manuel" }, { value: "San Nicolas", label: "San Nicolas" }, { value: "San Quintin", label: "San Quintin" },
+    { value: "Santa Barbara", label: "Santa Barbara" }, { value: "Santa Maria", label: "Santa Maria" }, { value: "Santo Tomas", label: "Santo Tomas" },
+    { value: "Sison", label: "Sison" }, { value: "Sual", label: "Sual" }, { value: "Tayug", label: "Tayug" },
+    { value: "Umingan", label: "Umingan" }, { value: "Urbiztondo", label: "Urbiztondo" }, { value: "Villasis", label: "Villasis" }
   ],
+  // Region II - Cagayan Valley (4 Cities, 89 Municipalities)
   II: [
-    { value: "Cauayan", label: "Cauayan" },
-    { value: "Santiago", label: "Santiago" },
-    { value: "Tuguegarao", label: "Tuguegarao" },
-    { value: "Ilagan", label: "Ilagan" }
+    { value: "Cauayan", label: "Cauayan" }, { value: "Ilagan", label: "Ilagan" }, { value: "Santiago", label: "Santiago" },
+    { value: "Tuguegarao", label: "Tuguegarao" }, { value: "Basco", label: "Basco" }, { value: "Itbayat", label: "Itbayat" },
+    { value: "Ivana", label: "Ivana" }, { value: "Mahatao", label: "Mahatao" }, { value: "Sabtang", label: "Sabtang" },
+    { value: "Uyugan", label: "Uyugan" }, { value: "Abulug", label: "Abulug" }, { value: "Alcala", label: "Alcala" },
+    { value: "Allacapan", label: "Allacapan" }, { value: "Amulung", label: "Amulung" }, { value: "Aparri", label: "Aparri" },
+    { value: "Baggao", label: "Baggao" }, { value: "Ballesteros", label: "Ballesteros" }, { value: "Buguey", label: "Buguey" },
+    { value: "Calayan", label: "Calayan" }, { value: "Camalaniugan", label: "Camalaniugan" }, { value: "Claveria", label: "Claveria" },
+    { value: "Enrile", label: "Enrile" }, { value: "Gattaran", label: "Gattaran" }, { value: "Gonzaga", label: "Gonzaga" },
+    { value: "Iguig", label: "Iguig" }, { value: "Lal-lo", label: "Lal-lo" }, { value: "Lasam", label: "Lasam" },
+    { value: "Pamplona", label: "Pamplona" }, { value: "Peñablanca", label: "Peñablanca" }, { value: "Piat", label: "Piat" },
+    { value: "Rizal", label: "Rizal" }, { value: "Sanchez-Mira", label: "Sanchez-Mira" }, { value: "Santa Ana", label: "Santa Ana" },
+    { value: "Santa Praxedes", label: "Santa Praxedes" }, { value: "Santa Teresita", label: "Santa Teresita" }, { value: "Santo Niño", label: "Santo Niño" },
+    { value: "Solana", label: "Solana" }, { value: "Tuao", label: "Tuao" }, { value: "Alicia", label: "Alicia" },
+    { value: "Angadanan", label: "Angadanan" }, { value: "Aurora", label: "Aurora" }, { value: "Benito Soliven", label: "Benito Soliven" },
+    { value: "Burgos", label: "Burgos" }, { value: "Cabagan", label: "Cabagan" }, { value: "Cabatuan", label: "Cabatuan" },
+    { value: "Cordon", label: "Cordon" }, { value: "Delfin Albano", label: "Delfin Albano" }, { value: "Dinapigue", label: "Dinapigue" },
+    { value: "Divilacan", label: "Divilacan" }, { value: "Echague", label: "Echague" }, { value: "Gamu", label: "Gamu" },
+    { value: "Jones", label: "Jones" }, { value: "Luna", label: "Luna" }, { value: "Maconacon", label: "Maconacon" },
+    { value: "Mallig", label: "Mallig" }, { value: "Naguilian", label: "Naguilian" }, { value: "Palanan", label: "Palanan" },
+    { value: "Quezon", label: "Quezon" }, { value: "Quirino", label: "Quirino" }, { value: "Ramon", label: "Ramon" },
+    { value: "Reina Mercedes", label: "Reina Mercedes" }, { value: "Roxas", label: "Roxas" }, { value: "San Agustin", label: "San Agustin" },
+    { value: "San Guillermo", label: "San Guillermo" }, { value: "San Isidro", label: "San Isidro" }, { value: "San Manuel", label: "San Manuel" },
+    { value: "San Mariano", label: "San Mariano" }, { value: "San Mateo", label: "San Mateo" }, { value: "San Pablo", label: "San Pablo" },
+    { value: "Santa Maria", label: "Santa Maria" }, { value: "Santo Tomas", label: "Santo Tomas" }, { value: "Tumauini", label: "Tumauini" },
+    { value: "Alfonso Castañeda", label: "Alfonso Castañeda" }, { value: "Ambaguio", label: "Ambaguio" }, { value: "Aritao", label: "Aritao" },
+    { value: "Bagabag", label: "Bagabag" }, { value: "Bambang", label: "Bambang" }, { value: "Bayombong", label: "Bayombong" },
+    { value: "Diadi", label: "Diadi" }, { value: "Dupax del Norte", label: "Dupax del Norte" }, { value: "Dupax del Sur", label: "Dupax del Sur" },
+    { value: "Kasibu", label: "Kasibu" }, { value: "Kayapa", label: "Kayapa" }, { value: "Quezon", label: "Quezon" },
+    { value: "Santa Fe", label: "Santa Fe" }, { value: "Solano", label: "Solano" }, { value: "Villaverde", label: "Villaverde" },
+    { value: "Aglipay", label: "Aglipay" }, { value: "Cabarroguis", label: "Cabarroguis" }, { value: "Diffun", label: "Diffun" },
+    { value: "Maddela", label: "Maddela" }, { value: "Nagtipunan", label: "Nagtipunan" }, { value: "Saguday", label: "Saguday" }
   ],
+  // Region III - Central Luzon (15 Cities, 115 Municipalities)
   III: [
-    { value: "Angeles", label: "Angeles" },
-    { value: "Balanga", label: "Balanga" },
-    { value: "Cabanatuan", label: "Cabanatuan" },
-    { value: "Gapan", label: "Gapan" },
-    { value: "Mabalacat", label: "Mabalacat" },
-    { value: "Malolos", label: "Malolos" },
-    { value: "Meycauayan", label: "Meycauayan" },
-    { value: "Muñoz", label: "Science City of Muñoz" },
-    { value: "Olongapo", label: "Olongapo" },
-    { value: "Palayan", label: "Palayan" },
-    { value: "San Fernando (Pampanga)", label: "San Fernando (Pampanga)" },
-    { value: "San Jose (Nueva Ecija)", label: "San Jose (Nueva Ecija)" },
-    { value: "San Jose Del Monte", label: "San Jose Del Monte" },
-    { value: "Tarlac", label: "Tarlac" },
-    { value: "Baliwag", label: "Baliwag" }
+    { value: "Angeles", label: "Angeles" }, { value: "Balanga", label: "Balanga" }, { value: "Cabanatuan", label: "Cabanatuan" },
+    { value: "Gapan", label: "Gapan" }, { value: "Mabalacat", label: "Mabalacat" }, { value: "Malolos", label: "Malolos" },
+    { value: "Meycauayan", label: "Meycauayan" }, { value: "Muñoz", label: "Muñoz" }, { value: "Olongapo", label: "Olongapo" },
+    { value: "Palayan", label: "Palayan" }, { value: "San Fernando (Pampanga)", label: "San Fernando (Pampanga)" }, { value: "San Jose (Nueva Ecija)", label: "San Jose (Nueva Ecija)" },
+    { value: "San Jose del Monte", label: "San Jose del Monte" }, { value: "Tarlac City", label: "Tarlac City" }, { value: "Baler", label: "Baler" },
+    { value: "Casiguran", label: "Casiguran" }, { value: "Dilasag", label: "Dilasag" }, { value: "Dinalungan", label: "Dinalungan" },
+    { value: "Dingalan", label: "Dingalan" }, { value: "Dipaculao", label: "Dipaculao" }, { value: "Maria Aurora", label: "Maria Aurora" },
+    { value: "San Luis", label: "San Luis" }, { value: "Abucay", label: "Abucay" }, { value: "Bagac", label: "Bagac" },
+    { value: "Dinalupihan", label: "Dinalupihan" }, { value: "Hermosa", label: "Hermosa" }, { value: "Limay", label: "Limay" },
+    { value: "Mariveles", label: "Mariveles" }, { value: "Morong", label: "Morong" }, { value: "Orani", label: "Orani" },
+    { value: "Orion", label: "Orion" }, { value: "Pilar", label: "Pilar" }, { value: "Samal", label: "Samal" },
+    { value: "Angat", label: "Angat" }, { value: "Balagtas", label: "Balagtas" }, { value: "Baliwag", label: "Baliwag" },
+    { value: "Bocaue", label: "Bocaue" }, { value: "Bulakan", label: "Bulakan" }, { value: "Bustos", label: "Bustos" },
+    { value: "Calumpit", label: "Calumpit" }, { value: "Doña Remedios Trinidad", label: "Doña Remedios Trinidad" }, { value: "Guiguinto", label: "Guiguinto" },
+    { value: "Hagonoy", label: "Hagonoy" }, { value: "Marilao", label: "Marilao" }, { value: "Norzagaray", label: "Norzagaray" },
+    { value: "Obando", label: "Obando" }, { value: "Pandi", label: "Pandi" }, { value: "Paombong", label: "Paombong" },
+    { value: "Plaridel", label: "Plaridel" }, { value: "Pulilan", label: "Pulilan" }, { value: "San Ildefonso", label: "San Ildefonso" },
+    { value: "San Miguel", label: "San Miguel" }, { value: "San Rafael", label: "San Rafael" }, { value: "Santa Maria", label: "Santa Maria" },
+    { value: "Aliaga", label: "Aliaga" }, { value: "Bongabon", label: "Bongabon" }, { value: "Cabiao", label: "Cabiao" },
+    { value: "Carranglan", label: "Carranglan" }, { value: "Cuyapo", label: "Cuyapo" }, { value: "Gabaldon", label: "Gabaldon" },
+    { value: "General Mamerto Natividad", label: "General Mamerto Natividad" }, { value: "General Tinio", label: "General Tinio" }, { value: "Guimba", label: "Guimba" },
+    { value: "Jaen", label: "Jaen" }, { value: "Laur", label: "Laur" }, { value: "Licab", label: "Licab" },
+    { value: "Llanera", label: "Llanera" }, { value: "Lupao", label: "Lupao" }, { value: "Nampicuan", label: "Nampicuan" },
+    { value: "Pantabangan", label: "Pantabangan" }, { value: "Peñaranda", label: "Peñaranda" }, { value: "Quezon", label: "Quezon" },
+    { value: "Rizal", label: "Rizal" }, { value: "San Antonio", label: "San Antonio" }, { value: "San Isidro", label: "San Isidro" },
+    { value: "San Leonardo", label: "San Leonardo" }, { value: "Santa Rosa", label: "Santa Rosa" }, { value: "Santo Domingo", label: "Santo Domingo" },
+    { value: "Talavera", label: "Talavera" }, { value: "Talugtug", label: "Talugtug" }, { value: "Zaragoza", label: "Zaragoza" },
+    { value: "Apalit", label: "Apalit" }, { value: "Arayat", label: "Arayat" }, { value: "Bacolor", label: "Bacolor" },
+    { value: "Candaba", label: "Candaba" }, { value: "Floridablanca", label: "Floridablanca" }, { value: "Guagua", label: "Guagua" },
+    { value: "Lubao", label: "Lubao" }, { value: "Macabebe", label: "Macabebe" }, { value: "Magalang", label: "Magalang" },
+    { value: "Masantol", label: "Masantol" }, { value: "Mexico", label: "Mexico" }, { value: "Minalin", label: "Minalin" },
+    { value: "Porac", label: "Porac" }, { value: "San Luis", label: "San Luis" }, { value: "San Simon", label: "San Simon" },
+    { value: "Santa Ana", label: "Santa Ana" }, { value: "Santa Rita", label: "Santa Rita" }, { value: "Santo Tomas", label: "Santo Tomas" },
+    { value: "Sasmuan", label: "Sasmuan" }, { value: "Anao", label: "Anao" }, { value: "Bamban", label: "Bamban" },
+    { value: "Camiling", label: "Camiling" }, { value: "Capas", label: "Capas" }, { value: "Concepcion", label: "Concepcion" },
+    { value: "Gerona", label: "Gerona" }, { value: "La Paz", label: "La Paz" }, { value: "Mayantoc", label: "Mayantoc" },
+    { value: "Moncada", label: "Moncada" }, { value: "Paniqui", label: "Paniqui" }, { value: "Pura", label: "Pura" },
+    { value: "Ramos", label: "Ramos" }, { value: "San Clemente", label: "San Clemente" }, { value: "San Jose", label: "San Jose" },
+    { value: "San Manuel", label: "San Manuel" }, { value: "Santa Ignacia", label: "Santa Ignacia" }, { value: "Victoria", label: "Victoria" },
+    { value: "Botolan", label: "Botolan" }, { value: "Cabangan", label: "Cabangan" }, { value: "Candelaria", label: "Candelaria" },
+    { value: "Castillejos", label: "Castillejos" }, { value: "Iba", label: "Iba" }, { value: "Masinloc", label: "Masinloc" },
+    { value: "Palauig", label: "Palauig" }, { value: "San Antonio", label: "San Antonio" }, { value: "San Felipe", label: "San Felipe" },
+    { value: "San Marcelino", label: "San Marcelino" }, { value: "San Narciso", label: "San Narciso" }, { value: "Santa Cruz", label: "Santa Cruz" }
   ],
+  // Region IV-A - CALABARZON (22 Cities, 120 Municipalities)
   "IV-A": [
-    { value: "Antipolo", label: "Antipolo" },
-    { value: "Bacoor", label: "Bacoor" },
-    { value: "Batangas", label: "Batangas" },
-    { value: "Biñan", label: "Biñan" },
-    { value: "Cabuyao", label: "Cabuyao" },
-    { value: "Calamba", label: "Calamba" },
-    { value: "Cavite", label: "Cavite" },
-    { value: "Dasmariñas", label: "Dasmariñas" },
-    { value: "General Trias", label: "General Trias" },
-    { value: "Imus", label: "Imus" },
-    { value: "Lipa", label: "Lipa" },
-    { value: "Lucena", label: "Lucena" },
-    { value: "San Pablo", label: "San Pablo" },
-    { value: "San Pedro", label: "San Pedro" },
-    { value: "Santa Rosa", label: "Santa Rosa" },
-    { value: "Santo Tomas", label: "Santo Tomas" },
-    { value: "Tagaytay", label: "Tagaytay" },
-    { value: "Tanauan", label: "Tanauan" },
-    { value: "Tayabas", label: "Tayabas" },
-    { value: "Trece Martires", label: "Trece Martires" },
-    { value: "Silang", label: "Silang" },
-    { value: "Rosario", label: "Rosario" }
+    { value: "Antipolo", label: "Antipolo" }, { value: "Bacoor", label: "Bacoor" }, { value: "Batangas City", label: "Batangas City" },
+    { value: "Biñan", label: "Biñan" }, { value: "Cabuyao", label: "Cabuyao" }, { value: "Calamba", label: "Calamba" },
+    { value: "Cavite City", label: "Cavite City" }, { value: "Dasmariñas", label: "Dasmariñas" }, { value: "General Trias", label: "General Trias" },
+    { value: "Imus", label: "Imus" }, { value: "Lipa", label: "Lipa" }, { value: "Lucena", label: "Lucena" },
+    { value: "San Pablo", label: "San Pablo" }, { value: "San Pedro", label: "San Pedro" }, { value: "Santa Rosa", label: "Santa Rosa" },
+    { value: "Santo Tomas", label: "Santo Tomas" }, { value: "Tagaytay", label: "Tagaytay" }, { value: "Tanauan", label: "Tanauan" },
+    { value: "Tayabas", label: "Tayabas" }, { value: "Trece Martires", label: "Trece Martires" }, { value: "Agoncillo", label: "Agoncillo" },
+    { value: "Alitagtag", label: "Alitagtag" }, { value: "Balayan", label: "Balayan" }, { value: "Balete", label: "Balete" },
+    { value: "Bauan", label: "Bauan" }, { value: "Calaca", label: "Calaca" }, { value: "Calatagan", label: "Calatagan" },
+    { value: "Cuenca", label: "Cuenca" }, { value: "Ibaan", label: "Ibaan" }, { value: "Laurel", label: "Laurel" },
+    { value: "Lemery", label: "Lemery" }, { value: "Lian", label: "Lian" }, { value: "Lobo", label: "Lobo" },
+    { value: "Mabini", label: "Mabini" }, { value: "Malvar", label: "Malvar" }, { value: "Mataasnakahoy", label: "Mataasnakahoy" },
+    { value: "Nasugbu", label: "Nasugbu" }, { value: "Padre Garcia", label: "Padre Garcia" }, { value: "Rosario", label: "Rosario" },
+    { value: "San Jose", label: "San Jose" }, { value: "San Juan", label: "San Juan" }, { value: "San Luis", label: "San Luis" },
+    { value: "San Nicolas", label: "San Nicolas" }, { value: "San Pascual", label: "San Pascual" }, { value: "Santa Teresita", label: "Santa Teresita" },
+    { value: "Taal", label: "Taal" }, { value: "Talisay", label: "Talisay" }, { value: "Taysan", label: "Taysan" },
+    { value: "Tingloy", label: "Tingloy" }, { value: "Tuy", label: "Tuy" }, { value: "Alfonso", label: "Alfonso" },
+    { value: "Amadeo", label: "Amadeo" }, { value: "Carmona", label: "Carmona" }, { value: "General Emilio Aguinaldo", label: "General Emilio Aguinaldo" },
+    { value: "Indang", label: "Indang" }, { value: "Magallanes", label: "Magallanes" }, { value: "Maragondon", label: "Maragondon" },
+    { value: "Mendez", label: "Mendez" }, { value: "Naic", label: "Naic" }, { value: "Noveleta", label: "Noveleta" },
+    { value: "Rosario", label: "Rosario" }, { value: "Silang", label: "Silang" }, { value: "Tanza", label: "Tanza" },
+    { value: "Ternate", label: "Ternate" }, { value: "Alaminos", label: "Alaminos" }, { value: "Bay", label: "Bay" },
+    { value: "Calauan", label: "Calauan" }, { value: "Cavinti", label: "Cavinti" }, { value: "Famy", label: "Famy" },
+    { value: "Kalayaan", label: "Kalayaan" }, { value: "Liliw", label: "Liliw" }, { value: "Los Baños", label: "Los Baños" },
+    { value: "Luisiana", label: "Luisiana" }, { value: "Lumban", label: "Lumban" }, { value: "Mabitac", label: "Mabitac" },
+    { value: "Magdalena", label: "Magdalena" }, { value: "Majayjay", label: "Majayjay" }, { value: "Nagcarlan", label: "Nagcarlan" },
+    { value: "Paete", label: "Paete" }, { value: "Pagsanjan", label: "Pagsanjan" }, { value: "Pakil", label: "Pakil" },
+    { value: "Pangil", label: "Pangil" }, { value: "Pila", label: "Pila" }, { value: "Rizal", label: "Rizal" },
+    { value: "Santa Cruz", label: "Santa Cruz" }, { value: "Santa Maria", label: "Santa Maria" }, { value: "Siniloan", label: "Siniloan" },
+    { value: "Victoria", label: "Victoria" }, { value: "Agdangan", label: "Agdangan" }, { value: "Alabat", label: "Alabat" },
+    { value: "Atimonan", label: "Atimonan" }, { value: "Buenavista", label: "Buenavista" }, { value: "Burdeos", label: "Burdeos" },
+    { value: "Calauag", label: "Calauag" }, { value: "Candelaria", label: "Candelaria" }, { value: "Catanauan", label: "Catanauan" },
+    { value: "Dolores", label: "Dolores" }, { value: "General Luna", label: "General Luna" }, { value: "General Nakar", label: "General Nakar" },
+    { value: "Guinayangan", label: "Guinayangan" }, { value: "Gumaca", label: "Gumaca" }, { value: "Infanta", label: "Infanta" },
+    { value: "Jomalig", label: "Jomalig" }, { value: "Lopez", label: "Lopez" }, { value: "Lucban", label: "Lucban" },
+    { value: "Macalelon", label: "Macalelon" }, { value: "Mauban", label: "Mauban" }, { value: "Mulanay", label: "Mulanay" },
+    { value: "Padre Burgos", label: "Padre Burgos" }, { value: "Pagbilao", label: "Pagbilao" }, { value: "Panukulan", label: "Panukulan" },
+    { value: "Patnanungan", label: "Patnanungan" }, { value: "Perez", label: "Perez" }, { value: "Pitogo", label: "Pitogo" },
+    { value: "Plaridel", label: "Plaridel" }, { value: "Polillo", label: "Polillo" }, { value: "Quezon", label: "Quezon" },
+    { value: "Real", label: "Real" }, { value: "Sampaloc", label: "Sampaloc" }, { value: "San Andres", label: "San Andres" },
+    { value: "San Antonio", label: "San Antonio" }, { value: "San Francisco", label: "San Francisco" }, { value: "San Narciso", label: "San Narciso" },
+    { value: "Sariaya", label: "Sariaya" }, { value: "Tagkawayan", label: "Tagkawayan" }, { value: "Tiaong", label: "Tiaong" },
+    { value: "Unisan", label: "Unisan" }, { value: "Angono", label: "Angono" }, { value: "Baras", label: "Baras" },
+    { value: "Binangonan", label: "Binangonan" }, { value: "Cainta", label: "Cainta" }, { value: "Cardona", label: "Cardona" },
+    { value: "Jalajala", label: "Jalajala" }, { value: "Morong", label: "Morong" }, { value: "Pililla", label: "Pililla" },
+    { value: "Rodriguez", label: "Rodriguez" }, { value: "San Mateo", label: "San Mateo" }, { value: "Tanay", label: "Tanay" },
+    { value: "Taytay", label: "Taytay" }, { value: "Teresa", label: "Teresa" }
   ],
+  // MIMAROPA Region (2 Cities, 71 Municipalities)
   MIMAROPA: [
-    { value: "Calapan", label: "Calapan" },
-    { value: "Puerto Princesa", label: "Puerto Princesa" },
-    { value: "Odiongan", label: "Odiongan" },
-    { value: "Roxas (Mindoro)", label: "Roxas" }
+    { value: "Calapan", label: "Calapan" }, { value: "Puerto Princesa", label: "Puerto Princesa" }, { value: "Boac", label: "Boac" },
+    { value: "Buenavista", label: "Buenavista" }, { value: "Gasan", label: "Gasan" }, { value: "Mogpog", label: "Mogpog" },
+    { value: "Santa Cruz", label: "Santa Cruz" }, { value: "Torrijos", label: "Torrijos" }, { value: "Abra de Ilog", label: "Abra de Ilog" },
+    { value: "Calintaan", label: "Calintaan" }, { value: "Looc", label: "Looc" }, { value: "Lubang", label: "Lubang" },
+    { value: "Magsaysay", label: "Magsaysay" }, { value: "Mamburao", label: "Mamburao" }, { value: "Paluan", label: "Paluan" },
+    { value: "Rizal", label: "Rizal" }, { value: "Sablayan", label: "Sablayan" }, { value: "San Jose", label: "San Jose" },
+    { value: "Santa Cruz", label: "Santa Cruz" }, { value: "Baco", label: "Baco" }, { value: "Bansud", label: "Bansud" },
+    { value: "Bongabong", label: "Bongabong" }, { value: "Bulalacao", label: "Bulalacao" }, { value: "Gloria", label: "Gloria" },
+    { value: "Mansalay", label: "Mansalay" }, { value: "Naujan", label: "Naujan" }, { value: "Pinamalayan", label: "Pinamalayan" },
+    { value: "Pola", label: "Pola" }, { value: "Puerto Galera", label: "Puerto Galera" }, { value: "Roxas", label: "Roxas" },
+    { value: "San Teodoro", label: "San Teodoro" }, { value: "Socorro", label: "Socorro" }, { value: "Victoria", label: "Victoria" },
+    { value: "Aborlan", label: "Aborlan" }, { value: "Agutaya", label: "Agutaya" }, { value: "Araceli", label: "Araceli" },
+    { value: "Balabac", label: "Balabac" }, { value: "Bataraza", label: "Bataraza" }, { value: "Brooke's Point", label: "Brooke's Point" },
+    { value: "Busuanga", label: "Busuanga" }, { value: "Cagayancillo", label: "Cagayancillo" }, { value: "Coron", label: "Coron" },
+    { value: "Culion", label: "Culion" }, { value: "Cuyo", label: "Cuyo" }, { value: "Dumaran", label: "Dumaran" },
+    { value: "El Nido", label: "El Nido" }, { value: "Kalayaan", label: "Kalayaan" }, { value: "Linapacan", label: "Linapacan" },
+    { value: "Magsaysay", label: "Magsaysay" }, { value: "Narra", label: "Narra" }, { value: "Quezon", label: "Quezon" },
+    { value: "Rizal", label: "Rizal" }, { value: "Roxas", label: "Roxas" }, { value: "San Vicente", label: "San Vicente" },
+    { value: "Sofronio Española", label: "Sofronio Española" }, { value: "Taytay", label: "Taytay" }, { value: "Alcantara", label: "Alcantara" },
+    { value: "Banton", label: "Banton" }, { value: "Cajidiocan", label: "Cajidiocan" }, { value: "Calatrava", label: "Calatrava" },
+    { value: "Concepcion", label: "Concepcion" }, { value: "Corcuera", label: "Corcuera" }, { value: "Ferrol", label: "Ferrol" },
+    { value: "Looc", label: "Looc" }, { value: "Magdiwang", label: "Magdiwang" }, { value: "Odiongan", label: "Odiongan" },
+    { value: "Romblon", label: "Romblon" }, { value: "San Agustin", label: "San Agustin" }, { value: "San Andres", label: "San Andres" },
+    { value: "San Fernando", label: "San Fernando" }, { value: "San Jose", label: "San Jose" }, { value: "Santa Fe", label: "Santa Fe" },
+    { value: "Santa Maria", label: "Santa Maria" }
   ],
+  // Region V - Bicol Region (7 Cities, 107 Municipalities)
   V: [
-    { value: "Iriga", label: "Iriga" },
-    { value: "Legazpi", label: "Legazpi" },
-    { value: "Ligao", label: "Ligao" },
-    { value: "Masbate", label: "Masbate" },
-    { value: "Naga (Camarines Sur)", label: "Naga (Camarines Sur)" },
-    { value: "Sorsogon", label: "Sorsogon" },
-    { value: "Tabaco", label: "Tabaco" },
-    { value: "Daet", label: "Daet" }
+    { value: "Iriga", label: "Iriga" }, { value: "Legazpi", label: "Legazpi" }, { value: "Ligao", label: "Ligao" },
+    { value: "Masbate City", label: "Masbate City" }, { value: "Naga", label: "Naga" }, { value: "Sorsogon City", label: "Sorsogon City" },
+    { value: "Tabaco", label: "Tabaco" }, { value: "Bacacay", label: "Bacacay" }, { value: "Camalig", label: "Camalig" },
+    { value: "Daraga", label: "Daraga" }, { value: "Guinobatan", label: "Guinobatan" }, { value: "Jovellar", label: "Jovellar" },
+    { value: "Libon", label: "Libon" }, { value: "Malilipot", label: "Malilipot" }, { value: "Malinao", label: "Malinao" },
+    { value: "Manito", label: "Manito" }, { value: "Oas", label: "Oas" }, { value: "Pio Duran", label: "Pio Duran" },
+    { value: "Polangui", label: "Polangui" }, { value: "Rapu-Rapu", label: "Rapu-Rapu" }, { value: "Santo Domingo", label: "Santo Domingo" },
+    { value: "Tiwi", label: "Tiwi" }, { value: "Basud", label: "Basud" }, { value: "Capalonga", label: "Capalonga" },
+    { value: "Daet", label: "Daet" }, { value: "Jose Panganiban", label: "Jose Panganiban" }, { value: "Labo", label: "Labo" },
+    { value: "Mercedes", label: "Mercedes" }, { value: "Paracale", label: "Paracale" }, { value: "San Lorenzo Ruiz", label: "San Lorenzo Ruiz" },
+    { value: "San Vicente", label: "San Vicente" }, { value: "Santa Elena", label: "Santa Elena" }, { value: "Talisay", label: "Talisay" },
+    { value: "Vinzons", label: "Vinzons" }, { value: "Baao", label: "Baao" }, { value: "Balatan", label: "Balatan" },
+    { value: "Bato", label: "Bato" }, { value: "Bombon", label: "Bombon" }, { value: "Buhi", label: "Buhi" },
+    { value: "Bula", label: "Bula" }, { value: "Cabusao", label: "Cabusao" }, { value: "Calabanga", label: "Calabanga" },
+    { value: "Camaligan", label: "Camaligan" }, { value: "Canaman", label: "Canaman" }, { value: "Caramoan", label: "Caramoan" },
+    { value: "Del Gallego", label: "Del Gallego" }, { value: "Gainza", label: "Gainza" }, { value: "Garchitorena", label: "Garchitorena" },
+    { value: "Goa", label: "Goa" }, { value: "Lagonoy", label: "Lagonoy" }, { value: "Libmanan", label: "Libmanan" },
+    { value: "Lupi", label: "Lupi" }, { value: "Magarao", label: "Magarao" }, { value: "Milaor", label: "Milaor" },
+    { value: "Minalabac", label: "Minalabac" }, { value: "Nabua", label: "Nabua" }, { value: "Ocampo", label: "Ocampo" },
+    { value: "Pamplona", label: "Pamplona" }, { value: "Pasacao", label: "Pasacao" }, { value: "Pili", label: "Pili" },
+    { value: "Presentacion", label: "Presentacion" }, { value: "Ragay", label: "Ragay" }, { value: "Sagñay", label: "Sagñay" },
+    { value: "San Fernando", label: "San Fernando" }, { value: "San Jose", label: "San Jose" }, { value: "Sipocot", label: "Sipocot" },
+    { value: "Siruma", label: "Siruma" }, { value: "Tigaon", label: "Tigaon" }, { value: "Tinambac", label: "Tinambac" },
+    { value: "Bagamanoc", label: "Bagamanoc" }, { value: "Baras", label: "Baras" }, { value: "Bato", label: "Bato" },
+    { value: "Caramoran", label: "Caramoran" }, { value: "Gigmoto", label: "Gigmoto" }, { value: "Pandan", label: "Pandan" },
+    { value: "Panganiban", label: "Panganiban" }, { value: "San Andres", label: "San Andres" }, { value: "San Miguel", label: "San Miguel" },
+    { value: "Viga", label: "Viga" }, { value: "Virac", label: "Virac" }, { value: "Aroroy", label: "Aroroy" },
+    { value: "Baleno", label: "Baleno" }, { value: "Balud", label: "Balud" }, { value: "Batuan", label: "Batuan" },
+    { value: "Cataingan", label: "Cataingan" }, { value: "Cawayan", label: "Cawayan" }, { value: "Claveria", label: "Claveria" },
+    { value: "Dimasalang", label: "Dimasalang" }, { value: "Esperanza", label: "Esperanza" }, { value: "Mandaon", label: "Mandaon" },
+    { value: "Milagros", label: "Milagros" }, { value: "Mobo", label: "Mobo" }, { value: "Monreal", label: "Monreal" },
+    { value: "Palanas", label: "Palanas" }, { value: "Pio V. Corpuz", label: "Pio V. Corpuz" }, { value: "Placer", label: "Placer" },
+    { value: "San Fernando", label: "San Fernando" }, { value: "San Jacinto", label: "San Jacinto" }, { value: "San Pascual", label: "San Pascual" },
+    { value: "Uson", label: "Uson" }, { value: "Barcelona", label: "Barcelona" }, { value: "Bulan", label: "Bulan" },
+    { value: "Bulusan", label: "Bulusan" }, { value: "Casiguran", label: "Casiguran" }, { value: "Castilla", label: "Castilla" },
+    { value: "Donsol", label: "Donsol" }, { value: "Gubat", label: "Gubat" }, { value: "Irosin", label: "Irosin" },
+    { value: "Juban", label: "Juban" }, { value: "Magallanes", label: "Magallanes" }, { value: "Matnog", label: "Matnog" },
+    { value: "Pilar", label: "Pilar" }, { value: "Prieto Diaz", label: "Prieto Diaz" }, { value: "Santa Magdalena", label: "Santa Magdalena" }
   ],
+  // Region VI - Western Visayas (excluding NIR: Iloilo City, Passi, Roxas)
   VI: [
-    { value: "Bacolod", label: "Bacolod" },
-    { value: "Bago", label: "Bago" },
-    { value: "Cadiz", label: "Cadiz" },
-    { value: "Escalante", label: "Escalante" },
-    { value: "Himamaylan", label: "Himamaylan" },
-    { value: "Iloilo", label: "Iloilo City" },
-    { value: "Kabankalan", label: "Kabankalan" },
-    { value: "La Carlota", label: "La Carlota" },
-    { value: "Passi", label: "Passi" },
-    { value: "Roxas (Capiz)", label: "Roxas" },
-    { value: "Sagay", label: "Sagay" },
-    { value: "San Carlos (Negros Occidental)", label: "San Carlos (Negros Occidental)" },
-    { value: "Silay", label: "Silay" },
-    { value: "Sipalay", label: "Sipalay" },
-    { value: "Talisay (Negros Occidental)", label: "Talisay" },
-    { value: "Victorias", label: "Victorias" },
-    { value: "Kalibo", label: "Kalibo" }
+    { value: "Iloilo City", label: "Iloilo City" }, { value: "Passi", label: "Passi" }, { value: "Roxas", label: "Roxas" },
+    { value: "Altavas", label: "Altavas" }, { value: "Balete", label: "Balete" }, { value: "Banga", label: "Banga" },
+    { value: "Batan", label: "Batan" }, { value: "Buruanga", label: "Buruanga" }, { value: "Ibajay", label: "Ibajay" },
+    { value: "Kalibo", label: "Kalibo" }, { value: "Lezo", label: "Lezo" }, { value: "Libacao", label: "Libacao" },
+    { value: "Madalag", label: "Madalag" }, { value: "Makato", label: "Makato" }, { value: "Malay", label: "Malay" },
+    { value: "Malinao", label: "Malinao" }, { value: "Nabas", label: "Nabas" }, { value: "New Washington", label: "New Washington" },
+    { value: "Numancia", label: "Numancia" }, { value: "Tangalan", label: "Tangalan" }, { value: "Anini-y", label: "Anini-y" },
+    { value: "Barbaza", label: "Barbaza" }, { value: "Belison", label: "Belison" }, { value: "Bugasong", label: "Bugasong" },
+    { value: "Caluya", label: "Caluya" }, { value: "Culasi", label: "Culasi" }, { value: "Hamtic", label: "Hamtic" },
+    { value: "Laua-an", label: "Laua-an" }, { value: "Libertad", label: "Libertad" }, { value: "Pandan", label: "Pandan" },
+    { value: "Patnongon", label: "Patnongon" }, { value: "San Jose", label: "San Jose" }, { value: "San Remigio", label: "San Remigio" },
+    { value: "Sebaste", label: "Sebaste" }, { value: "Sibalom", label: "Sibalom" }, { value: "Tibiao", label: "Tibiao" },
+    { value: "Tobias Fornier", label: "Tobias Fornier" }, { value: "Valderrama", label: "Valderrama" }, { value: "Cuartero", label: "Cuartero" },
+    { value: "Dao", label: "Dao" }, { value: "Dumalag", label: "Dumalag" }, { value: "Dumarao", label: "Dumarao" },
+    { value: "Ivisan", label: "Ivisan" }, { value: "Jamindan", label: "Jamindan" }, { value: "Ma-ayon", label: "Ma-ayon" },
+    { value: "Mambusao", label: "Mambusao" }, { value: "Panay", label: "Panay" }, { value: "Panitan", label: "Panitan" },
+    { value: "Pilar", label: "Pilar" }, { value: "Pontevedra", label: "Pontevedra" }, { value: "President Roxas", label: "President Roxas" },
+    { value: "Sapian", label: "Sapian" }, { value: "Sigma", label: "Sigma" }, { value: "Tapaz", label: "Tapaz" },
+    { value: "Buenavista", label: "Buenavista" }, { value: "Jordan", label: "Jordan" }, { value: "Nueva Valencia", label: "Nueva Valencia" },
+    { value: "San Lorenzo", label: "San Lorenzo" }, { value: "Sibunag", label: "Sibunag" }, { value: "Ajuy", label: "Ajuy" },
+    { value: "Alimodian", label: "Alimodian" }, { value: "Anilao", label: "Anilao" }, { value: "Badiangan", label: "Badiangan" },
+    { value: "Balasan", label: "Balasan" }, { value: "Banate", label: "Banate" }, { value: "Barotac Nuevo", label: "Barotac Nuevo" },
+    { value: "Barotac Viejo", label: "Barotac Viejo" }, { value: "Batad", label: "Batad" }, { value: "Bingawan", label: "Bingawan" },
+    { value: "Cabatuan", label: "Cabatuan" }, { value: "Calinog", label: "Calinog" }, { value: "Carles", label: "Carles" },
+    { value: "Concepcion", label: "Concepcion" }, { value: "Dingle", label: "Dingle" }, { value: "Dueñas", label: "Dueñas" },
+    { value: "Dumangas", label: "Dumangas" }, { value: "Estancia", label: "Estancia" }, { value: "Guimbal", label: "Guimbal" },
+    { value: "Igbaras", label: "Igbaras" }, { value: "Janiuay", label: "Janiuay" }, { value: "Lambunao", label: "Lambunao" },
+    { value: "Leganes", label: "Leganes" }, { value: "Lemery", label: "Lemery" }, { value: "Leon", label: "Leon" },
+    { value: "Maasin", label: "Maasin" }, { value: "Miagao", label: "Miagao" }, { value: "Mina", label: "Mina" },
+    { value: "New Lucena", label: "New Lucena" }, { value: "Oton", label: "Oton" }, { value: "Pavia", label: "Pavia" },
+    { value: "Pototan", label: "Pototan" }, { value: "San Dionisio", label: "San Dionisio" }, { value: "San Enrique", label: "San Enrique" },
+    { value: "San Joaquin", label: "San Joaquin" }, { value: "San Miguel", label: "San Miguel" }, { value: "San Rafael", label: "San Rafael" },
+    { value: "Santa Barbara", label: "Santa Barbara" }, { value: "Sara", label: "Sara" }, { value: "Tigbauan", label: "Tigbauan" },
+    { value: "Tubungan", label: "Tubungan" }, { value: "Zarraga", label: "Zarraga" }
   ],
+  // Negros Island Region (NIR) - 19 Cities, 44 Municipalities
+  NIR: [
+    { value: "Bacolod", label: "Bacolod" }, { value: "Bago", label: "Bago" }, { value: "Bais", label: "Bais" },
+    { value: "Bayawan", label: "Bayawan" }, { value: "Cadiz", label: "Cadiz" }, { value: "Canlaon", label: "Canlaon" },
+    { value: "Dumaguete", label: "Dumaguete" }, { value: "Escalante", label: "Escalante" }, { value: "Guihulngan", label: "Guihulngan" },
+    { value: "Himamaylan", label: "Himamaylan" }, { value: "Kabankalan", label: "Kabankalan" }, { value: "La Carlota", label: "La Carlota" },
+    { value: "San Carlos (Negros Occidental)", label: "San Carlos (Negros Occidental)" }, { value: "Silay", label: "Silay" }, { value: "Sipalay", label: "Sipalay" },
+    { value: "Talisay (Negros Occidental)", label: "Talisay (Negros Occidental)" }, { value: "Tanjay", label: "Tanjay" }, { value: "Victorias", label: "Victorias" },
+    { value: "Calatrava", label: "Calatrava" }, { value: "Candoni", label: "Candoni" }, { value: "Cauayan", label: "Cauayan" },
+    { value: "Don Salvador Benedicto", label: "Don Salvador Benedicto" }, { value: "Enrique B. Magalona", label: "Enrique B. Magalona" }, { value: "Hinigaran", label: "Hinigaran" },
+    { value: "Hinoba-an", label: "Hinoba-an" }, { value: "Ilog", label: "Ilog" }, { value: "Isabela", label: "Isabela" },
+    { value: "La Castellana", label: "La Castellana" }, { value: "Manapla", label: "Manapla" }, { value: "Moises Padilla", label: "Moises Padilla" },
+    { value: "Murcia", label: "Murcia" }, { value: "Pontevedra", label: "Pontevedra" }, { value: "Pulupandan", label: "Pulupandan" },
+    { value: "San Enrique", label: "San Enrique" }, { value: "Toboso", label: "Toboso" }, { value: "Valladolid", label: "Valladolid" },
+    { value: "Amlan", label: "Amlan" }, { value: "Ayungon", label: "Ayungon" }, { value: "Bacong", label: "Bacong" },
+    { value: "Basay", label: "Basay" }, { value: "Bindoy", label: "Bindoy" }, { value: "Dauin", label: "Dauin" },
+    { value: "Jimalalud", label: "Jimalalud" }, { value: "La Libertad", label: "La Libertad" }, { value: "Mabinay", label: "Mabinay" },
+    { value: "Manjuyod", label: "Manjuyod" }, { value: "Pamplona", label: "Pamplona" }, { value: "San Jose", label: "San Jose" },
+    { value: "Santa Catalina", label: "Santa Catalina" }, { value: "Siaton", label: "Siaton" }, { value: "Sibulan", label: "Sibulan" },
+    { value: "Tayasan", label: "Tayasan" }, { value: "Valencia", label: "Valencia" }, { value: "Vallehermoso", label: "Vallehermoso" },
+    { value: "Zamboanguita", label: "Zamboanguita" }
+  ],
+  // Region VII - Central Visayas (10 Cities, 91 Municipalities)
   VII: [
-    { value: "Bais", label: "Bais" },
-    { value: "Bayawan", label: "Bayawan" },
-    { value: "Bogo", label: "Bogo" },
-    { value: "Canlaon", label: "Canlaon" },
-    { value: "Carcar", label: "Carcar" },
-    { value: "Cebu", label: "Cebu City" },
-    { value: "Danao", label: "Danao" },
-    { value: "Dumaguete", label: "Dumaguete" },
-    { value: "Guihulngan", label: "Guihulngan" },
-    { value: "Lapu-Lapu", label: "Lapu-Lapu" },
-    { value: "Mandaue", label: "Mandaue" },
-    { value: "Naga (Cebu)", label: "Naga (Cebu)" },
-    { value: "San Carlos (Negros Oriental)", label: "San Carlos" },
-    { value: "Talisay (Cebu)", label: "Talisay" },
-    { value: "Tanjay", label: "Tanjay" },
-    { value: "Toledo", label: "Toledo" },
-    { value: "Tagbilaran", label: "Tagbilaran" }
+    { value: "Bogo", label: "Bogo" }, { value: "Carcar", label: "Carcar" }, { value: "Cebu City", label: "Cebu City" },
+    { value: "Danao", label: "Danao" }, { value: "Lapu-Lapu", label: "Lapu-Lapu" }, { value: "Mandaue", label: "Mandaue" },
+    { value: "Naga (Cebu)", label: "Naga (Cebu)" }, { value: "Talisay (Cebu)", label: "Talisay (Cebu)" }, { value: "Toledo", label: "Toledo" },
+    { value: "Tagbilaran", label: "Tagbilaran" }, { value: "Alburquerque", label: "Alburquerque" }, { value: "Alicia", label: "Alicia" },
+    { value: "Anda", label: "Anda" }, { value: "Antequera", label: "Antequera" }, { value: "Baclayon", label: "Baclayon" },
+    { value: "Balilihan", label: "Balilihan" }, { value: "Batuan", label: "Batuan" }, { value: "Bien Unido", label: "Bien Unido" },
+    { value: "Bilar", label: "Bilar" }, { value: "Buenavista", label: "Buenavista" }, { value: "Calape", label: "Calape" },
+    { value: "Candijay", label: "Candijay" }, { value: "Carmen", label: "Carmen" }, { value: "Catigbian", label: "Catigbian" },
+    { value: "Clarin", label: "Clarin" }, { value: "Corella", label: "Corella" }, { value: "Cortes", label: "Cortes" },
+    { value: "Dagohoy", label: "Dagohoy" }, { value: "Danao", label: "Danao" }, { value: "Dauis", label: "Dauis" },
+    { value: "Dimiao", label: "Dimiao" }, { value: "Duero", label: "Duero" }, { value: "Garcia Hernandez", label: "Garcia Hernandez" },
+    { value: "Guindulman", label: "Guindulman" }, { value: "Inabanga", label: "Inabanga" }, { value: "Jagna", label: "Jagna" },
+    { value: "Jetafe", label: "Jetafe" }, { value: "Lila", label: "Lila" }, { value: "Loay", label: "Loay" },
+    { value: "Loboc", label: "Loboc" }, { value: "Loon", label: "Loon" }, { value: "Mabini", label: "Mabini" },
+    { value: "Maribojoc", label: "Maribojoc" }, { value: "Panglao", label: "Panglao" }, { value: "Pilar", label: "Pilar" },
+    { value: "President Carlos P. Garcia", label: "President Carlos P. Garcia" }, { value: "Sagbayan", label: "Sagbayan" }, { value: "San Isidro", label: "San Isidro" },
+    { value: "San Miguel", label: "San Miguel" }, { value: "San Vicente", label: "San Vicente" }, { value: "Sevilla", label: "Sevilla" },
+    { value: "Sierra Bullones", label: "Sierra Bullones" }, { value: "Sikatuna", label: "Sikatuna" }, { value: "Talibon", label: "Talibon" },
+    { value: "Trinidad", label: "Trinidad" }, { value: "Tubigon", label: "Tubigon" }, { value: "Ubay", label: "Ubay" },
+    { value: "Valencia", label: "Valencia" }, { value: "Alcantara", label: "Alcantara" }, { value: "Alcoy", label: "Alcoy" },
+    { value: "Alegria", label: "Alegria" }, { value: "Aloguinsan", label: "Aloguinsan" }, { value: "Argao", label: "Argao" },
+    { value: "Asturias", label: "Asturias" }, { value: "Badian", label: "Badian" }, { value: "Balamban", label: "Balamban" },
+    { value: "Bantayan", label: "Bantayan" }, { value: "Barili", label: "Barili" }, { value: "Boljoon", label: "Boljoon" },
+    { value: "Borbon", label: "Borbon" }, { value: "Carmen", label: "Carmen" }, { value: "Catmon", label: "Catmon" },
+    { value: "Compostela", label: "Compostela" }, { value: "Consolacion", label: "Consolacion" }, { value: "Cordova", label: "Cordova" },
+    { value: "Daanbantayan", label: "Daanbantayan" }, { value: "Dalaguete", label: "Dalaguete" }, { value: "Dumanjug", label: "Dumanjug" },
+    { value: "Ginatilan", label: "Ginatilan" }, { value: "Liloan", label: "Liloan" }, { value: "Madridejos", label: "Madridejos" },
+    { value: "Malabuyoc", label: "Malabuyoc" }, { value: "Medellin", label: "Medellin" }, { value: "Minglanilla", label: "Minglanilla" },
+    { value: "Moalboal", label: "Moalboal" }, { value: "Oslob", label: "Oslob" }, { value: "Pilar", label: "Pilar" },
+    { value: "Pinamungajan", label: "Pinamungajan" }, { value: "Poro", label: "Poro" }, { value: "Ronda", label: "Ronda" },
+    { value: "Samboan", label: "Samboan" }, { value: "San Fernando", label: "San Fernando" }, { value: "San Francisco", label: "San Francisco" },
+    { value: "San Remigio", label: "San Remigio" }, { value: "Santa Fe", label: "Santa Fe" }, { value: "Santander", label: "Santander" },
+    { value: "Sibonga", label: "Sibonga" }, { value: "Sogod", label: "Sogod" }, { value: "Tabogon", label: "Tabogon" },
+    { value: "Tabuelan", label: "Tabuelan" }, { value: "Tuburan", label: "Tuburan" }, { value: "Tudela", label: "Tudela" }
   ],
+  // Region VIII - Eastern Visayas (7 Cities, 136 Municipalities)
   VIII: [
-    { value: "Baybay", label: "Baybay" },
-    { value: "Borongan", label: "Borongan" },
-    { value: "Calbayog", label: "Calbayog" },
-    { value: "Catbalogan", label: "Catbalogan" },
-    { value: "Maasin", label: "Maasin" },
-    { value: "Ormoc", label: "Ormoc" },
-    { value: "Tacloban", label: "Tacloban" }
+    { value: "Baybay", label: "Baybay" }, { value: "Borongan", label: "Borongan" }, { value: "Catbalogan", label: "Catbalogan" },
+    { value: "Maasin", label: "Maasin" }, { value: "Ormoc", label: "Ormoc" }, { value: "Tacloban", label: "Tacloban" },
+    { value: "Calbayog", label: "Calbayog" }, { value: "Almeria", label: "Almeria" }, { value: "Biliran", label: "Biliran" },
+    { value: "Cabucgayan", label: "Cabucgayan" }, { value: "Caibiran", label: "Caibiran" }, { value: "Culaba", label: "Culaba" },
+    { value: "Kawayan", label: "Kawayan" }, { value: "Maripipi", label: "Maripipi" }, { value: "Naval", label: "Naval" },
+    { value: "Arteche", label: "Arteche" }, { value: "Balangiga", label: "Balangiga" }, { value: "Balangkayan", label: "Balangkayan" },
+    { value: "Can-avid", label: "Can-avid" }, { value: "Dolores", label: "Dolores" }, { value: "General MacArthur", label: "General MacArthur" },
+    { value: "Giporlos", label: "Giporlos" }, { value: "Guiuan", label: "Guiuan" }, { value: "Hernani", label: "Hernani" },
+    { value: "Jipapad", label: "Jipapad" }, { value: "Lawaan", label: "Lawaan" }, { value: "Llorente", label: "Llorente" },
+    { value: "Maslog", label: "Maslog" }, { value: "Maydolong", label: "Maydolong" }, { value: "Mercedes", label: "Mercedes" },
+    { value: "Oras", label: "Oras" }, { value: "Quinapondan", label: "Quinapondan" }, { value: "Salcedo", label: "Salcedo" },
+    { value: "San Julian", label: "San Julian" }, { value: "San Policarpo", label: "San Policarpo" }, { value: "Sulat", label: "Sulat" },
+    { value: "Taft", label: "Taft" }, { value: "Abuyog", label: "Abuyog" }, { value: "Alangalang", label: "Alangalang" },
+    { value: "Albuera", label: "Albuera" }, { value: "Babatngon", label: "Babatngon" }, { value: "Barugo", label: "Barugo" },
+    { value: "Bato", label: "Bato" }, { value: "Burauen", label: "Burauen" }, { value: "Calubian", label: "Calubian" },
+    { value: "Capoocan", label: "Capoocan" }, { value: "Carigara", label: "Carigara" }, { value: "Dagami", label: "Dagami" },
+    { value: "Dulag", label: "Dulag" }, { value: "Hilongos", label: "Hilongos" }, { value: "Hindang", label: "Hindang" },
+    { value: "Inopacan", label: "Inopacan" }, { value: "Isabel", label: "Isabel" }, { value: "Jaro", label: "Jaro" },
+    { value: "Javier", label: "Javier" }, { value: "Julita", label: "Julita" }, { value: "Kananga", label: "Kananga" },
+    { value: "La Paz", label: "La Paz" }, { value: "Leyte", label: "Leyte" }, { value: "MacArthur", label: "MacArthur" },
+    { value: "Mahaplag", label: "Mahaplag" }, { value: "Matag-ob", label: "Matag-ob" }, { value: "Matalom", label: "Matalom" },
+    { value: "Mayorga", label: "Mayorga" }, { value: "Merida", label: "Merida" }, { value: "Palo", label: "Palo" },
+    { value: "Palompon", label: "Palompon" }, { value: "Pastrana", label: "Pastrana" }, { value: "San Isidro", label: "San Isidro" },
+    { value: "San Miguel", label: "San Miguel" }, { value: "Santa Fe", label: "Santa Fe" }, { value: "Tabango", label: "Tabango" },
+    { value: "Tabontabon", label: "Tabontabon" }, { value: "Tanauan", label: "Tanauan" }, { value: "Tolosa", label: "Tolosa" },
+    { value: "Tunga", label: "Tunga" }, { value: "Villaba", label: "Villaba" }, { value: "Allen", label: "Allen" },
+    { value: "Biri", label: "Biri" }, { value: "Bobon", label: "Bobon" }, { value: "Capul", label: "Capul" },
+    { value: "Catarman", label: "Catarman" }, { value: "Catubig", label: "Catubig" }, { value: "Gamay", label: "Gamay" },
+    { value: "Laoang", label: "Laoang" }, { value: "Lapinig", label: "Lapinig" }, { value: "Las Navas", label: "Las Navas" },
+    { value: "Lavezares", label: "Lavezares" }, { value: "Lope de Vega", label: "Lope de Vega" }, { value: "Mapanas", label: "Mapanas" },
+    { value: "Mondragon", label: "Mondragon" }, { value: "Palapag", label: "Palapag" }, { value: "Pambujan", label: "Pambujan" },
+    { value: "Rosario", label: "Rosario" }, { value: "San Antonio", label: "San Antonio" }, { value: "San Isidro", label: "San Isidro" },
+    { value: "San Jose", label: "San Jose" }, { value: "San Roque", label: "San Roque" }, { value: "San Vicente", label: "San Vicente" },
+    { value: "Silvino Lobos", label: "Silvino Lobos" }, { value: "Victoria", label: "Victoria" }, { value: "Almagro", label: "Almagro" },
+    { value: "Basey", label: "Basey" }, { value: "Calbiga", label: "Calbiga" }, { value: "Daram", label: "Daram" },
+    { value: "Gandara", label: "Gandara" }, { value: "Hinabangan", label: "Hinabangan" }, { value: "Jiabong", label: "Jiabong" },
+    { value: "Marabut", label: "Marabut" }, { value: "Matuguinao", label: "Matuguinao" }, { value: "Motiong", label: "Motiong" },
+    { value: "Pagsanghan", label: "Pagsanghan" }, { value: "Paranas", label: "Paranas" }, { value: "Pinabacdao", label: "Pinabacdao" },
+    { value: "San Jorge", label: "San Jorge" }, { value: "San Jose de Buan", label: "San Jose de Buan" }, { value: "San Sebastian", label: "San Sebastian" },
+    { value: "Santa Margarita", label: "Santa Margarita" }, { value: "Santa Rita", label: "Santa Rita" }, { value: "Santo Niño", label: "Santo Niño" },
+    { value: "Tagapul-an", label: "Tagapul-an" }, { value: "Talalora", label: "Talalora" }, { value: "Tarangnan", label: "Tarangnan" },
+    { value: "Villareal", label: "Villareal" }, { value: "Zumarraga", label: "Zumarraga" }, { value: "Anahawan", label: "Anahawan" },
+    { value: "Bontoc", label: "Bontoc" }, { value: "Hinunangan", label: "Hinunangan" }, { value: "Hinundayan", label: "Hinundayan" },
+    { value: "Libagon", label: "Libagon" }, { value: "Liloan", label: "Liloan" }, { value: "Limasawa", label: "Limasawa" },
+    { value: "Macrohon", label: "Macrohon" }, { value: "Malitbog", label: "Malitbog" }, { value: "Padre Burgos", label: "Padre Burgos" },
+    { value: "Pintuyan", label: "Pintuyan" }, { value: "Saint Bernard", label: "Saint Bernard" }, { value: "San Francisco", label: "San Francisco" },
+    { value: "San Juan", label: "San Juan" }, { value: "San Ricardo", label: "San Ricardo" }, { value: "Silago", label: "Silago" },
+    { value: "Sogod", label: "Sogod" }, { value: "Tomas Oppus", label: "Tomas Oppus" }
   ],
+  // Region IX - Zamboanga Peninsula (5 Cities, 86 Municipalities)
   IX: [
-    { value: "Dapitan", label: "Dapitan" },
-    { value: "Dipolog", label: "Dipolog" },
-    { value: "Isabela (Basilan)", label: "Isabela (Basilan)" },
-    { value: "Pagadian", label: "Pagadian" },
-    { value: "Zamboanga", label: "Zamboanga City" }
+    { value: "Dapitan", label: "Dapitan" }, { value: "Dipolog", label: "Dipolog" }, { value: "Isabela (Basilan)", label: "Isabela (Basilan)" },
+    { value: "Pagadian", label: "Pagadian" }, { value: "Zamboanga City", label: "Zamboanga City" }, { value: "Akbar", label: "Akbar" },
+    { value: "Al-Barka", label: "Al-Barka" }, { value: "Hadji Mohammad Ajul", label: "Hadji Mohammad Ajul" }, { value: "Hadji Muhtamad", label: "Hadji Muhtamad" },
+    { value: "Lamitan", label: "Lamitan" }, { value: "Lantawan", label: "Lantawan" }, { value: "Maluso", label: "Maluso" },
+    { value: "Sumisip", label: "Sumisip" }, { value: "Tabuan-Lasa", label: "Tabuan-Lasa" }, { value: "Tipo-Tipo", label: "Tipo-Tipo" },
+    { value: "Tuburan", label: "Tuburan" }, { value: "Ungkaya Pukan", label: "Ungkaya Pukan" }, { value: "Baliguian", label: "Baliguian" },
+    { value: "Godod", label: "Godod" }, { value: "Gutalac", label: "Gutalac" }, { value: "Jose Dalman", label: "Jose Dalman" },
+    { value: "Kalawit", label: "Kalawit" }, { value: "Katipunan", label: "Katipunan" }, { value: "La Libertad", label: "La Libertad" },
+    { value: "Labason", label: "Labason" }, { value: "Liloy", label: "Liloy" }, { value: "Manukan", label: "Manukan" },
+    { value: "Mutia", label: "Mutia" }, { value: "Piñan", label: "Piñan" }, { value: "Polanco", label: "Polanco" },
+    { value: "Pres. Manuel A. Roxas", label: "Pres. Manuel A. Roxas" }, { value: "Rizal", label: "Rizal" }, { value: "Salug", label: "Salug" },
+    { value: "Sergio Osmeña Sr.", label: "Sergio Osmeña Sr." }, { value: "Siayan", label: "Siayan" }, { value: "Sibuco", label: "Sibuco" },
+    { value: "Sibutad", label: "Sibutad" }, { value: "Sindangan", label: "Sindangan" }, { value: "Siocon", label: "Siocon" },
+    { value: "Sirawai", label: "Sirawai" }, { value: "Tampilisan", label: "Tampilisan" }, { value: "Aurora", label: "Aurora" },
+    { value: "Bayog", label: "Bayog" }, { value: "Dimataling", label: "Dimataling" }, { value: "Dinas", label: "Dinas" },
+    { value: "Dumalinao", label: "Dumalinao" }, { value: "Dumingag", label: "Dumingag" }, { value: "Guipos", label: "Guipos" },
+    { value: "Josefina", label: "Josefina" }, { value: "Kumalarang", label: "Kumalarang" }, { value: "Labangan", label: "Labangan" },
+    { value: "Lakewood", label: "Lakewood" }, { value: "Lapuyan", label: "Lapuyan" }, { value: "Mahayag", label: "Mahayag" },
+    { value: "Margosatubig", label: "Margosatubig" }, { value: "Midsalip", label: "Midsalip" }, { value: "Molave", label: "Molave" },
+    { value: "Pitogo", label: "Pitogo" }, { value: "Ramon Magsaysay", label: "Ramon Magsaysay" }, { value: "San Miguel", label: "San Miguel" },
+    { value: "San Pablo", label: "San Pablo" }, { value: "Sominot", label: "Sominot" }, { value: "Tabina", label: "Tabina" },
+    { value: "Tambulig", label: "Tambulig" }, { value: "Tigbao", label: "Tigbao" }, { value: "Tukuran", label: "Tukuran" },
+    { value: "Vincenzo A. Sagun", label: "Vincenzo A. Sagun" }, { value: "Alicia", label: "Alicia" }, { value: "Buug", label: "Buug" },
+    { value: "Diplahan", label: "Diplahan" }, { value: "Imelda", label: "Imelda" }, { value: "Ipil", label: "Ipil" },
+    { value: "Kabasalan", label: "Kabasalan" }, { value: "Mabuhay", label: "Mabuhay" }, { value: "Malangas", label: "Malangas" },
+    { value: "Naga", label: "Naga" }, { value: "Olutanga", label: "Olutanga" }, { value: "Payao", label: "Payao" },
+    { value: "Roseller Lim", label: "Roseller Lim" }, { value: "Siay", label: "Siay" }, { value: "Talusan", label: "Talusan" },
+    { value: "Titay", label: "Titay" }, { value: "Tungawan", label: "Tungawan" }
   ],
+  // Region X - Northern Mindanao (9 Cities, 84 Municipalities)
   X: [
-    { value: "Cagayan de Oro", label: "Cagayan de Oro" },
-    { value: "El Salvador", label: "El Salvador" },
-    { value: "Gingoog", label: "Gingoog" },
-    { value: "Iligan", label: "Iligan" },
-    { value: "Malaybalay", label: "Malaybalay" },
-    { value: "Oroquieta", label: "Oroquieta" },
-    { value: "Ozamiz", label: "Ozamiz" },
-    { value: "Tangub", label: "Tangub" },
-    { value: "Valencia (Bukidnon)", label: "Valencia" }
+    { value: "Cagayan de Oro", label: "Cagayan de Oro" }, { value: "El Salvador", label: "El Salvador" }, { value: "Gingoog", label: "Gingoog" },
+    { value: "Iligan", label: "Iligan" }, { value: "Malaybalay", label: "Malaybalay" }, { value: "Oroquieta", label: "Oroquieta" },
+    { value: "Ozamiz", label: "Ozamiz" }, { value: "Tangub", label: "Tangub" }, { value: "Valencia", label: "Valencia" },
+    { value: "Baungon", label: "Baungon" }, { value: "Cabanglasan", label: "Cabanglasan" }, { value: "Damulog", label: "Damulog" },
+    { value: "Dangcagan", label: "Dangcagan" }, { value: "Don Carlos", label: "Don Carlos" }, { value: "Impasug-ong", label: "Impasug-ong" },
+    { value: "Kadingilan", label: "Kadingilan" }, { value: "Kalilangan", label: "Kalilangan" }, { value: "Kibawe", label: "Kibawe" },
+    { value: "Kitaotao", label: "Kitaotao" }, { value: "Lantapan", label: "Lantapan" }, { value: "Libona", label: "Libona" },
+    { value: "Malitbog", label: "Malitbog" }, { value: "Manolo Fortich", label: "Manolo Fortich" }, { value: "Maramag", label: "Maramag" },
+    { value: "Pangantucan", label: "Pangantucan" }, { value: "Quezon", label: "Quezon" }, { value: "San Fernando", label: "San Fernando" },
+    { value: "Sumilao", label: "Sumilao" }, { value: "Talakag", label: "Talakag" }, { value: "Catarman", label: "Catarman" },
+    { value: "Guinsiliban", label: "Guinsiliban" }, { value: "Mahinog", label: "Mahinog" }, { value: "Mambajao", label: "Mambajao" },
+    { value: "Sagay", label: "Sagay" }, { value: "Bacolod", label: "Bacolod" }, { value: "Baloi", label: "Baloi" },
+    { value: "Baroy", label: "Baroy" }, { value: "Kapatagan", label: "Kapatagan" }, { value: "Kauswagan", label: "Kauswagan" },
+    { value: "Kolambugan", label: "Kolambugan" }, { value: "Lala", label: "Lala" }, { value: "Linamon", label: "Linamon" },
+    { value: "Magsaysay", label: "Magsaysay" }, { value: "Maigo", label: "Maigo" }, { value: "Matungao", label: "Matungao" },
+    { value: "Munai", label: "Munai" }, { value: "Nunungan", label: "Nunungan" }, { value: "Pantao Ragat", label: "Pantao Ragat" },
+    { value: "Pantar", label: "Pantar" }, { value: "Poona Piagapo", label: "Poona Piagapo" }, { value: "Salvador", label: "Salvador" },
+    { value: "Sapad", label: "Sapad" }, { value: "Sultan Naga Dimaporo", label: "Sultan Naga Dimaporo" }, { value: "Tagoloan", label: "Tagoloan" },
+    { value: "Tangcal", label: "Tangcal" }, { value: "Tubod", label: "Tubod" }, { value: "Aloran", label: "Aloran" },
+    { value: "Baliangao", label: "Baliangao" }, { value: "Bonifacio", label: "Bonifacio" }, { value: "Calamba", label: "Calamba" },
+    { value: "Clarin", label: "Clarin" }, { value: "Concepcion", label: "Concepcion" }, { value: "Don Victoriano Chiongbian", label: "Don Victoriano Chiongbian" },
+    { value: "Jimenez", label: "Jimenez" }, { value: "Lopez Jaena", label: "Lopez Jaena" }, { value: "Panaon", label: "Panaon" },
+    { value: "Plaridel", label: "Plaridel" }, { value: "Sapang Dalaga", label: "Sapang Dalaga" }, { value: "Sinacaban", label: "Sinacaban" },
+    { value: "Tudela", label: "Tudela" }, { value: "Alubijid", label: "Alubijid" }, { value: "Balingasag", label: "Balingasag" },
+    { value: "Balingoan", label: "Balingoan" }, { value: "Binuangan", label: "Binuangan" }, { value: "Claveria", label: "Claveria" },
+    { value: "Gitagum", label: "Gitagum" }, { value: "Initao", label: "Initao" }, { value: "Jasaan", label: "Jasaan" },
+    { value: "Kinoguitan", label: "Kinoguitan" }, { value: "Lagonglong", label: "Lagonglong" }, { value: "Laguindingan", label: "Laguindingan" },
+    { value: "Libertad", label: "Libertad" }, { value: "Lugait", label: "Lugait" }, { value: "Magsaysay", label: "Magsaysay" },
+    { value: "Manticao", label: "Manticao" }, { value: "Medina", label: "Medina" }, { value: "Naawan", label: "Naawan" },
+    { value: "Opol", label: "Opol" }, { value: "Salay", label: "Salay" }, { value: "Sugbongcogon", label: "Sugbongcogon" },
+    { value: "Tagoloan", label: "Tagoloan" }, { value: "Talisayan", label: "Talisayan" }, { value: "Villanueva", label: "Villanueva" }
   ],
+  // Region XI - Davao Region (6 Cities, 43 Municipalities)
   XI: [
-    { value: "Davao", label: "Davao City" },
-    { value: "Digos", label: "Digos" },
-    { value: "Mati", label: "Mati" },
-    { value: "Panabo", label: "Panabo" },
-    { value: "Samal", label: "Island Garden City of Samal" },
-    { value: "Tagum", label: "Tagum" },
-    { value: "Malita", label: "Malita" }
+    { value: "Davao City", label: "Davao City" }, { value: "Digos", label: "Digos" }, { value: "Mati", label: "Mati" },
+    { value: "Panabo", label: "Panabo" }, { value: "Samal", label: "Samal" }, { value: "Tagum", label: "Tagum" },
+    { value: "Compostela", label: "Compostela" }, { value: "Laak", label: "Laak" }, { value: "Mabini", label: "Mabini" },
+    { value: "Maco", label: "Maco" }, { value: "Maragusan", label: "Maragusan" }, { value: "Mawab", label: "Mawab" },
+    { value: "Monkayo", label: "Monkayo" }, { value: "Montevista", label: "Montevista" }, { value: "Nabunturan", label: "Nabunturan" },
+    { value: "New Bataan", label: "New Bataan" }, { value: "Pantukan", label: "Pantukan" }, { value: "Asuncion", label: "Asuncion" },
+    { value: "Braulio E. Dujali", label: "Braulio E. Dujali" }, { value: "Carmen", label: "Carmen" }, { value: "Kapalong", label: "Kapalong" },
+    { value: "New Corella", label: "New Corella" }, { value: "San Isidro", label: "San Isidro" }, { value: "Santo Tomas", label: "Santo Tomas" },
+    { value: "Talaingod", label: "Talaingod" }, { value: "Bansalan", label: "Bansalan" }, { value: "Hagonoy", label: "Hagonoy" },
+    { value: "Kiblawan", label: "Kiblawan" }, { value: "Magsaysay", label: "Magsaysay" }, { value: "Malalag", label: "Malalag" },
+    { value: "Matanao", label: "Matanao" }, { value: "Padada", label: "Padada" }, { value: "Santa Cruz", label: "Santa Cruz" },
+    { value: "Sulop", label: "Sulop" }, { value: "Don Marcelino", label: "Don Marcelino" }, { value: "Jose Abad Santos", label: "Jose Abad Santos" },
+    { value: "Malita", label: "Malita" }, { value: "Santa Maria", label: "Santa Maria" }, { value: "Sarangani", label: "Sarangani" },
+    { value: "Baganga", label: "Baganga" }, { value: "Banaybanay", label: "Banaybanay" }, { value: "Boston", label: "Boston" },
+    { value: "Caraga", label: "Caraga" }, { value: "Cateel", label: "Cateel" }, { value: "Governor Generoso", label: "Governor Generoso" },
+    { value: "Lupon", label: "Lupon" }, { value: "Manay", label: "Manay" }, { value: "San Isidro", label: "San Isidro" },
+    { value: "Tarragona", label: "Tarragona" }
   ],
+  // Region XII - SOCCSKSARGEN (4 Cities, 45 Municipalities)
   XII: [
-    { value: "Cotabato", label: "Cotabato City" },
-    { value: "General Santos", label: "General Santos" },
-    { value: "Kidapawan", label: "Kidapawan" },
-    { value: "Koronadal", label: "Koronadal" },
-    { value: "Tacurong", label: "Tacurong" },
-    { value: "Polomolok", label: "Polomolok" }
+    { value: "General Santos", label: "General Santos" }, { value: "Kidapawan", label: "Kidapawan" }, { value: "Koronadal", label: "Koronadal" },
+    { value: "Tacurong", label: "Tacurong" }, { value: "Alamada", label: "Alamada" }, { value: "Aleosan", label: "Aleosan" },
+    { value: "Antipas", label: "Antipas" }, { value: "Arakan", label: "Arakan" }, { value: "Banisilan", label: "Banisilan" },
+    { value: "Carmen", label: "Carmen" }, { value: "Kabacan", label: "Kabacan" }, { value: "Libungan", label: "Libungan" },
+    { value: "Magpet", label: "Magpet" }, { value: "Makilala", label: "Makilala" }, { value: "Matalam", label: "Matalam" },
+    { value: "Midsayap", label: "Midsayap" }, { value: "M'lang", label: "M'lang" }, { value: "Pigcawayan", label: "Pigcawayan" },
+    { value: "Pikit", label: "Pikit" }, { value: "President Roxas", label: "President Roxas" }, { value: "Tulunan", label: "Tulunan" },
+    { value: "Alabel", label: "Alabel" }, { value: "Glan", label: "Glan" }, { value: "Kiamba", label: "Kiamba" },
+    { value: "Maasim", label: "Maasim" }, { value: "Maitum", label: "Maitum" }, { value: "Malapatan", label: "Malapatan" },
+    { value: "Malungon", label: "Malungon" }, { value: "Banga", label: "Banga" }, { value: "Lake Sebu", label: "Lake Sebu" },
+    { value: "Norala", label: "Norala" }, { value: "Polomolok", label: "Polomolok" }, { value: "Santo Niño", label: "Santo Niño" },
+    { value: "Surallah", label: "Surallah" }, { value: "Tampakan", label: "Tampakan" }, { value: "Tantangan", label: "Tantangan" },
+    { value: "T'boli", label: "T'boli" }, { value: "Tupi", label: "Tupi" }, { value: "Bagumbayan", label: "Bagumbayan" },
+    { value: "Columbio", label: "Columbio" }, { value: "Esperanza", label: "Esperanza" }, { value: "Isulan", label: "Isulan" },
+    { value: "Kalamansig", label: "Kalamansig" }, { value: "Lambayong", label: "Lambayong" }, { value: "Lebak", label: "Lebak" },
+    { value: "Lutayan", label: "Lutayan" }, { value: "Palimbang", label: "Palimbang" }, { value: "President Quirino", label: "President Quirino" },
+    { value: "Senator Ninoy Aquino", label: "Senator Ninoy Aquino" }
   ],
+  // Region XIII - Caraga (6 Cities, 67 Municipalities)
   XIII: [
-    { value: "Bayugan", label: "Bayugan" },
-    { value: "Bislig", label: "Bislig" },
-    { value: "Butuan", label: "Butuan" },
-    { value: "Cabadbaran", label: "Cabadbaran" },
-    { value: "Surigao", label: "Surigao" },
-    { value: "Tandag", label: "Tandag" }
+    { value: "Bislig", label: "Bislig" }, { value: "Butuan", label: "Butuan" }, { value: "Cabadbaran", label: "Cabadbaran" },
+    { value: "Surigao City", label: "Surigao City" }, { value: "Tandag", label: "Tandag" }, { value: "Bayugan", label: "Bayugan" },
+    { value: "Buenavista", label: "Buenavista" }, { value: "Carmen", label: "Carmen" }, { value: "Jabonga", label: "Jabonga" },
+    { value: "Kitcharao", label: "Kitcharao" }, { value: "Las Nieves", label: "Las Nieves" }, { value: "Magallanes", label: "Magallanes" },
+    { value: "Nasipit", label: "Nasipit" }, { value: "Remedios T. Romualdez", label: "Remedios T. Romualdez" }, { value: "Santiago", label: "Santiago" },
+    { value: "Tubay", label: "Tubay" }, { value: "Bunawan", label: "Bunawan" }, { value: "Esperanza", label: "Esperanza" },
+    { value: "La Paz", label: "La Paz" }, { value: "Loreto", label: "Loreto" }, { value: "Prosperidad", label: "Prosperidad" },
+    { value: "Rosario", label: "Rosario" }, { value: "San Francisco", label: "San Francisco" }, { value: "San Luis", label: "San Luis" },
+    { value: "Santa Josefa", label: "Santa Josefa" }, { value: "Sibagat", label: "Sibagat" }, { value: "Talacogon", label: "Talacogon" },
+    { value: "Trento", label: "Trento" }, { value: "Veruela", label: "Veruela" }, { value: "Basilisa", label: "Basilisa" },
+    { value: "Cagdianao", label: "Cagdianao" }, { value: "Dinagat", label: "Dinagat" }, { value: "Libjo", label: "Libjo" },
+    { value: "Loreto", label: "Loreto" }, { value: "San Jose", label: "San Jose" }, { value: "Tubajon", label: "Tubajon" },
+    { value: "Alegria", label: "Alegria" }, { value: "Bacuag", label: "Bacuag" }, { value: "Burgos", label: "Burgos" },
+    { value: "Claver", label: "Claver" }, { value: "Dapa", label: "Dapa" }, { value: "Del Carmen", label: "Del Carmen" },
+    { value: "General Luna", label: "General Luna" }, { value: "Gigaquit", label: "Gigaquit" }, { value: "Mainit", label: "Mainit" },
+    { value: "Malimono", label: "Malimono" }, { value: "Pilar", label: "Pilar" }, { value: "Placer", label: "Placer" },
+    { value: "San Benito", label: "San Benito" }, { value: "San Francisco", label: "San Francisco" }, { value: "San Isidro", label: "San Isidro" },
+    { value: "Santa Monica", label: "Santa Monica" }, { value: "Sison", label: "Sison" }, { value: "Socorro", label: "Socorro" },
+    { value: "Tagana-an", label: "Tagana-an" }, { value: "Tubod", label: "Tubod" }, { value: "Barobo", label: "Barobo" },
+    { value: "Bayabas", label: "Bayabas" }, { value: "Cagwait", label: "Cagwait" }, { value: "Cantilan", label: "Cantilan" },
+    { value: "Carmen", label: "Carmen" }, { value: "Carrascal", label: "Carrascal" }, { value: "Cortes", label: "Cortes" },
+    { value: "Hinatuan", label: "Hinatuan" }, { value: "Lanuza", label: "Lanuza" }, { value: "Lianga", label: "Lianga" },
+    { value: "Lingig", label: "Lingig" }, { value: "Madrid", label: "Madrid" }, { value: "Marihatag", label: "Marihatag" },
+    { value: "San Agustin", label: "San Agustin" }, { value: "San Miguel", label: "San Miguel" }, { value: "Tagbina", label: "Tagbina" },
+    { value: "Tago", label: "Tago" }
   ],
+  // BARMM (3 Cities, 105 Municipalities)
   BARMM: [
-    { value: "Lamitan", label: "Lamitan" },
-    { value: "Marawi", label: "Marawi" },
-    { value: "Jolo", label: "Jolo" },
-    { value: "Bongao", label: "Bongao" }
+    { value: "Cotabato City", label: "Cotabato City" }, { value: "Lamitan", label: "Lamitan" }, { value: "Marawi", label: "Marawi" },
+    { value: "Akbar", label: "Akbar" }, { value: "Al-Barka", label: "Al-Barka" }, { value: "Hadji Mohammad Ajul", label: "Hadji Mohammad Ajul" },
+    { value: "Hadji Muhtamad", label: "Hadji Muhtamad" }, { value: "Lantawan", label: "Lantawan" }, { value: "Maluso", label: "Maluso" },
+    { value: "Sumisip", label: "Sumisip" }, { value: "Tabuan-Lasa", label: "Tabuan-Lasa" }, { value: "Tipo-Tipo", label: "Tipo-Tipo" },
+    { value: "Tuburan", label: "Tuburan" }, { value: "Ungkaya Pukan", label: "Ungkaya Pukan" }, { value: "Amai Manabilang", label: "Amai Manabilang" },
+    { value: "Bacolod-Kalawi", label: "Bacolod-Kalawi" }, { value: "Balabagan", label: "Balabagan" }, { value: "Balindong", label: "Balindong" },
+    { value: "Bayang", label: "Bayang" }, { value: "Binidayan", label: "Binidayan" }, { value: "Buadiposo-Buntong", label: "Buadiposo-Buntong" },
+    { value: "Bubong", label: "Bubong" }, { value: "Butig", label: "Butig" }, { value: "Calanogas", label: "Calanogas" },
+    { value: "Ditsaan-Ramain", label: "Ditsaan-Ramain" }, { value: "Ganassi", label: "Ganassi" }, { value: "Kapai", label: "Kapai" },
+    { value: "Kapatagan", label: "Kapatagan" }, { value: "Lumba-Bayabao", label: "Lumba-Bayabao" }, { value: "Lumbaca-Unayan", label: "Lumbaca-Unayan" },
+    { value: "Lumbatan", label: "Lumbatan" }, { value: "Lumbayanague", label: "Lumbayanague" }, { value: "Madalum", label: "Madalum" },
+    { value: "Madamba", label: "Madamba" }, { value: "Maguing", label: "Maguing" }, { value: "Malabang", label: "Malabang" },
+    { value: "Marantao", label: "Marantao" }, { value: "Marogong", label: "Marogong" }, { value: "Masiu", label: "Masiu" },
+    { value: "Mulondo", label: "Mulondo" }, { value: "Pagayawan", label: "Pagayawan" }, { value: "Piagapo", label: "Piagapo" },
+    { value: "Picong", label: "Picong" }, { value: "Poona Bayabao", label: "Poona Bayabao" }, { value: "Pualas", label: "Pualas" },
+    { value: "Saguiaran", label: "Saguiaran" }, { value: "Sultan Dumalondong", label: "Sultan Dumalondong" }, { value: "Tagoloan II", label: "Tagoloan II" },
+    { value: "Tamparan", label: "Tamparan" }, { value: "Taraka", label: "Taraka" }, { value: "Tubaran", label: "Tubaran" },
+    { value: "Tugaya", label: "Tugaya" }, { value: "Wao", label: "Wao" }, { value: "Barira", label: "Barira" },
+    { value: "Buldon", label: "Buldon" }, { value: "Datu Blah T. Sinsuat", label: "Datu Blah T. Sinsuat" }, { value: "Datu Odin Sinsuat", label: "Datu Odin Sinsuat" },
+    { value: "Kabuntalan", label: "Kabuntalan" }, { value: "Matanog", label: "Matanog" }, { value: "Northern Kabuntalan", label: "Northern Kabuntalan" },
+    { value: "Parang", label: "Parang" }, { value: "Sultan Kudarat", label: "Sultan Kudarat" }, { value: "Sultan Mastura", label: "Sultan Mastura" },
+    { value: "Talitay", label: "Talitay" }, { value: "Upi", label: "Upi" }, { value: "Ampatuan", label: "Ampatuan" },
+    { value: "Buluan", label: "Buluan" }, { value: "Datu Abdullah Sangki", label: "Datu Abdullah Sangki" }, { value: "Datu Anggal Midtimbang", label: "Datu Anggal Midtimbang" },
+    { value: "Datu Hoffer Ampatuan", label: "Datu Hoffer Ampatuan" }, { value: "Datu Montawal", label: "Datu Montawal" }, { value: "Datu Paglas", label: "Datu Paglas" },
+    { value: "Datu Piang", label: "Datu Piang" }, { value: "Datu Salibo", label: "Datu Salibo" }, { value: "Datu Saudi-Ampatuan", label: "Datu Saudi-Ampatuan" },
+    { value: "Datu Unsay", label: "Datu Unsay" }, { value: "General Salipada K. Pendatun", label: "General Salipada K. Pendatun" }, { value: "Guindulungan", label: "Guindulungan" },
+    { value: "Mamasapano", label: "Mamasapano" }, { value: "Pagalungan", label: "Pagalungan" }, { value: "Paglat", label: "Paglat" },
+    { value: "Pandag", label: "Pandag" }, { value: "Rajah Buayan", label: "Rajah Buayan" }, { value: "Shariff Aguak", label: "Shariff Aguak" },
+    { value: "Shariff Saydona Mustapha", label: "Shariff Saydona Mustapha" }, { value: "South Upi", label: "South Upi" }, { value: "Sultan sa Barongis", label: "Sultan sa Barongis" },
+    { value: "Talayan", label: "Talayan" }, { value: "Banguingui", label: "Banguingui" }, { value: "Hadji Panglima Tahil", label: "Hadji Panglima Tahil" },
+    { value: "Indanan", label: "Indanan" }, { value: "Jolo", label: "Jolo" }, { value: "Kalingalan Caluang", label: "Kalingalan Caluang" },
+    { value: "Lugus", label: "Lugus" }, { value: "Luuk", label: "Luuk" }, { value: "Maimbung", label: "Maimbung" },
+    { value: "Old Panamao", label: "Old Panamao" }, { value: "Omar", label: "Omar" }, { value: "Pandami", label: "Pandami" },
+    { value: "Panglima Estino", label: "Panglima Estino" }, { value: "Pangutaran", label: "Pangutaran" }, { value: "Parang", label: "Parang" },
+    { value: "Pata", label: "Pata" }, { value: "Patikul", label: "Patikul" }, { value: "Siasi", label: "Siasi" },
+    { value: "Talipao", label: "Talipao" }, { value: "Tapul", label: "Tapul" }, { value: "Bongao", label: "Bongao" },
+    { value: "Languyan", label: "Languyan" }, { value: "Mapun", label: "Mapun" }, { value: "Panglima Sugala", label: "Panglima Sugala" },
+    { value: "Sapa-Sapa", label: "Sapa-Sapa" }, { value: "Sibutu", label: "Sibutu" }, { value: "Simunul", label: "Simunul" },
+    { value: "Sitangkai", label: "Sitangkai" }, { value: "South Ubian", label: "South Ubian" }, { value: "Tandubas", label: "Tandubas" },
+    { value: "Turtle Islands", label: "Turtle Islands" }
   ]
 };
 
-// Get all cities for a region, sorted alphabetically
+// Helper function to get cities for a region
 const getCitiesForRegion = (regionCode) => {
   if (!regionCode || !CITIES_BY_REGION[regionCode]) {
     return [];
@@ -350,17 +768,11 @@ const getCitiesForRegion = (regionCode) => {
   );
 };
 
-// Format phone number - only remove special characters and spaces
 const formatPhilippineNumber = (value) => {
-  // Only get digits
   let cleaned = value.replace(/\D/g, '');
-  
-  // Limit to 11 digits
   if (cleaned.length > 11) {
     cleaned = cleaned.slice(0, 11);
   }
-  
-  // Format for display: add spaces every 3-4 digits for readability
   if (cleaned.length >= 4) {
     if (cleaned.length <= 4) {
       return cleaned;
@@ -370,34 +782,23 @@ const formatPhilippineNumber = (value) => {
       return `${cleaned.slice(0, 4)} ${cleaned.slice(4, 7)} ${cleaned.slice(7, 11)}`.trim();
     }
   }
-  
   return cleaned;
 };
 
-// Validate phone number - only check length and that it contains digits
 const validatePhilippineNumber = (phoneNumber) => {
-  // Remove all non-digit characters
   let cleaned = phoneNumber.replace(/\D/g, '');
-  
-  // Check if empty
   if (!cleaned) {
     return { isValid: false, normalizedNumber: '', error: 'Phone number is required' };
   }
-  
-  // Check length (must be between 7 and 11 digits for Philippine numbers)
   if (cleaned.length < 7) {
     return { isValid: false, normalizedNumber: cleaned, error: 'Phone number must have at least 7 digits' };
   }
-  
   if (cleaned.length > 11) {
     return { isValid: false, normalizedNumber: cleaned.slice(0, 11), error: 'Phone number cannot exceed 11 digits' };
   }
-  
-  // Valid phone number
   return { isValid: true, normalizedNumber: cleaned, error: '' };
 };
 
-// Format date range for display
 const formatDateRange = (startDate, endDate) => {
   if (!startDate) return '';
   const start = new Date(startDate);
@@ -446,7 +847,6 @@ function Register() {
     { image: "/delta3.jpg" }
   ];
 
-  // Fetch active event on component mount
   useEffect(() => {
     fetchActiveEvent();
   }, []);
@@ -460,17 +860,14 @@ function Register() {
     }
   };
 
-  // Handle resize events
   useEffect(() => {
     const handleResize = () => {
       setIsMobile(window.innerWidth <= 768);
     };
-    
     window.addEventListener('resize', handleResize);
     return () => window.removeEventListener('resize', handleResize);
   }, []);
 
-  // Update available cities when region changes
   useEffect(() => {
     if (form.region) {
       const cities = getCitiesForRegion(form.region);
@@ -484,7 +881,6 @@ function Register() {
     }
   }, [form.region]);
 
-  // Preload images
   useEffect(() => {
     slides.forEach(slide => {
       const img = new Image();
@@ -492,7 +888,6 @@ function Register() {
     });
   }, []);
 
-  // Prevent body scroll when modal is open
   useEffect(() => {
     if (showSuccessModal) {
       document.body.style.overflow = 'hidden';
@@ -504,7 +899,6 @@ function Register() {
     };
   }, [showSuccessModal]);
 
-  // Validate all form fields
   const validateForm = () => {
     if (!form.full_name.trim()) {
       setValidationError("Full name is required");
@@ -547,7 +941,6 @@ function Register() {
       return false;
     }
     
-    // Update form with normalized phone number (only digits)
     if (normalizedNumber !== form.phone.replace(/\D/g, '')) {
       setForm(prev => ({ ...prev, phone: normalizedNumber }));
     }
@@ -638,7 +1031,6 @@ function Register() {
     
     const selectedRegion = PHILIPPINE_REGIONS.find(r => r.value === form.region);
     
-    // Get only digits for phone number
     const phoneDigits = form.phone.replace(/\D/g, '');
     
     const formData = {
@@ -693,7 +1085,6 @@ function Register() {
     setRegisteredUser(null);
   };
 
-  // Auto-advance slides every 4 seconds
   useEffect(() => {
     const timer = setInterval(() => {
       setStaticNoise(true);
@@ -1007,7 +1398,6 @@ function Register() {
                 </div>
               </div>
 
-              {/* Optional Inquiries Section */}
               <div className="inquiry-section">
                 <div className="inquiry-header">
                   <button
