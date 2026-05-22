@@ -10,6 +10,12 @@ function Login() {
   const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
 
+  // List of authorized admin credentials
+  const authorizedAdmins = [
+    { email: "leah.evangelista@deltaplus.ph", password: "deltaplus" },
+    { email: "francis.magallanes@deltaplus.ph", password: "deltaplus" }
+  ];
+
   const createRipple = (event) => {
     const button = event.currentTarget;
     const ripple = document.createElement('span');
@@ -39,8 +45,12 @@ function Login() {
     
     // Simulate loading for better UX
     setTimeout(() => {
-      // Check if credentials match the specific user
-      if (email === "leah.evangelista@deltaplus.ph" && password === "deltaplus") {
+      // Check if credentials match any authorized admin
+      const isValidAdmin = authorizedAdmins.some(
+        admin => admin.email === email && admin.password === password
+      );
+      
+      if (isValidAdmin) {
         // Store authentication state
         localStorage.setItem("isAuthenticated", "true");
         localStorage.setItem("userEmail", email);
