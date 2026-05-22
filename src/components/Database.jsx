@@ -118,7 +118,7 @@ const Database = () => {
   const [filterRegion, setFilterRegion] = useState("all");
   const [filterEvent, setFilterEvent] = useState("all");
   const [filterDate, setFilterDate] = useState("");
-  const [searchInquiry, setSearchInquiry] = useState("");
+  const [filterInquiryStatus, setFilterInquiryStatus] = useState("all"); // "all", "with", "without"
   
   // Auto-refresh state
   const [lastUpdate, setLastUpdate] = useState(Date.now());
@@ -148,6 +148,11 @@ const Database = () => {
   useEffect(() => {
     usersRef.current = users;
   }, [users]);
+
+  // Helper function to check if user has inquiry
+  const hasInquiry = (user) => {
+    return user.inquiry && user.inquiry.trim() !== "";
+  };
 
   // Define applyFilters with useCallback to prevent unnecessary re-renders
   const applyFilters = useCallback(() => {
@@ -200,15 +205,15 @@ const Database = () => {
       });
     }
 
-    if (searchInquiry.trim() !== "") {
-      filtered = filtered.filter(user => {
-        const inquiryText = user.inquiry || '';
-        return inquiryText.toLowerCase().includes(searchInquiry.toLowerCase());
-      });
+    // Filter by inquiry status
+    if (filterInquiryStatus === "with") {
+      filtered = filtered.filter(user => hasInquiry(user));
+    } else if (filterInquiryStatus === "without") {
+      filtered = filtered.filter(user => !hasInquiry(user));
     }
 
     setFilteredUsers(filtered);
-  }, [searchName, searchCompany, searchPosition, searchCity, filterRegion, filterEvent, filterDate, searchInquiry]);
+  }, [searchName, searchCompany, searchPosition, searchCity, filterRegion, filterEvent, filterDate, filterInquiryStatus]);
 
   // Initial data fetch
   useEffect(() => {
@@ -337,12 +342,7 @@ const Database = () => {
     setFilterRegion("all");
     setFilterEvent("all");
     setFilterDate("");
-    setSearchInquiry("");
-  };
-
-  // Helper function to check if user has inquiry
-  const hasInquiry = (user) => {
-    return user.inquiry && user.inquiry.trim() !== "";
+    setFilterInquiryStatus("all");
   };
 
   // Get dynamic inquiry count based on filtered users
@@ -371,7 +371,7 @@ const Database = () => {
   };
 
   const exportToExcel = () => {
-    const dataToExport = (searchName || searchCompany || searchPosition || searchCity || filterRegion !== "all" || filterEvent !== "all" || filterDate || searchInquiry) ? filteredUsers : users;
+    const dataToExport = (searchName || searchCompany || searchPosition || searchCity || filterRegion !== "all" || filterEvent !== "all" || filterDate || filterInquiryStatus !== "all") ? filteredUsers : users;
     
     const excelData = dataToExport.map(user => ({
       'Name': user.full_name,
@@ -400,7 +400,7 @@ const Database = () => {
     XLSX.utils.book_append_sheet(wb, ws, 'Visitors');
 
     let filename = 'visitors';
-    if (searchName || searchCompany || searchPosition || searchCity || filterRegion !== "all" || filterEvent !== "all" || filterDate || searchInquiry) {
+    if (searchName || searchCompany || searchPosition || searchCity || filterRegion !== "all" || filterEvent !== "all" || filterDate || filterInquiryStatus !== "all") {
       filename += '_filtered';
     }
     filename += `_${new Date().toISOString().split('T')[0]}.xlsx`;
@@ -582,7 +582,7 @@ const Database = () => {
 
   const filteredInquiryCount = getFilteredInquiryCount();
   const totalInquiryCount = getTotalInquiryCount();
-  const isFilterApplied = searchName || searchCompany || searchPosition || searchCity || filterRegion !== "all" || filterEvent !== "all" || filterDate || searchInquiry;
+  const isFilterApplied = searchName || searchCompany || searchPosition || searchCity || filterRegion !== "all" || filterEvent !== "all" || filterDate || filterInquiryStatus !== "all";
 
   return (
     <div className="dashboard">
@@ -761,14 +761,16 @@ const Database = () => {
                   </div>
 
                   <div className="filter-group">
-                    <label>Inquiry</label>
-                    <input
-                      type="text"
-                      placeholder="Search inquiries..."
-                      value={searchInquiry}
-                      onChange={(e) => setSearchInquiry(e.target.value)}
-                      className="filter-input"
-                    />
+                    <label>Inquiry Status</label>
+                    <select 
+                      value={filterInquiryStatus} 
+                      onChange={(e) => setFilterInquiryStatus(e.target.value)}
+                      className="filter-select"
+                    >
+                      <option value="all">All Visitors</option>
+                      <option value="with">With Inquiries</option>
+                      <option value="without">Without Inquiries</option>
+                    </select>
                   </div>
 
                   <div className="filter-group filter-clear-group">
