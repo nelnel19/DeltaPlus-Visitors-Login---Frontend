@@ -1,4 +1,4 @@
-/* styles/register.css - Complete file */
+/* styles/register.css - Complete file with dropdown z-index fix */
 
 :root {
   --primary-yellow: #FFC107;
@@ -508,6 +508,8 @@ body {
   background: white;
   display: flex;
   flex-direction: column;
+  position: relative;
+  z-index: 1;
 }
 
 .logo-section {
@@ -553,6 +555,8 @@ body {
 .form-section {
   padding: 0 40px 40px 40px;
   flex: 1;
+  position: relative;
+  z-index: 1;
 }
 
 .form-header {
@@ -661,6 +665,8 @@ body {
   flex-direction: column;
   gap: 6px;
   transition: transform 0.2s ease;
+  position: relative;
+  z-index: 1;
 }
 
 .form-group:focus-within {
@@ -719,6 +725,8 @@ body {
 
 .form-footer {
   margin-top: 10px;
+  position: relative;
+  z-index: 1;
 }
 
 .submit-btn {
@@ -738,6 +746,7 @@ body {
   gap: 8px;
   position: relative;
   overflow: hidden;
+  z-index: 2;
 }
 
 .submit-btn:hover:not(:disabled) {
@@ -803,6 +812,8 @@ body {
   background: var(--gray-50);
   border-radius: var(--radius);
   border: 1px solid var(--gray-200);
+  position: relative;
+  z-index: 1;
 }
 
 .address-title {
@@ -831,9 +842,11 @@ body {
   background: white;
 }
 
+/* CUSTOM SELECT - FIXED DROPDOWN Z-INDEX */
 .custom-select-container {
   position: relative;
   width: 100%;
+  z-index: 10;
 }
 
 .custom-select-trigger {
@@ -850,6 +863,8 @@ body {
   color: var(--gray-700);
   transition: all 0.2s;
   height: 48px;
+  position: relative;
+  z-index: 10;
 }
 
 .custom-select-trigger:hover {
@@ -876,15 +891,16 @@ body {
   transform: rotate(180deg);
 }
 
+/* CRITICAL FIX: Dropdown appears above all other elements */
 .custom-select-dropdown {
   position: absolute;
   background: white;
   border: 1px solid var(--gray-200);
   border-radius: var(--radius);
   box-shadow: var(--shadow-lg);
-  z-index: 1000;
-  animation: dropdownFade 0.2s ease;
+  z-index: 10000 !important;
   width: 100%;
+  min-width: 250px;
 }
 
 .custom-select-dropdown.bottom {
@@ -918,6 +934,9 @@ body {
   padding: 12px;
   border-bottom: 1px solid var(--gray-200);
   background: white;
+  position: sticky;
+  top: 0;
+  z-index: 10001;
 }
 
 .search-input {
@@ -997,6 +1016,17 @@ body {
   display: flex;
   flex-direction: column;
   gap: 6px;
+  position: relative;
+  z-index: 10;
+}
+
+/* Ensure other elements don't overlap the dropdown */
+.address-section,
+.form-footer,
+.submit-btn,
+.inquiry-section {
+  position: relative;
+  z-index: 1;
 }
 
 .admin-login-container {
@@ -1004,6 +1034,8 @@ body {
   text-align: center;
   padding-top: 15px;
   border-top: 1px solid var(--gray-200);
+  position: relative;
+  z-index: 1;
 }
 
 .admin-login-link {
@@ -1064,6 +1096,8 @@ body {
   gap: 14px;
   box-shadow: var(--shadow-sm);
   animation: bannerSlideIn 0.4s ease-out;
+  position: relative;
+  z-index: 1;
 }
 
 @keyframes bannerSlideIn {
@@ -1121,18 +1155,19 @@ body {
   font-size: 12px;
 }
 
+/* Success Modal */
 .success-modal-overlay {
   position: fixed;
   top: 0;
   left: 0;
-  right:0;
-    bottom: 0;
+  right: 0;
+  bottom: 0;
   background: rgba(0, 0, 0, 0.75);
   backdrop-filter: blur(8px);
   display: flex;
   align-items: center;
   justify-content: center;
-  z-index: 10000;
+  z-index: 100000;
   animation: modalOverlayFade 0.3s ease-out;
 }
 
@@ -1156,6 +1191,7 @@ body {
   position: relative;
   animation: modalSlideUp 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
   box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
+  z-index: 100001;
 }
 
 @keyframes modalSlideUp {
@@ -1332,6 +1368,167 @@ body {
 
 .success-modal-button:active {
   transform: translateY(0);
+}
+
+/* Inquiry Section Styles */
+.inquiry-section {
+  margin-top: 20px;
+  border-top: 1px solid var(--gray-200);
+  padding-top: 16px;
+  position: relative;
+  z-index: 1;
+}
+
+.inquiry-header {
+  margin-bottom: 12px;
+}
+
+.inquiry-toggle-btn {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  padding: 12px 16px;
+  background: var(--gray-50);
+  border: 1px solid var(--gray-200);
+  border-radius: var(--radius);
+  cursor: pointer;
+  font-size: 14px;
+  font-weight: 500;
+  color: var(--gray-700);
+  transition: all 0.2s ease;
+  text-align: left;
+}
+
+.inquiry-toggle-btn:hover {
+  background: var(--gray-100);
+  border-color: var(--gray-300);
+}
+
+.inquiry-toggle-btn.active {
+  background: rgba(245, 193, 7, 0.1);
+  border-color: var(--primary-yellow);
+  border-bottom-left-radius: 0;
+  border-bottom-right-radius: 0;
+}
+
+.inquiry-toggle-btn svg {
+  flex-shrink: 0;
+}
+
+.optional-tag {
+  font-size: 11px;
+  font-weight: 400;
+  color: var(--gray-500);
+  background: white;
+  padding: 2px 8px;
+  border-radius: 12px;
+  margin-left: 8px;
+}
+
+.toggle-icon {
+  font-size: 12px;
+  transition: transform 0.2s ease;
+  color: var(--gray-500);
+}
+
+.toggle-icon.open {
+  transform: rotate(180deg);
+}
+
+.inquiry-content {
+  animation: slideDown 0.3s ease-out;
+  border: 1px solid var(--gray-200);
+  border-top: none;
+  border-radius: 0 0 var(--radius) var(--radius);
+  padding: 16px;
+  background: white;
+}
+
+@keyframes slideDown {
+  from {
+    opacity: 0;
+    transform: translateY(-10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.form-textarea {
+  width: 100%;
+  padding: 12px 16px;
+  border: 1px solid var(--gray-200);
+  border-radius: var(--radius);
+  font-size: 14px;
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  resize: vertical;
+  transition: all 0.2s ease;
+}
+
+.form-textarea:focus {
+  outline: none;
+  border-color: var(--primary-yellow);
+  box-shadow: 0 0 0 3px rgba(255, 193, 7, 0.1);
+}
+
+.form-textarea::placeholder {
+  color: var(--gray-400);
+  font-size: 13px;
+}
+
+/* Inquiry confirmation in success modal */
+.success-modal-detail-item.inquiry-item {
+  background: rgba(16, 185, 129, 0.1);
+  border-radius: 8px;
+  margin-top: 8px;
+  padding: 8px 12px;
+}
+
+.detail-value.inquiry-value {
+  color: var(--success-green);
+  font-weight: 600;
+}
+
+.inquiry-confirmation {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 12px 16px;
+  background: rgba(16, 185, 129, 0.1);
+  border-radius: 12px;
+  margin-top: 16px;
+  margin-bottom: 20px;
+}
+
+.inquiry-confirmation svg {
+  color: var(--success-green);
+  flex-shrink: 0;
+}
+
+.inquiry-confirmation span {
+  font-size: 13px;
+  color: var(--gray-700);
+  line-height: 1.4;
+}
+
+/* Position Field Styles */
+.form-group input[name="position"] {
+  text-transform: capitalize;
+}
+
+.form-group[data-field="position"] .field-hint {
+  font-size: 11px;
+  color: var(--gray-500);
+  margin-top: 4px;
+  display: block;
+}
+
+.success-modal-detail-item .detail-value.position-value {
+  font-weight: 600;
+  color: var(--dark-blue);
 }
 
 /* Responsive Styles */
@@ -1560,6 +1757,7 @@ body {
     padding: 8px 14px;
   }
   
+  /* Mobile dropdown - slides from bottom */
   .custom-select-dropdown {
     position: fixed;
     bottom: 0;
@@ -1569,6 +1767,7 @@ body {
     border-radius: 12px 12px 0 0;
     animation: slideUp 0.3s ease;
     max-height: 70vh;
+    z-index: 100000 !important;
   }
   
   .custom-select-dropdown.top {
@@ -1763,149 +1962,6 @@ body {
 .modal-overlay {
   animation: fadeIn 0.2s ease;
 }
-/* Add these styles to your existing register.css */
-
-/* Inquiry Section Styles */
-.inquiry-section {
-  margin-top: 20px;
-  border-top: 1px solid var(--gray-200);
-  padding-top: 16px;
-}
-
-.inquiry-header {
-  margin-bottom: 12px;
-}
-
-.inquiry-toggle-btn {
-  width: 100%;
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 10px;
-  padding: 12px 16px;
-  background: var(--gray-50);
-  border: 1px solid var(--gray-200);
-  border-radius: var(--radius);
-  cursor: pointer;
-  font-size: 14px;
-  font-weight: 500;
-  color: var(--gray-700);
-  transition: all 0.2s ease;
-  text-align: left;
-}
-
-.inquiry-toggle-btn:hover {
-  background: var(--gray-100);
-  border-color: var(--gray-300);
-}
-
-.inquiry-toggle-btn.active {
-  background: rgba(245, 193, 7, 0.1);
-  border-color: var(--primary-yellow);
-  border-bottom-left-radius: 0;
-  border-bottom-right-radius: 0;
-}
-
-.inquiry-toggle-btn svg {
-  flex-shrink: 0;
-}
-
-.optional-tag {
-  font-size: 11px;
-  font-weight: 400;
-  color: var(--gray-500);
-  background: white;
-  padding: 2px 8px;
-  border-radius: 12px;
-  margin-left: 8px;
-}
-
-.toggle-icon {
-  font-size: 12px;
-  transition: transform 0.2s ease;
-  color: var(--gray-500);
-}
-
-.toggle-icon.open {
-  transform: rotate(180deg);
-}
-
-.inquiry-content {
-  animation: slideDown 0.3s ease-out;
-  border: 1px solid var(--gray-200);
-  border-top: none;
-  border-radius: 0 0 var(--radius) var(--radius);
-  padding: 16px;
-  background: white;
-}
-
-@keyframes slideDown {
-  from {
-    opacity: 0;
-    transform: translateY(-10px);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
-}
-
-.form-textarea {
-  width: 100%;
-  padding: 12px 16px;
-  border: 1px solid var(--gray-200);
-  border-radius: var(--radius);
-  font-size: 14px;
-  font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
-  resize: vertical;
-  transition: all 0.2s ease;
-}
-
-.form-textarea:focus {
-  outline: none;
-  border-color: var(--primary-yellow);
-  box-shadow: 0 0 0 3px rgba(255, 193, 7, 0.1);
-}
-
-.form-textarea::placeholder {
-  color: var(--gray-400);
-  font-size: 13px;
-}
-
-/* Inquiry confirmation in success modal */
-.success-modal-detail-item.inquiry-item {
-  background: rgba(16, 185, 129, 0.1);
-  border-radius: 8px;
-  margin-top: 8px;
-  padding: 8px 12px;
-}
-
-.detail-value.inquiry-value {
-  color: var(--success-green);
-  font-weight: 600;
-}
-
-.inquiry-confirmation {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-  padding: 12px 16px;
-  background: rgba(16, 185, 129, 0.1);
-  border-radius: 12px;
-  margin-top: 16px;
-  margin-bottom: 20px;
-}
-
-.inquiry-confirmation svg {
-  color: var(--success-green);
-  flex-shrink: 0;
-}
-
-.inquiry-confirmation span {
-  font-size: 13px;
-  color: var(--gray-700);
-  line-height: 1.4;
-}
 
 /* Responsive styles for inquiry section */
 @media (max-width: 768px) {
@@ -1945,26 +2001,6 @@ body {
   .optional-tag {
     font-size: 9px;
   }
-}
-/* Position Field Styles - Add to your existing register.css */
-
-/* Position field specific styling */
-.form-group input[name="position"] {
-  text-transform: capitalize;
-}
-
-/* Optional: Add a hint tooltip for position field */
-.form-group[data-field="position"] .field-hint {
-  font-size: 11px;
-  color: var(--gray-500);
-  margin-top: 4px;
-  display: block;
-}
-
-/* Position badge style for success modal */
-.success-modal-detail-item .detail-value.position-value {
-  font-weight: 600;
-  color: var(--dark-blue);
 }
 
 /* Responsive adjustments for position field */
