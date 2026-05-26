@@ -118,7 +118,7 @@ const Database = () => {
   const [filterRegion, setFilterRegion] = useState("all");
   const [filterEvent, setFilterEvent] = useState("all");
   const [filterDate, setFilterDate] = useState("");
-  const [filterInquiryStatus, setFilterInquiryStatus] = useState("all"); // "all", "with", "without"
+  const [filterInquiryStatus, setFilterInquiryStatus] = useState("all");
   
   // Auto-refresh state
   const [lastUpdate, setLastUpdate] = useState(Date.now());
@@ -823,21 +823,21 @@ const Database = () => {
                         <tr key={user.id}>
                           <td>
                             <strong>{user.full_name}</strong>
-                           </tr>
+                          </td>
                           <td>
                             <span className="company-badge">
                               {user.company_name}
                             </span>
-                           </tr>
+                          </td>
                           <td>
                             <span className="position-badge">
                               {user.position || '—'}
                             </span>
-                           </tr>
-                          <td>{user.phone}</tr>
-                          <td>{user.email}</tr>
-                          <td>{user.city || '—'}</tr>
-                          <td>{user.region || '—'}</tr>
+                          </td>
+                          <td>{user.phone}</td>
+                          <td>{user.email}</td>
+                          <td>{user.city || '—'}</td>
+                          <td>{user.region || '—'}</td>
                           <td>
                             {user.event_name ? (
                               <span className={`event-badge ${user.event_name === activeEvent?.event_name ? 'active' : ''}`}>
@@ -846,7 +846,7 @@ const Database = () => {
                             ) : (
                               <span className="event-badge">—</span>
                             )}
-                           </tr>
+                          </td>
                           <td className="inquiry-cell">
                             {hasInquiry(user) ? (
                               <button
@@ -864,8 +864,8 @@ const Database = () => {
                                 <span className="no-inquiry-text">No inquiries</span>
                               </span>
                             )}
-                           </tr>
-                          <td>{formatDate(user.created_at)}</tr>
+                          </td>
+                          <td>{formatDate(user.created_at)}</td>
                           <td>
                             <div className="action-group">
                               <button
@@ -876,14 +876,14 @@ const Database = () => {
                                 ×
                               </button>
                             </div>
-                           </tr>
-                        </table>
+                          </td>
+                        </tr>
                       ))
                     ) : (
                       <tr>
                         <td colSpan="11" className="empty-state">
                           No visitors match your filters
-                         </td>
+                        </td>
                       </tr>
                     )}
                   </tbody>
