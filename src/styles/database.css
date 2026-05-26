@@ -22,8 +22,9 @@
   --shadow-sm: 0 1px 2px 0 rgb(0 0 0 / 0.05);
   --shadow-md: 0 4px 6px -1px rgb(0 0 0 / 0.1);
   --radius: 6px;
-  --header-height: 104px;
-  --header-height-mobile: 120px;
+  /* --- Reduced Header Height --- */
+  --header-height: 70px;
+  --header-height-mobile: 90px;
 }
 
 * {
@@ -45,7 +46,7 @@ body {
   flex-direction: column;
 }
 
-/* Fixed Header */
+/* Fixed Header - More Compact */
 .fixed-header {
   position: fixed;
   top: 0;
@@ -53,9 +54,9 @@ body {
   right: 0;
   background: white;
   z-index: 1000;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
   border-bottom: 1px solid var(--gray-200);
-  padding: 12px 0;
+  padding: 0;
 }
 
 .header-container {
@@ -66,6 +67,7 @@ body {
   max-width: 1400px;
   margin: 0 auto;
   padding: 0 24px;
+  height: var(--header-height);
 }
 
 .dashboard-container {
@@ -74,7 +76,7 @@ body {
   padding: 24px;
 }
 
-/* Main Content - Scrollable with proper spacing */
+/* Main Content - Adjusted for smaller header */
 .main-content {
   flex: 1;
   margin-top: var(--header-height);
@@ -83,11 +85,7 @@ body {
   padding-bottom: 40px;
 }
 
-/* Header */
-.dashboard-header {
-  margin-bottom: 0;
-}
-
+/* Compact Header Elements */
 .header-left {
   display: flex;
   align-items: center;
@@ -100,26 +98,27 @@ body {
 }
 
 .logo-image {
-  height: 80px;
+  height: 40px; /* Reduced from 80px */
   width: auto;
   object-fit: contain;
+  transition: height 0.2s ease;
 }
 
 .header-nav {
   display: flex;
-  gap: 8px;
+  gap: 6px;
   background: white;
-  padding: 4px;
+  padding: 2px;
   border-radius: var(--radius);
   border: 1px solid var(--gray-200);
 }
 
 .nav-btn {
-  padding: 8px 20px;
+  padding: 6px 16px; /* Reduced padding */
   border: none;
   background: transparent;
   color: var(--gray-500);
-  font-size: 14px;
+  font-size: 13px; /* Slightly smaller font */
   font-weight: 500;
   cursor: pointer;
   border-radius: var(--radius);
@@ -148,11 +147,11 @@ body {
 }
 
 .logout-btn {
-  padding: 6px 12px;
+  padding: 5px 10px; /* Smaller padding */
   border: 1px solid var(--gray-200);
   background: white;
   color: var(--gray-600);
-  font-size: 13px;
+  font-size: 12px; /* Smaller font */
   font-weight: 500;
   border-radius: var(--radius);
   cursor: pointer;
@@ -1248,7 +1247,7 @@ tbody tr:nth-child(even) {
 
 @media (max-width: 768px) {
   :root {
-    --header-height: 120px;
+    --header-height: var(--header-height-mobile);
   }
   
   .main-content {
@@ -1257,10 +1256,11 @@ tbody tr:nth-child(even) {
   
   .header-container {
     padding: 0 16px;
+    height: var(--header-height-mobile);
   }
   
   .fixed-header {
-    padding: 8px 0;
+    padding: 0;
   }
   
   .dashboard-container {
@@ -1273,7 +1273,7 @@ tbody tr:nth-child(even) {
   }
   
   .logo-image {
-    height: 50px;
+    height: 35px;
   }
   
   .header-nav {
@@ -1281,8 +1281,8 @@ tbody tr:nth-child(even) {
   }
   
   .nav-btn {
-    padding: 6px 12px;
-    font-size: 13px;
+    padding: 5px 12px;
+    font-size: 12px;
   }
   
   .section-header {
@@ -1355,17 +1355,21 @@ tbody tr:nth-child(even) {
 
 @media (max-width: 480px) {
   :root {
-    --header-height: 130px;
+    --header-height-mobile: 85px;
+  }
+  
+  .header-container {
+    height: var(--header-height-mobile);
   }
   
   .header-left {
     flex-direction: column;
     align-items: flex-start;
-    gap: 10px;
+    gap: 8px;
   }
   
   .logo-image {
-    height: 40px;
+    height: 30px;
   }
   
   .header-nav {
@@ -1376,17 +1380,22 @@ tbody tr:nth-child(even) {
   .nav-btn {
     flex: 1;
     text-align: center;
-    font-size: 12px;
-    padding: 6px 8px;
+    font-size: 11px;
+    padding: 5px 8px;
   }
   
   .header-right {
     flex-direction: column;
     align-items: flex-end;
-    gap: 8px;
+    gap: 6px;
   }
   
   .user-email {
+    font-size: 10px;
+  }
+  
+  .logout-btn {
+    padding: 4px 8px;
     font-size: 11px;
   }
   
@@ -1479,7 +1488,7 @@ tbody tr:nth-child(even) {
 
 @media (max-width: 896px) and (orientation: landscape) {
   :root {
-    --header-height: 100px;
+    --header-height-mobile: 70px;
   }
   
   .custom-select-dropdown {
