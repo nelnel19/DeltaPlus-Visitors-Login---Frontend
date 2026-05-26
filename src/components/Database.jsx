@@ -586,7 +586,7 @@ const Database = () => {
 
   return (
     <div className="dashboard">
-      {/* Fixed Header */}
+      {/* Fixed Header - Now More Compact */}
       <header className="dashboard-header fixed-header">
         <div className="dashboard-container header-container">
           <div className="header-left">
@@ -623,7 +623,7 @@ const Database = () => {
         </div>
       </header>
 
-      {/* Main Content - Scrollable */}
+      {/* Main Content - Scrollable with proper spacing */}
       <main className="main-content">
         <div className="dashboard-container">
           {error && (
@@ -823,21 +823,21 @@ const Database = () => {
                         <tr key={user.id}>
                           <td>
                             <strong>{user.full_name}</strong>
-                          </td>
+                           </tr>
                           <td>
                             <span className="company-badge">
                               {user.company_name}
                             </span>
-                          </td>
+                           </tr>
                           <td>
                             <span className="position-badge">
                               {user.position || '—'}
                             </span>
-                          </td>
-                          <td>{user.phone}</td>
-                          <td>{user.email}</td>
-                          <td>{user.city || '—'}</td>
-                          <td>{user.region || '—'}</td>
+                           </tr>
+                          <td>{user.phone}</tr>
+                          <td>{user.email}</tr>
+                          <td>{user.city || '—'}</tr>
+                          <td>{user.region || '—'}</tr>
                           <td>
                             {user.event_name ? (
                               <span className={`event-badge ${user.event_name === activeEvent?.event_name ? 'active' : ''}`}>
@@ -846,7 +846,7 @@ const Database = () => {
                             ) : (
                               <span className="event-badge">—</span>
                             )}
-                          </td>
+                           </tr>
                           <td className="inquiry-cell">
                             {hasInquiry(user) ? (
                               <button
@@ -864,8 +864,8 @@ const Database = () => {
                                 <span className="no-inquiry-text">No inquiries</span>
                               </span>
                             )}
-                          </td>
-                          <td>{formatDate(user.created_at)}</td>
+                           </tr>
+                          <td>{formatDate(user.created_at)}</tr>
                           <td>
                             <div className="action-group">
                               <button
@@ -876,14 +876,14 @@ const Database = () => {
                                 ×
                               </button>
                             </div>
-                          </td>
-                        </tr>
+                           </tr>
+                        </table>
                       ))
                     ) : (
                       <tr>
                         <td colSpan="11" className="empty-state">
                           No visitors match your filters
-                        </td>
+                         </td>
                       </tr>
                     )}
                   </tbody>
