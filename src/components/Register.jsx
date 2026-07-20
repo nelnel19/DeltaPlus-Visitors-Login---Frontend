@@ -1896,7 +1896,7 @@ function Register() {
 
   const fetchActiveEvent = async () => {
     try {
-      const res = await axios.get("https://deltaplus-visitors-login-backend-ydkm.onrender.com/events/active");
+      const res = await axios.get("https://deltaplus-visitors-login-backend-5efd.onrender.com/events/active");
       setActiveEvent(res.data);
     } catch (err) {
       console.error("Error fetching active event:", err);
